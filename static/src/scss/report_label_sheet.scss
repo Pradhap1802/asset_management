@@ -1,0 +1,392 @@
+.o_label_sheet {
+    margin-left: -4mm;
+    margin-right: -4mm;
+    overflow: hidden;
+    width: 210mm;
+    height: 297mm;
+    page-break-before: always;
+    &.o_label_dymo {
+        font-size:90%;
+        width: 57mm;
+        height: 32mm;
+    }
+    div {
+        padding: 2px 4px;
+    }
+    div.o_label_small_text {
+        font-size: 60%;
+        line-height: 130%;
+    }
+    div.o_label_name {
+        background-color: ghostwhite;
+        height: 3em;
+        overflow: hidden;
+    }
+    div.o_label_full {
+        overflow: hidden;
+        padding: 0;
+        margin: auto;
+    }
+    div.o_label_left_column {
+        float: left;
+        font-size: .6em;
+        overflow:hidden;
+        width: 40%;
+        &.o_label_full_with {
+            width: 100%
+        }
+    }
+    div.o_label_right_column {
+        float: right;
+    }
+    div.o_label_small_barcode {
+        font-size: .6em;
+        padding: 0 4px;
+        line-height: normal;
+    }
+    strong.o_label_price {
+        font-size: 2em;
+    }
+    strong.o_label_price_medium {
+        font-size: 1.3em;
+        line-height: normal;
+        padding: 0;
+        padding-right: 2mm;
+    }
+    strong.o_label_price_small {
+        font-size: 0.9em;
+        padding: 0 4px;
+        padding-right: 2mm;
+    }
+    div.o_label_extra_data {
+        overflow: hidden;
+        height: 2.5em;
+        padding: 0;
+        .img {
+            max-height: 100%;
+            max-width: 100%;
+        }
+    }
+    div.o_label_clear {
+        clear: both;
+    }
+
+    // generic 4x12 label w/ all same size font
+    div.o_label_4x12 {
+        padding:0;
+        line-height:1;
+        font-size:55%;
+        overflow:hidden;
+        white-space:nowrap;
+        text-overflow: ellipsis;
+    }
+}
+
+// New Property Sticker Styles - Base
+.o_label_property_sticker {
+    border-radius: 4mm;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    
+    .o_label_red_band {
+        background-color: #dc3545;
+        color: white;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border-bottom: 1px solid white;
+        flex-shrink: 0;
+        
+        .o_label_property_text {
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            line-height: 1.1;
+        }
+        
+        .o_label_company_name {
+            font-weight: bold;
+            text-transform: uppercase;
+            line-height: 1.1;
+            word-wrap: break-word;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+    
+    .o_label_white_section {
+        background-color: white;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 0;
+        
+        .o_label_barcode_container {
+            width: 100%;
+            text-align: center;
+            
+            .o_label_asset_code {
+                font-weight: 600;
+                color: #000;
+                text-align: center;
+                letter-spacing: 0.5px;
+                font-family: 'Courier New', monospace;
+                margin-top: 0.5mm;
+            }
+        }
+        
+        .o_label_price_container {
+            width: 100%;
+            text-align: center;
+            margin-top: 1.5mm;
+            
+            .o_label_price_value {
+                font-weight: bold;
+                color: #000;
+            }
+        }
+    }
+}
+
+// 2x7 format specific adjustments - price in top-right corner
+.o_label_property_sticker.o_label_2x7 {
+    .o_label_red_band {
+        padding: 1.5mm 3mm;
+        min-height: 22%;
+        max-height: 24%;
+        
+        .o_label_property_text {
+            font-size: 0.52em;
+            margin-bottom: 0.5mm;
+        }
+        
+        .o_label_company_name {
+            font-size: 0.7em;
+            max-height: 2.5em;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+    }
+    
+    .o_label_white_section {
+        padding: 2.5mm 3mm;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 0;
+        
+        .o_label_price_container.o_label_price_top_right {
+            position: absolute;
+            top: 2mm;
+            right: 2.5mm;
+            text-align: right;
+            z-index: 10;
+            margin-top: 0 !important;
+            width: auto !important;
+            max-width: 35%;
+            
+            .o_label_price_value {
+                font-size: 0.95em;
+                white-space: nowrap;
+                font-weight: 700;
+                color: #000;
+                line-height: 1.2;
+            }
+        }
+        
+        .o_label_barcode_container {
+            width: 100%;
+            text-align: center;
+            margin-top: 0;
+            padding-top: 0.5mm;
+            
+            .o_label_asset_code {
+                font-size: 0.75em;
+                margin-top: 0.8mm;
+                word-break: break-all;
+            }
+        }
+    }
+}
+
+// 4x7 format specific adjustments - reduced spacing
+.o_label_property_sticker.o_label_4x7 {
+    .o_label_red_band {
+        padding: 1.5mm 2mm;
+        min-height: 22%;
+        max-height: 25%;
+        
+        .o_label_property_text {
+            font-size: 0.45em;
+            margin-bottom: 0.4mm;
+        }
+        
+        .o_label_company_name {
+            font-size: 0.58em;
+            max-height: 2.5em;
+            line-height: 1.15;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+    
+    .o_label_white_section {
+        padding: 2mm 2mm;
+        justify-content: space-between;
+        
+        .o_label_barcode_container {
+            margin-bottom: 0.5mm;
+            
+            .o_label_asset_code {
+                font-size: 0.65em;
+                margin-top: 0.5mm;
+            }
+        }
+        
+        .o_label_price_container {
+            margin-top: 0.5mm;
+            
+            .o_label_price_value {
+                font-size: 0.95em;
+            }
+        }
+    }
+}
+
+// 4x12 format specific adjustments - compact labels with tight spacing
+.o_label_property_sticker.o_label_4x12 {
+    .o_label_red_band {
+        padding: 1mm 1.5mm;
+        min-height: 25%;
+        max-height: 28%;
+        
+        .o_label_property_text {
+            font-size: 0.4em;
+            margin-bottom: 0.2mm;
+        }
+        
+        .o_label_company_name {
+            font-size: 0.5em;
+            max-height: 1.8em;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+    }
+    
+    .o_label_white_section {
+        padding: 1.2mm 1.5mm;
+        justify-content: space-between;
+        
+        .o_label_barcode_container {
+            margin-bottom: 0.3mm;
+            
+            .o_label_asset_code {
+                font-size: 0.55em;
+                margin-top: 0.3mm;
+            }
+        }
+        
+        .o_label_price_container {
+            margin-top: 0.3mm;
+            
+            .o_label_price_value {
+                font-size: 0.7em;
+            }
+        }
+    }
+}
+
+// Custom format adjustments
+.o_label_property_sticker.o_label_custom {
+    .o_label_red_band {
+        padding: 1.5mm 2.5mm;
+        min-height: 22%;
+        max-height: 25%;
+        
+        .o_label_property_text {
+            font-size: 0.5em;
+            margin-bottom: 0.4mm;
+        }
+        
+        .o_label_company_name {
+            font-size: 0.65em;
+            max-height: 2.2em;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+    }
+    
+    .o_label_white_section {
+        padding: 2.5mm 2.5mm;
+        justify-content: center;
+        
+        .o_label_barcode_container {
+            margin-bottom: 0;
+            
+            .o_label_asset_code {
+                font-size: 0.7em;
+                margin-top: 0.8mm;
+            }
+        }
+    }
+}
+
+// Dymo label specific adjustments
+.o_label_property_sticker.o_label_dymo_format {
+    .o_label_red_band {
+        padding: 1.5mm 2mm;
+        min-height: 32%;
+        max-height: 35%;
+        
+        .o_label_property_text {
+            font-size: 0.48em;
+            margin-bottom: 0.3mm;
+        }
+        
+        .o_label_company_name {
+            font-size: 0.65em;
+            max-height: 2em;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+    }
+    
+    .o_label_white_section {
+        padding: 1.5mm 2mm;
+        
+        .o_label_barcode_container {
+            margin-bottom: 0.8mm;
+            
+            .o_label_asset_code {
+                font-size: 0.6em;
+                margin-top: 0.5mm;
+            }
+        }
+        
+        .o_label_price_container {
+            margin-top: 1mm;
+            
+            .o_label_price_value {
+                font-size: 0.8em;
+            }
+        }
+    }
+}
+

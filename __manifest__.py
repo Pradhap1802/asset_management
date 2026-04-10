@@ -1,0 +1,51 @@
+{
+    'name': 'Asset Management',
+    "version": "1.0",
+    'summary': 'Manage company assets, transfers, maintenance, and depreciation.',
+    'description': """
+        Streamline your asset lifecycle management with our comprehensive Odoo module. Track assets, automate depreciation, manage maintenance, and handle transfers effortlessly. Generate detailed reports, monitor warranties, and optimize asset utilization. User-friendly interface ensures easy adoption. Suitable for businesses of all sizes, this module empowers you to make informed decisions and maximize the value of your assets.
+    """,
+    'category': 'Operations',
+    'author': 'WebbyCrown Solutions',
+    'website': 'https://www.webbycrown.com',
+    'depends': ['base', 'product', 'hr', 'account'],
+    'data': [
+        'security/security.xml',
+        'security/ir.model.access.csv',
+        'data/sequence.xml',
+        # 'data/demo_data.xml',
+        'wizard/asset_label_wizard_view.xml',
+        'report/asset_label_report.xml',
+        'report/asset_label_templates.xml',
+        'report/asset_template_templates.xml',
+        'views/asset_views.xml',
+        'views/asset_vendor_views.xml',
+        'views/asset_report.xml',
+        'views/stock_movement_report_views.xml'
+    ],
+    'assets': {
+        'web.report_assets_common': [
+            'asset_management/static/src/scss/report_label_sheet.scss',
+        ],
+    },
+    'i18n': [
+        'i18n/ar.po',
+        'i18n/de.po',
+        'i18n/es_ES.po',
+        'i18n/es.po',
+        'i18n/fr.po',
+        'i18n/it.po',
+        'i18n/nl.po',
+        'i18n/pt.po',
+        'i18n/tr.po',
+    ],
+    'images': ['static/description/main_screenshot.png', 'static/description/formate_screenshot_1.png',
+               'static/description/formate_screenshot_2.png', 'static/description/formate_screenshot_3.png',
+               'static/description/formate_screenshot_4.png', 'static/description/formate_screenshot_5.png',
+               'static/description/formate_screenshot_6.png', 'static/description/formate_screenshot_7.png'],
+    'application': True,
+    'installable': True,
+    'price': 0,
+    'currency': 'EUR',
+    'license': 'LGPL-3',
+}

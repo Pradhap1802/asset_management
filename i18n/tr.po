@@ -1,0 +1,1140 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* asset_management
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-01 12:00+0000\n"
+"PO-Revision-Date: 2024-01-01 12:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: asset_management
+msgid "Asset Management"
+msgstr "Varlık Yönetimi"
+
+#. module: asset_management
+msgid "Manage company assets, transfers, maintenance, and depreciation."
+msgstr "Şirket varlıklarını, transferleri, bakımı ve amortismanı yönetin."
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_assets
+msgid "Assets"
+msgstr "Varlıklar"
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_asset_tags
+msgid "Tags"
+msgstr "Etiketler"
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_assets_maintenance_entry
+msgid "Maintenance / Repair"
+msgstr "Bakım / Onarım"
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_assets_transfer_entry
+msgid "Transfer"
+msgstr "Transfer"
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_assets_depreciation_entry
+msgid "Depreciation"
+msgstr "Amortisman"
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_assets_settings
+msgid "Types"
+msgstr "Türler"
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_asset_vendor
+msgid "Vendors"
+msgstr "Tedarikçiler"
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_assets_graph
+msgid "Assets Type Graph"
+msgstr "Varlık Türü Grafiği"
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_assets_status_graph
+msgid "Assets Status Graph"
+msgstr "Varlık Durumu Grafiği"
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_assets_vendor_graph
+msgid "Assets By Vendor Graph"
+msgstr "Tedarikçiye Göre Varlık Grafiği"
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_assets_transfer_graph
+msgid "Assets Transfer Graph"
+msgstr "Varlık Transfer Grafiği"
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_assets_maintenance_graph
+msgid "Assets Maintenance Graph"
+msgstr "Varlık Bakım Grafiği"
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_assets_depreciation_graph
+msgid "Assets Depreciation Graph"
+msgstr "Varlık Amortisman Grafiği"
+
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-01 00:00+0000\n"
+"PO-Revision-Date: 2025-01-01 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#. module: asset_management
+msgid "Basic Information"
+msgstr "Temel Bilgiler"
+
+#. module: asset_management
+msgid "Financial Information"
+msgstr "Finansal Bilgiler"
+
+#. module: asset_management
+msgid "Depreciation"
+msgstr "Amortisman"
+
+#. module: asset_management
+msgid "Depreciation Settings"
+msgstr "Amortisman Ayarları"
+
+#. module: asset_management
+msgid "Documentation"
+msgstr "Belgeler"
+
+#. module: asset_management
+msgid "Maintenance / Repair"
+msgstr "Bakım / Onarım"
+
+#. module: asset_management
+msgid "Maintenance Information"
+msgstr "Bakım Bilgileri"
+
+#. module: asset_management
+msgid "Vendor And Warranty"
+msgstr "Tedarikçi ve Garanti"
+
+#. module: asset_management
+msgid "Transfer"
+msgstr "Transfer"
+
+#. module: asset_management
+msgid "Types"
+msgstr "Türler"
+
+#. module: asset_management
+msgid "Tags"
+msgstr "Etiketler"
+
+#. module: asset_management
+msgid "Asset Depreciation Over Time"
+msgstr "Zaman İçinde Varlık Amortismanı"
+
+#. module: asset_management
+msgid "Asset Status Overview"
+msgstr "Varlık Durumuna Genel Bakış"
+
+#. module: asset_management
+msgid "Asset Types Distribution"
+msgstr "Varlık Türleri Dağılımı"
+
+#. module: asset_management
+msgid "Asset Vendors"
+msgstr "Varlık Tedarikçileri"
+
+#. module: asset_management
+msgid "Assets Transfer Wise"
+msgstr "Transfer Bazlı Varlıklar"
+
+#. module: asset_management
+msgid "Group By"
+msgstr "Gruplandır"
+
+#. module: asset_management
+msgid "In Repair"
+msgstr "Onarımda"
+
+#. module: asset_management
+msgid "In Stock"
+msgstr "Stokta"
+
+#. module: asset_management
+msgid "Out of Stock"
+msgstr "Stokta Yok"
+
+#. module: asset_management
+msgid "Maintenance and Repair Costs Over Time"
+msgstr "Zaman İçinde Bakım ve Onarım Maliyetleri"
+
+#. module: asset_management
+msgid "Service Capabilities"
+msgstr "Hizmet Yetenekleri"
+
+#. module: asset_management
+msgid "Single Assets"
+msgstr "Tekil Varlıklar"
+
+#. module: asset_management
+msgid "Stock Movements"
+msgstr "Stok Hareketleri"
+
+#. module: asset_management
+msgid "Vendor Distribution of Assets"
+msgstr "Tedarikçiye Göre Varlık Dağılımı"
+
+#. module: asset_management
+msgid "Vendor"
+msgstr "Tedarikçi"
+
+#. module: asset_management
+msgid "Asset Vendor"
+msgstr "Varlık Tedarikçisi"
+
+#. module: asset_management
+msgid "Vendor Profile"
+msgstr "Tedarikçi Profili"
+
+#. module: asset_management
+msgid "Contact Information"
+msgstr "İletişim Bilgileri"
+
+#. module: asset_management
+msgid "Vendors"
+msgstr "Tedarikçiler"
+
+#. module: asset_management
+msgid "Create your first Record"
+msgstr "İlk kaydınızı oluşturun"
+
+#. auto-added to match Spanish coverage
+msgid "Asset Reference"
+msgstr "Varlık Referansı"
+
+#. auto-added to match Spanish coverage
+msgid "Associated Product"
+msgstr "İlişkili Ürün"
+
+#. auto-added to match Spanish coverage
+msgid "Select the product used in this asset from available options"
+msgstr "Bu varlıkta kullanılan ürünü seçeneklerden seçin"
+
+#. auto-added to match Spanish coverage
+msgid "Asset Type"
+msgstr "Varlık Türü"
+
+#. auto-added to match Spanish coverage
+msgid "Classification of the asset (e.g., Equipment, Vehicle, Building)"
+msgstr "Varlığın sınıflandırması (örn. Ekipman, Araç, Bina)"
+
+#. auto-added to match Spanish coverage
+msgid "Model Type"
+msgstr "Model Türü"
+
+#. auto-added to match Spanish coverage
+msgid "Single Asset"
+msgstr "Tekil Varlık"
+
+#. auto-added to match Spanish coverage
+msgid "Multiple Assets"
+msgstr "Çoklu Varlıklar"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__depreciation_count
+msgid "Number of Depreciation Entries"
+msgstr "Amortisman Kaydı Sayısı"
+
+#. auto-added to match Spanish coverage
+msgid "Single: Unique asset with specific tracking. Multiple: Assets with stock management"
+msgstr "Tekil: Özel takibi olan tek varlık. Çoklu: Stok yönetimli varlıklar"
+
+#. auto-added to match Spanish coverage
+msgid "Initial Stock"
+msgstr "Başlangıç Stoku"
+
+#. auto-added to match Spanish coverage
+msgid "Initial quantity of this asset"
+msgstr "Bu varlığın başlangıç miktarı"
+
+#. auto-added to match Spanish coverage
+msgid "Current Stock"
+msgstr "Mevcut Stok"
+
+#. auto-added to match Spanish coverage
+msgid "Current available quantity of this asset"
+msgstr "Bu varlığın mevcut kullanılabilir miktarı"
+
+#. auto-added to match Spanish coverage
+msgid "Active Transfers"
+msgstr "Aktif Transferler"
+
+#. auto-added to match Spanish coverage
+msgid "Number of assets currently assigned to users"
+msgstr "Şu anda kullanıcılara atanan varlık sayısı"
+
+#. auto-added to match Spanish coverage
+msgid "Enable Depreciation"
+msgstr "Amortismanı Etkinleştir"
+
+#. auto-added to match Spanish coverage
+msgid "Check to apply depreciation calculations for this asset"
+msgstr "Bu varlık için amortisman hesaplamalarını uygulamak için işaretleyin"
+
+#. auto-added to match Spanish coverage
+msgid "Expired Warranty Date"
+msgstr "Garanti Bitiş Tarihi"
+
+#. auto-added to match Spanish coverage
+msgid "Associated Vendor"
+msgstr "İlişkili Tedarikçi"
+
+#. auto-added to match Spanish coverage
+msgid "Select the vendor or supplier of this asset"
+msgstr "Bu varlığın tedarikçisini seçin"
+
+#. auto-added to match Spanish coverage
+msgid "Invoice Date"
+msgstr "Fatura Tarihi"
+
+#. auto-added to match Spanish coverage
+msgid "Date when the asset was purchased or acquired"
+msgstr "Varlığın satın alındığı veya edinildiği tarih"
+
+#. auto-added to match Spanish coverage
+msgid "Purchase Price"
+msgstr "Satın Alma Fiyatı"
+
+#. auto-added to match Spanish coverage
+msgid "Initial cost of acquiring the asset"
+msgstr "Varlığı edinmenin ilk maliyeti"
+
+#. auto-added to match Spanish coverage
+msgid "Current Book Value"
+msgstr "Mevcut Defter Değeri"
+
+#. auto-added to match Spanish coverage
+msgid "Current value of the asset after depreciation (Read-only)"
+msgstr "Amortisman sonrası varlığın mevcut değeri (Salt okunur)"
+
+#. auto-added to match Spanish coverage
+msgid "Accumulated Depreciation"
+msgstr "Birikmiş Amortisman"
+
+#. auto-added to match Spanish coverage
+msgid "Total depreciation applied to the asset to date (Read-only)"
+msgstr "Bugüne kadar varlığa uygulanan toplam amortisman (Salt okunur)"
+
+#. auto-added to match Spanish coverage
+msgid "Total Maintenance Cost"
+msgstr "Toplam Bakım Maliyeti"
+
+#. auto-added to match Spanish coverage
+msgid "Sum of all maintenance expenses for this asset (Read-only)"
+msgstr "Bu varlık için tüm bakım giderlerinin toplamı (Salt okunur)"
+
+#. auto-added to match Spanish coverage
+msgid "Status"
+msgstr "Durum"
+
+#. auto-added to match Spanish coverage
+msgid "Assign"
+msgstr "Atama"
+
+#. auto-added to match Spanish coverage
+msgid "Return"
+msgstr "İade"
+
+#. auto-added to match Spanish coverage
+msgid "On Hold"
+msgstr "Beklemede"
+
+#. auto-added to match Spanish coverage
+msgid "In Warehouse"
+msgstr "Depoda"
+
+#. auto-added to match Spanish coverage
+msgid "Repair"
+msgstr "Onarım"
+
+#. auto-added to match Spanish coverage
+msgid "Destroyed"
+msgstr "Yok Edildi"
+
+#. module: asset_management
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_form
+msgid "Maintenance / Repair"
+msgstr "Bakım / Onarım"
+
+#. auto-added to match Spanish coverage
+msgid "Asset Documentation"
+msgstr "Varlık Dokümantasyonu"
+
+#. auto-added to match Spanish coverage
+msgid "Upload multiple documents related to the asset (e.g., Warranty,Invoice)"
+msgstr "Varlıkla ilgili birden fazla belge yükleyin (örn. Garanti, Fatura)"
+
+#. auto-added to match Spanish coverage
+msgid "Categorize assets with tags for easier filtering and organization"
+msgstr "Kolay filtreleme ve düzenleme için varlıkları etiketlerle kategorize edin"
+
+#. auto-added to match Spanish coverage
+msgid "Transfer Entries"
+msgstr "Transfer Kayıtları"
+
+#. auto-added to match Spanish coverage
+msgid "Maintenance Entries"
+msgstr "Bakım Kayıtları"
+
+#. auto-added to match Spanish coverage
+msgid "Depreciation Entries"
+msgstr "Amortisman Kayıtları"
+
+#. auto-added to match Spanish coverage
+msgid "Last Depreciation Date"
+msgstr "Son Amortisman Tarihi"
+
+#. auto-added to match Spanish coverage
+msgid "Last Depreciation Entry Date"
+msgstr "Son Amortisman Kayıt Tarihi"
+
+#. auto-added to match Spanish coverage
+msgid "Asset Transfer History"
+msgstr "Varlık Transfer Geçmişi"
+
+#. auto-added to match Spanish coverage
+msgid "Maintenance Records"
+msgstr "Bakım Kayıtları"
+
+#. auto-added to match Spanish coverage
+msgid "Depreciation Entries"
+msgstr "Amortisman Kayıtları"
+
+#. auto-added to match Spanish coverage
+msgid "Associated Invoice"
+msgstr "İlişkili Fatura"
+
+#. auto-added to match Spanish coverage
+msgid "Months Left"
+msgstr "Kalan Ay"
+
+#. auto-added to match Spanish coverage
+msgid "Assigned User"
+msgstr "Atanan Kullanıcı"
+
+#. auto-added to match Spanish coverage
+msgid "Assigned By"
+msgstr "Atayan"
+
+#. auto-added to match Spanish coverage
+msgid "Remaining Warranty"
+msgstr "Kalan Garanti"
+
+#. auto-added to match Spanish coverage
+msgid "Warranty Status"
+msgstr "Garanti Durumu"
+
+#. auto-added to match Spanish coverage
+msgid "Asset Management"
+msgstr "Varlık Yönetimi"
+
+#. auto-added to match Spanish coverage
+msgid "Asset Tag"
+msgstr "Asset Tag"
+
+#. auto-added to match Spanish coverage
+msgid "Name"
+msgstr "Ad"
+
+#. auto-added to match Spanish coverage
+msgid "Color Index"
+msgstr "Color Index"
+
+#. auto-added to match Spanish coverage
+msgid "Asset Transfer Entry"
+msgstr "Asset Transfer Entry"
+
+#. auto-added to match Spanish coverage
+msgid "Asset Reference"
+msgstr "Varlık Referansı"
+
+#. auto-added to match Spanish coverage
+msgid "Choose the asset for which the transfer is being recorded"
+msgstr "Choose the asset for which the transfer is being recorded"
+
+#. auto-added to match Spanish coverage
+msgid "Assigned To"
+msgstr "Assigned To"
+
+#. auto-added to match Spanish coverage
+msgid "Employee who is receiving or has received the asset"
+msgstr "Employee who is receiving or has received the asset"
+
+#. auto-added to match Spanish coverage
+msgid "Assign Date"
+msgstr "Assign Date"
+
+#. auto-added to match Spanish coverage
+msgid "Date when the asset was assigned to the employee"
+msgstr "Date when the asset was assigned to the employee"
+
+#. auto-added to match Spanish coverage
+msgid "Assign By"
+msgstr "Assign By"
+
+#. auto-added to match Spanish coverage
+msgid "Person responsible for assigning the asset"
+msgstr "Person responsible for assigning the asset"
+
+#. auto-added to match Spanish coverage
+msgid "Return Date"
+msgstr "Return Date"
+
+#. auto-added to match Spanish coverage
+msgid "Date when the asset was returned by the employee"
+msgstr "Date when the asset was returned by the employee"
+
+#. auto-added to match Spanish coverage
+msgid "Status"
+msgstr "Durum"
+
+#. auto-added to match Spanish coverage
+msgid "Current status of the asset transfer"
+msgstr "Current status of the asset transfer"
+
+#. auto-added to match Spanish coverage
+msgid "Assigned"
+msgstr "Atandı"
+
+#. auto-added to match Spanish coverage
+msgid "Returned"
+msgstr "İade Edildi"
+
+#. auto-added to match Spanish coverage
+msgid "Under Maintenance"
+msgstr "Under Maintenance"
+
+#. auto-added to match Spanish coverage
+msgid "Transfer Code"
+msgstr "Transfer Code"
+
+#. auto-added to match Spanish coverage
+msgid "Unique identifier for this transfer"
+msgstr "Unique identifier for this transfer"
+
+#. auto-added to match Spanish coverage
+msgid "Quantity"
+msgstr "Miktar"
+
+#. auto-added to match Spanish coverage
+msgid "Quantity of assets being transferred (for multiple assets)"
+msgstr "Quantity of assets being transferred (for multiple assets)"
+
+#. auto-added to match Spanish coverage
+msgid "Asset Maintenance Entry"
+msgstr "Asset Maintenance Entry"
+
+#. auto-added to match Spanish coverage
+msgid "Asset Reference"
+msgstr "Varlık Referansı"
+
+#. auto-added to match Spanish coverage
+msgid "Choose the asset for undergoing maintenance or repair is being recorded"
+msgstr "Choose the asset for undergoing maintenance or repair is being recorded"
+
+#. auto-added to match Spanish coverage
+msgid "Select Vendor"
+msgstr "Select Vendor"
+
+#. auto-added to match Spanish coverage
+msgid "Vendor or technician performing the maintenance or repair"
+msgstr "Vendor or technician performing the maintenance or repair"
+
+#. auto-added to match Spanish coverage
+msgid "Service Start Date"
+msgstr "Service Start Date"
+
+#. auto-added to match Spanish coverage
+msgid "Date when the asset was sent for maintenance or repair"
+msgstr "Date when the asset was sent for maintenance or repair"
+
+#. auto-added to match Spanish coverage
+msgid "Requested By"
+msgstr "Requested By"
+
+#. auto-added to match Spanish coverage
+msgid "Person who initiated the maintenance or repair request"
+msgstr "Person who initiated the maintenance or repair request"
+
+#. auto-added to match Spanish coverage
+msgid "Completion Date"
+msgstr "Completion Date"
+
+#. auto-added to match Spanish coverage
+msgid "Date when the maintenance or repair was completed"
+msgstr "Date when the maintenance or repair was completed"
+
+#. auto-added to match Spanish coverage
+msgid "Status"
+msgstr "Durum"
+
+#. auto-added to match Spanish coverage
+msgid "Current status of the maintenance or repair process"
+msgstr "Current status of the maintenance or repair process"
+
+#. auto-added to match Spanish coverage
+msgid "In Progress"
+msgstr "In Progress"
+
+#. auto-added to match Spanish coverage
+msgid "Pending"
+msgstr "Beklemede"
+
+#. auto-added to match Spanish coverage
+msgid "Completed"
+msgstr "Tamamlandı"
+
+#. auto-added to match Spanish coverage
+msgid "Amount"
+msgstr "Tutar"
+
+#. auto-added to match Spanish coverage
+msgid "Invoice"
+msgstr "Fatura"
+
+#. auto-added to match Spanish coverage
+msgid "File Name"
+msgstr "File Name"
+
+#. auto-added to match Spanish coverage
+msgid "Documents"
+msgstr "Belgeler"
+
+#. auto-added to match Spanish coverage
+msgid "Asset Depreciation Entry"
+msgstr "Asset Depreciation Entry"
+
+#. auto-added to match Spanish coverage
+msgid "Asset Reference"
+msgstr "Varlık Referansı"
+
+#. auto-added to match Spanish coverage
+msgid "Choose the asset for which depreciation is being recorded"
+msgstr "Choose the asset for which depreciation is being recorded"
+
+#. auto-added to match Spanish coverage
+msgid "Amount"
+msgstr "Tutar"
+
+#. auto-added to match Spanish coverage
+msgid "The monetary value of depreciation applied in this entry"
+msgstr "The monetary value of depreciation applied in this entry"
+
+#. auto-added to match Spanish coverage
+msgid "Depreciation Date"
+msgstr "Depreciation Date"
+
+#. auto-added to match Spanish coverage
+msgid "Date when this depreciation entry was recorded"
+msgstr "Date when this depreciation entry was recorded"
+
+#. auto-added to match Spanish coverage
+msgid "Comments"
+msgstr "Yorumlar"
+
+#. auto-added to match Spanish coverage
+msgid "Additional information or remarks about this depreciation entry"
+msgstr "Additional information or remarks about this depreciation entry"
+
+#. auto-added to match Spanish coverage
+msgid "Recorded By"
+msgstr "Recorded By"
+
+#. auto-added to match Spanish coverage
+msgid "Person who created this depreciation entry"
+msgstr "Person who created this depreciation entry"
+
+#. auto-added to match Spanish coverage
+msgid "Asset Type"
+msgstr "Varlık Türü"
+
+#. auto-added to match Spanish coverage
+msgid "Name"
+msgstr "Ad"
+
+#. auto-added to match Spanish coverage
+msgid "Color Index"
+msgstr "Color Index"
+
+#. auto-added to match Spanish coverage
+msgid "Depreciation Frequency"
+msgstr "Depreciation Frequency"
+
+#. auto-added to match Spanish coverage
+msgid "How often depreciation is calculated (Yearly, Monthly, or Daily)"
+msgstr "How often depreciation is calculated (Yearly, Monthly, or Daily)"
+
+#. auto-added to match Spanish coverage
+msgid "Monthly"
+msgstr "Aylık"
+
+#. auto-added to match Spanish coverage
+msgid "Yearly"
+msgstr "Yıllık"
+
+#. auto-added to match Spanish coverage
+msgid "Days"
+msgstr "Günler"
+
+#. auto-added to match Spanish coverage
+msgid "Depreciation Value Type"
+msgstr "Depreciation Value Type"
+
+#. auto-added to match Spanish coverage
+msgid "Whether depreciation is calculated as a percentage or fixed amount"
+msgstr "Whether depreciation is calculated as a percentage or fixed amount"
+
+#. auto-added to match Spanish coverage
+msgid "Fix"
+msgstr "Sabit"
+
+#. auto-added to match Spanish coverage
+msgid "Percentage"
+msgstr "Yüzde"
+
+#. auto-added to match Spanish coverage
+msgid "Depreciation Rate"
+msgstr "Depreciation Rate"
+
+#. auto-added to match Spanish coverage
+msgid "The percentage or fixed amount used to calculate depreciation"
+msgstr "The percentage or fixed amount used to calculate depreciation"
+
+#. auto-added to match Spanish coverage
+msgid "Depreciation Start Delay"
+msgstr "Depreciation Start Delay"
+
+#. auto-added to match Spanish coverage
+msgid "Time duration before depreciation begins after asset acquisition"
+msgstr "Time duration before depreciation begins after asset acquisition"
+
+#. auto-added to match Spanish coverage
+msgid "Depreciation Basis"
+msgstr "Depreciation Basis"
+
+#. auto-added to match Spanish coverage
+msgid "Whether depreciation is applied to the adjusted value (after previous depreciation) or the original value"
+msgstr "Whether depreciation is applied to the adjusted value (after previous depreciation) or the original value"
+
+#. auto-added to match Spanish coverage
+msgid "Purchase Price"
+msgstr "Satın Alma Fiyatı"
+
+#. auto-added to match Spanish coverage
+msgid "Book Price"
+msgstr "Book Price"
+
+#. auto-added to match Spanish coverage
+msgid "Maximum Depreciation Entries"
+msgstr "Maximum Depreciation Entries"
+
+#. auto-added to match Spanish coverage
+msgid "The maximum number of depreciation entries allowed for this asset type"
+msgstr "The maximum number of depreciation entries allowed for this asset type"
+
+#. auto-added to match Spanish coverage
+msgid "Name"
+msgstr "Ad"
+
+#. auto-added to match Spanish coverage
+msgid "Official registered name of the vendor company"
+msgstr "Official registered name of the vendor company"
+
+#. auto-added to match Spanish coverage
+msgid "Primary Address"
+msgstr "Primary Address"
+
+#. auto-added to match Spanish coverage
+msgid "Main business address of the vendor"
+msgstr "Main business address of the vendor"
+
+#. auto-added to match Spanish coverage
+msgid "Service Area"
+msgstr "Service Area"
+
+#. auto-added to match Spanish coverage
+msgid "Geographic regions where the vendor operates or provides services"
+msgstr "Geographic regions where the vendor operates or provides services"
+
+#. auto-added to match Spanish coverage
+msgid "Primary Contact"
+msgstr "Primary Contact"
+
+#. auto-added to match Spanish coverage
+msgid "Name and position of the main point of contact"
+msgstr "Name and position of the main point of contact"
+
+#. auto-added to match Spanish coverage
+msgid "Contact Phone"
+msgstr "Contact Phone"
+
+#. auto-added to match Spanish coverage
+msgid "Primary phone number for vendor communication"
+msgstr "Primary phone number for vendor communication"
+
+#. auto-added to match Spanish coverage
+msgid "Contact Email"
+msgstr "Contact Email"
+
+#. auto-added to match Spanish coverage
+msgid "Primary email address for vendor communication"
+msgstr "Primary email address for vendor communication"
+
+#. auto-added to match Spanish coverage
+msgid "Additional Services"
+msgstr "Additional Services"
+
+#. auto-added to match Spanish coverage
+msgid "Other relevant services offered by the vendor"
+msgstr "Other relevant services offered by the vendor"
+
+#. auto-added to match Spanish coverage
+msgid "Repair Services"
+msgstr "Repair Services"
+
+#. auto-added to match Spanish coverage
+msgid "Indicates if the vendor offers repair services (Yes/No)"
+msgstr "Indicates if the vendor offers repair services (Yes/No)"
+
+#. auto-added to match Spanish coverage
+msgid "Maintenance Services"
+msgstr "Maintenance Services"
+
+#. auto-added to match Spanish coverage
+msgid "Indicates if the vendor provides maintenance services (Yes/No)"
+msgstr "Indicates if the vendor provides maintenance services (Yes/No)"
+
+#. auto-added to match Spanish coverage
+msgid "Asset Stock Movement Analysis"
+msgstr "Asset Stock Movement Analysis"
+
+#. auto-added to match Spanish coverage
+msgid "Asset"
+msgstr "Varlık"
+
+#. auto-added to match Spanish coverage
+msgid "Asset Name"
+msgstr "Asset Name"
+
+#. auto-added to match Spanish coverage
+msgid "Employee"
+msgstr "Çalışan"
+
+#. auto-added to match Spanish coverage
+msgid "Date"
+msgstr "Tarih"
+
+#. auto-added to match Spanish coverage
+msgid "Movement Type"
+msgstr "Movement Type"
+
+#. auto-added to match Spanish coverage
+msgid "Assigned"
+msgstr "Atandı"
+
+#. auto-added to match Spanish coverage
+msgid "Returned"
+msgstr "İade Edildi"
+
+#. auto-added to match Spanish coverage
+msgid "Done By"
+msgstr "Done By"
+
+#. auto-added to match Spanish coverage
+msgid "New"
+msgstr "Yeni"
+
+#. auto-added to match Spanish coverage
+msgid "Transfer quantity must be greater than zero."
+msgstr "Transfer quantity must be greater than zero."
+
+#. auto-added to match Spanish coverage
+msgid "Cannot assign this asset: Insufficient stock available."
+msgstr "Cannot assign this asset: Insufficient stock available."
+
+#. auto-added to match Spanish coverage
+msgid "Tag name already exists!"
+msgstr "Tag name already exists!"
+
+#. auto-added to match Spanish coverage
+msgid "Maintenance Management"
+msgstr "Maintenance Management"
+
+#. auto-added to match Spanish coverage
+msgid "User"
+msgstr "Kullanıcı"
+
+#. auto-added to match Spanish coverage
+msgid "Administrator"
+msgstr "Yönetici"
+
+#. auto-added to match Spanish coverage
+msgid "Depreciation Management"
+msgstr "Depreciation Management"
+
+#. auto-added to match Spanish coverage
+msgid "User"
+msgstr "Kullanıcı"
+
+#. auto-added to match Spanish coverage
+msgid "Administrator"
+msgstr "Yönetici"
+
+#. auto-added to match Spanish coverage
+msgid "Reporting Management"
+msgstr "Reporting Management"
+
+#. auto-added to match Spanish coverage
+msgid "Administrator"
+msgstr "Yönetici"
+
+#. auto-added to match Spanish coverage
+msgid "Transfer Management"
+msgstr "Transfer Management"
+
+#. auto-added to match Spanish coverage
+msgid "User"
+msgstr "Kullanıcı"
+
+#. auto-added to match Spanish coverage
+msgid "Administrator"
+msgstr "Yönetici"
+
+#. auto-added to match Spanish coverage
+msgid "Assets Management"
+msgstr "Assets Management"
+
+#. auto-added to match Spanish coverage
+msgid "User"
+msgstr "Kullanıcı"
+
+#. auto-added to match Spanish coverage
+msgid "Administrator"
+msgstr "Yönetici"
+
+#. auto-added to match Spanish coverage
+msgid "Vendor Management"
+msgstr "Vendor Management"
+
+#. auto-added to match Spanish coverage
+msgid "User"
+msgstr "Kullanıcı"
+
+#. auto-added to match Spanish coverage
+msgid "Administrator"
+msgstr "Yönetici"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_root
+msgid "Asset"
+msgstr "Varlık"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset
+msgid "Assets"
+msgstr "Varlıklar"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_transfer
+msgid "Transfer"
+msgstr "Transfer"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_depreciation
+msgid "Depreciation"
+msgstr "Amortisman"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.asset_configuration
+msgid "Configuration"
+msgstr "Yapılandırma"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.asset_type_menu
+msgid "Types"
+msgstr "Türler"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.asset_tag_menu
+msgid "Tags"
+msgstr "Etiketler"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_vendor_root
+msgid "Vendors"
+msgstr "Tedarikçiler"
+
+#. module: asset_management
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_form
+msgid "Basic Information"
+msgstr "Temel Bilgiler"
+
+#. module: asset_management
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_form
+msgid "Financial Information"
+msgstr "Finansal Bilgiler"
+
+#. module: asset_management
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_form
+msgid "Depreciation Settings"
+msgstr "Amortisman Ayarları"
+
+#. module: asset_management
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_form
+msgid "Maintenance Information"
+msgstr "Bakım Bilgileri"
+
+#. module: asset_management
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_form
+msgid "Vendor And Warranty"
+msgstr "Tedarikçi ve Garanti"
+
+#. module: asset_management
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_form
+msgid "Documentation"
+msgstr "Belgeler"
+
+#. module: asset_management
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_form
+msgid "Transfer"
+msgstr "Transfer"
+
+#. module: asset_management
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_form
+msgid "Depreciation"
+msgstr "Amortisman"
+
+#. module: asset_management
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_vendor_form
+msgid "Vendor Profile"
+msgstr "Tedarikçi Profili"
+
+#. module: asset_management
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_vendor_form
+msgid "Contact Information"
+msgstr "İletişim Bilgileri"
+
+#. module: asset_management
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_vendor_form
+msgid "Service Capabilities"
+msgstr "Hizmet Yetenekleri"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_reporting
+msgid "Reporting"
+msgstr "Raporlama"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_type_graph
+msgid "Asset Type"
+msgstr "Varlık Türü"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_vendor_graph
+msgid "Asset By Vendor"
+msgstr "Tedarikçiye Göre Varlık"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_status_graph
+msgid "Asset By status"
+msgstr "Duruma Göre Varlık"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_transfer_graph
+msgid "Asset Transfer"
+msgstr "Varlık Transferi"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_maintenance_graph
+msgid "Asset Maintenance"
+msgstr "Varlık Bakımı"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_assets_depreciation_graph
+msgid "Asset Depreciation"
+msgstr "Varlık Amortismanı"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__model_type
+msgid "Single Asset"
+msgstr "Tek Varlık"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__model_type
+msgid "Multiple Assets"
+msgstr "Çoklu Varlıklar"
+
+#. module: asset_management
+#: model:ir.model.fields.selection,name:asset_management.selection__asset_management__model_type__single
+msgid "Single Asset"
+msgstr "Tek Varlık"
+
+#. module: asset_management
+#: model:ir.model.fields.selection,name:asset_management.selection__asset_management__model_type__multiple
+msgid "Multiple Assets"
+msgstr "Çoklu Varlıklar"
+
+#. module: asset_management
+#: model:ir.model.fields.selection,name:asset_management.selection__asset_management__status__assign
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_management_search
+msgid "Assign"
+msgstr "Atama"
+
+#. module: asset_management
+#: model:ir.model.fields.selection,name:asset_management.selection__asset_management__status__return
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_management_search
+msgid "Return"
+msgstr "İade"
+
+#. module: asset_management
+#: model:ir.model.fields.selection,name:asset_management.selection__asset_management__status__on_hold
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_management_search
+msgid "On Hold"
+msgstr "Beklemede"
+
+#. module: asset_management
+#: model:ir.model.fields.selection,name:asset_management.selection__asset_management__status__in_warehouse
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_management_search
+msgid "In Warehouse"
+msgstr "Depoda"
+
+#. module: asset_management
+#: model:ir.model.fields.selection,name:asset_management.selection__asset_management__status__repair
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_management_search
+msgid "Repair"
+msgstr "Onarım"
+
+#. module: asset_management
+#: model:ir.model.fields.selection,name:asset_management.selection__asset_management__status__destroyed
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_management_search
+msgid "Destroyed"
+msgstr "Yok Edildi"

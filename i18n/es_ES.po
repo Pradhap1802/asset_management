@@ -1,0 +1,1259 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* asset_management
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-01 12:00+0000\n"
+"PO-Revision-Date: 2024-01-01 12:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: es_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: asset_management
+msgid "Asset Management"
+msgstr "Gestión de Activos"
+
+#. module: asset_management
+msgid "Manage company assets, transfers, maintenance, and depreciation."
+msgstr "Gestiona los activos de la empresa, transferencias, mantenimiento y depreciación."
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_assets
+msgid "Assets"
+msgstr "Activos"
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_asset_tags
+msgid "Tags"
+msgstr "Etiquetas"
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_assets_maintenance_entry
+msgid "Maintenance / Repair"
+msgstr "Mantenimiento / Reparación"
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_assets_transfer_entry
+msgid "Transfer"
+msgstr "Transferencia"
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_assets_depreciation_entry
+msgid "Depreciation"
+msgstr "Depreciación"
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_assets_settings
+msgid "Types"
+msgstr "Tipos"
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_asset_vendor
+msgid "Vendors"
+msgstr "Proveedores"
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_assets_graph
+msgid "Assets Type Graph"
+msgstr "Gráfico por Tipo de Activo"
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_assets_status_graph
+msgid "Assets Status Graph"
+msgstr "Gráfico por Estado de Activos"
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_assets_vendor_graph
+msgid "Assets By Vendor Graph"
+msgstr "Gráfico por Proveedor de Activos"
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_assets_transfer_graph
+msgid "Assets Transfer Graph"
+msgstr "Gráfico de Transferencia de Activos"
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_assets_maintenance_graph
+msgid "Assets Maintenance Graph"
+msgstr "Gráfico de Mantenimiento de Activos"
+
+#. module: asset_management
+#: model:ir.actions.act_window,name:asset_management.action_assets_depreciation_graph
+msgid "Assets Depreciation Graph"
+msgstr "Gráfico de Depreciación de Activos"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_maintenance
+msgid "Maintenance / Repair"
+msgstr "Mantenimiento / Reparación"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_root
+msgid "Asset"
+msgstr "Activo"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset
+msgid "Assets"
+msgstr "Activos"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_transfer
+msgid "Transfer"
+msgstr "Transferencia"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_depreciation
+msgid "Depreciation"
+msgstr "Depreciación"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.asset_configuration
+msgid "Configuration"
+msgstr "Configuración"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.asset_type_menu
+msgid "Types"
+msgstr "Tipos"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.asset_tag_menu
+msgid "Tags"
+msgstr "Etiquetas"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_vendor_root
+msgid "Vendors"
+msgstr "Proveedores"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__name
+msgid "Asset Reference"
+msgstr "Referencia del Activo"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__product_id
+msgid "Associated Product"
+msgstr "Producto Asociado"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_management__product_id
+msgid "Select the product used in this asset from available options"
+msgstr "Seleccione el producto utilizado en este activo de las opciones disponibles"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__asset_type_id
+msgid "Asset Type"
+msgstr "Tipo de Activo"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_management__asset_type_id
+msgid "Classification of the asset (e.g., Equipment, Vehicle, Building)"
+msgstr "Clasificación del activo (ej., Equipo, Vehículo, Edificio)"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__model_type
+msgid "Model Type"
+msgstr "Tipo de Modelo"
+
+#. module: asset_management
+#: model:ir.model.fields,selection:asset_management.field_asset_management__model_type
+msgid "Single Asset"
+msgstr "Activo Individual"
+
+#. module: asset_management
+#: model:ir.model.fields,selection:asset_management.field_asset_management__model_type
+msgid "Multiple Assets"
+msgstr "Activos Múltiples"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_management__model_type
+msgid "Single: Unique asset with specific tracking. Multiple: Assets with stock management"
+msgstr "Individual: Activo único con seguimiento específico. Múltiple: Activos con gestión de inventario"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__initial_stock
+msgid "Initial Stock"
+msgstr "Stock Inicial"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_management__initial_stock
+msgid "Initial quantity of this asset"
+msgstr "Cantidad inicial de este activo"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__current_stock
+msgid "Current Stock"
+msgstr "Stock Actual"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_management__current_stock
+msgid "Current available quantity of this asset"
+msgstr "Cantidad disponible actual de este activo"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__active_transfers
+msgid "Active Transfers"
+msgstr "Transferencias Activas"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_management__active_transfers
+msgid "Number of assets currently assigned to users"
+msgstr "Número de activos asignados actualmente a usuarios"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__depreciation_apply
+msgid "Enable Depreciation"
+msgstr "Habilitar Depreciación"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_management__depreciation_apply
+msgid "Check to apply depreciation calculations for this asset"
+msgstr "Marque para aplicar cálculos de depreciación para este activo"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__expired_warranty_date
+msgid "Expired Warranty Date"
+msgstr "Fecha de Vencimiento de Garantía"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__vendor_id
+msgid "Associated Vendor"
+msgstr "Proveedor Asociado"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_management__vendor_id
+msgid "Select the vendor or supplier of this asset"
+msgstr "Seleccione el proveedor o suministrador de este activo"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__invoice_date
+msgid "Invoice Date"
+msgstr "Fecha de Factura"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_management__invoice_date
+msgid "Date when the asset was purchased or acquired"
+msgstr "Fecha cuando el activo fue comprado o adquirido"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__amount
+msgid "Purchase Price"
+msgstr "Precio de Compra"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_management__amount
+msgid "Initial cost of acquiring the asset"
+msgstr "Costo inicial de adquisición del activo"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__current_amount
+msgid "Current Book Value"
+msgstr "Valor Contable Actual"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_management__current_amount
+msgid "Current value of the asset after depreciation (Read-only)"
+msgstr "Valor actual del activo después de la depreciación (Solo lectura)"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__total_depreciation_amount
+msgid "Accumulated Depreciation"
+msgstr "Depreciación Acumulada"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_management__total_depreciation_amount
+msgid "Total depreciation applied to the asset to date (Read-only)"
+msgstr "Depreciación total aplicada al activo hasta la fecha (Solo lectura)"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__total_maintenance_amount
+msgid "Total Maintenance Cost"
+msgstr "Costo Total de Mantenimiento"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_management__total_maintenance_amount
+msgid "Sum of all maintenance expenses for this asset (Read-only)"
+msgstr "Suma de todos los gastos de mantenimiento para este activo (Solo lectura)"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__status
+msgid "Status"
+msgstr "Estado"
+
+#. module: asset_management
+#: model:ir.model.fields,selection:asset_management.field_asset_management__status
+msgid "Assign"
+msgstr "Asignar"
+
+#. module: asset_management
+#: model:ir.model.fields,selection:asset_management.field_asset_management__status
+msgid "Return"
+msgstr "Devolver"
+
+#. module: asset_management
+#: model:ir.model.fields,selection:asset_management.field_asset_management__status
+msgid "On Hold"
+msgstr "En Espera"
+
+#. module: asset_management
+#: model:ir.model.fields,selection:asset_management.field_asset_management__status
+msgid "In Warehouse"
+msgstr "En Almacén"
+
+#. module: asset_management
+#: model:ir.model.fields,selection:asset_management.field_asset_management__status
+msgid "Repair"
+msgstr "Reparación"
+
+#. module: asset_management
+#: model:ir.model.fields,selection:asset_management.field_asset_management__status
+msgid "Destroyed"
+msgstr "Destruido"
+
+#. module: asset_management
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_form
+msgid "Maintenance / Repair"
+msgstr "Mantenimiento / Reparación"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__document_ids
+msgid "Asset Documentation"
+msgstr "Documentación del Activo"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_management__document_ids
+msgid "Upload multiple documents related to the asset (e.g., Warranty,Invoice)"
+msgstr "Subir múltiples documentos relacionados con el activo (ej., Garantía, Factura)"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__tag_ids
+msgid "Tags"
+msgstr "Etiquetas"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_management__tag_ids
+msgid "Categorize assets with tags for easier filtering and organization"
+msgstr "Categorizar activos con etiquetas para facilitar el filtrado y organización"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__transfer_ids
+msgid "Transfer Entries"
+msgstr "Entradas de Transferencia"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__maintenance_ids
+msgid "Maintenance Entries"
+msgstr "Entradas de Mantenimiento"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__depreciation_ids
+msgid "Depreciation Entries"
+msgstr "Entradas de Depreciación"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__last_depreciation_date
+msgid "Last Depreciation Date"
+msgstr "Última Fecha de Depreciación"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_management__last_depreciation_date
+msgid "Last Depreciation Entry Date"
+msgstr "Última Fecha de Entrada de Depreciación"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__transfer_count
+msgid "Asset Transfer History"
+msgstr "Historial de Transferencias de Activos"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__maintenance_count
+msgid "Maintenance Records"
+msgstr "Registros de Mantenimiento"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__depreciation_count
+msgid "Depreciation Entries"
+msgstr "Entradas de Depreciación"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__invoice_id
+msgid "Associated Invoice"
+msgstr "Factura Asociada"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__months_left
+msgid "Months Left"
+msgstr "Meses Restantes"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__assigned_user
+msgid "Assigned User"
+msgstr "Usuario Asignado"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__assign_by
+msgid "Assigned By"
+msgstr "Asignado Por"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__remaining_warranty
+msgid "Remaining Warranty"
+msgstr "Garantía Restante"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__warranty_status
+msgid "Warranty Status"
+msgstr "Estado de Garantía"
+
+#. module: asset_management
+#: model:ir.model,name:asset_management.model_asset_management
+msgid "Asset Management"
+msgstr "Gestión de Activos"
+
+#. module: asset_management
+#: model:ir.model,name:asset_management.model_asset_tag
+msgid "Asset Tag"
+msgstr "Etiqueta de Activo"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_tag__name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_tag__color
+msgid "Color Index"
+msgstr "Índice de Color"
+
+#. module: asset_management
+#: model:ir.model,name:asset_management.model_asset_transfer_entry
+msgid "Asset Transfer Entry"
+msgstr "Entrada de Transferencia de Activo"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_transfer_entry__asset_id
+msgid "Asset Reference"
+msgstr "Referencia del Activo"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_transfer_entry__asset_id
+msgid "Choose the asset for which the transfer is being recorded"
+msgstr "Elija el activo para el cual se está registrando la transferencia"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_transfer_entry__transfer_employee_id
+msgid "Assigned To"
+msgstr "Asignado A"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_transfer_entry__transfer_employee_id
+msgid "Employee who is receiving or has received the asset"
+msgstr "Empleado que está recibiendo o ha recibido el activo"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_transfer_entry__assign_date
+msgid "Assign Date"
+msgstr "Fecha de Asignación"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_transfer_entry__assign_date
+msgid "Date when the asset was assigned to the employee"
+msgstr "Fecha cuando el activo fue asignado al empleado"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_transfer_entry__assign_by
+msgid "Assign By"
+msgstr "Asignado Por"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_transfer_entry__assign_by
+msgid "Person responsible for assigning the asset"
+msgstr "Persona responsable de asignar el activo"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_transfer_entry__return_date
+msgid "Return Date"
+msgstr "Fecha de Devolución"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_transfer_entry__return_date
+msgid "Date when the asset was returned by the employee"
+msgstr "Fecha cuando el activo fue devuelto por el empleado"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_transfer_entry__status
+msgid "Status"
+msgstr "Estado"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_transfer_entry__status
+msgid "Current status of the asset transfer"
+msgstr "Estado actual de la transferencia del activo"
+
+#. module: asset_management
+#: model:ir.model.fields,selection:asset_management.field_asset_transfer_entry__status
+msgid "Assigned"
+msgstr "Asignado"
+
+#. module: asset_management
+#: model:ir.model.fields,selection:asset_management.field_asset_transfer_entry__status
+msgid "Returned"
+msgstr "Devuelto"
+
+#. module: asset_management
+#: model:ir.model.fields,selection:asset_management.field_asset_transfer_entry__status
+msgid "Under Maintenance"
+msgstr "En Mantenimiento"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_transfer_entry__transfer_code
+msgid "Transfer Code"
+msgstr "Código de Transferencia"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_transfer_entry__transfer_code
+msgid "Unique identifier for this transfer"
+msgstr "Identificador único para esta transferencia"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_transfer_entry__stock_qty
+msgid "Quantity"
+msgstr "Cantidad"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_transfer_entry__stock_qty
+msgid "Quantity of assets being transferred (for multiple assets)"
+msgstr "Cantidad de activos siendo transferidos (para activos múltiples)"
+
+#. module: asset_management
+#: model:ir.model,name:asset_management.model_asset_maintenance_entry
+msgid "Asset Maintenance Entry"
+msgstr "Entrada de Mantenimiento de Activo"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_maintenance_entry__asset_id
+msgid "Asset Reference"
+msgstr "Referencia del Activo"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_maintenance_entry__asset_id
+msgid "Choose the asset for undergoing maintenance or repair is being recorded"
+msgstr "Elija el activo para el cual se está registrando el mantenimiento o reparación"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_maintenance_entry__maintenance_vendor_id
+msgid "Select Vendor"
+msgstr "Seleccionar Proveedor"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_maintenance_entry__maintenance_vendor_id
+msgid "Vendor or technician performing the maintenance or repair"
+msgstr "Proveedor o técnico que realiza el mantenimiento o reparación"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_maintenance_entry__assign_date
+msgid "Service Start Date"
+msgstr "Fecha de Inicio del Servicio"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_maintenance_entry__assign_date
+msgid "Date when the asset was sent for maintenance or repair"
+msgstr "Fecha cuando el activo fue enviado para mantenimiento o reparación"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_maintenance_entry__assign_by
+msgid "Requested By"
+msgstr "Solicitado Por"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_maintenance_entry__assign_by
+msgid "Person who initiated the maintenance or repair request"
+msgstr "Persona que inició la solicitud de mantenimiento o reparación"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_maintenance_entry__return_date
+msgid "Completion Date"
+msgstr "Fecha de Finalización"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_maintenance_entry__return_date
+msgid "Date when the maintenance or repair was completed"
+msgstr "Fecha cuando el mantenimiento o reparación fue completado"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_maintenance_entry__maintenance_status
+msgid "Status"
+msgstr "Estado"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_maintenance_entry__maintenance_status
+msgid "Current status of the maintenance or repair process"
+msgstr "Estado actual del proceso de mantenimiento o reparación"
+
+#. module: asset_management
+#: model:ir.model.fields,selection:asset_management.field_asset_maintenance_entry__maintenance_status
+msgid "In Progress"
+msgstr "En Progreso"
+
+#. module: asset_management
+#: model:ir.model.fields,selection:asset_management.field_asset_maintenance_entry__maintenance_status
+msgid "Pending"
+msgstr "Pendiente"
+
+#. module: asset_management
+#: model:ir.model.fields,selection:asset_management.field_asset_maintenance_entry__maintenance_status
+msgid "Completed"
+msgstr "Completado"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_maintenance_entry__maintenance_amount
+msgid "Amount"
+msgstr "Monto"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_maintenance_entry__invoice_id
+msgid "Invoice"
+msgstr "Factura"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_maintenance_entry__file_name
+msgid "File Name"
+msgstr "Nombre del Archivo"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_maintenance_entry__document
+msgid "Documents"
+msgstr "Documentos"
+
+#. module: asset_management
+#: model:ir.model,name:asset_management.model_asset_depreciation_entry
+msgid "Asset Depreciation Entry"
+msgstr "Entrada de Depreciación de Activo"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_depreciation_entry__asset_id
+msgid "Asset Reference"
+msgstr "Referencia del Activo"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_depreciation_entry__asset_id
+msgid "Choose the asset for which depreciation is being recorded"
+msgstr "Elija el activo para el cual se está registrando la depreciación"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_depreciation_entry__depreciation_amount
+msgid "Amount"
+msgstr "Monto"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_depreciation_entry__depreciation_amount
+msgid "The monetary value of depreciation applied in this entry"
+msgstr "El valor monetario de la depreciación aplicada en esta entrada"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_depreciation_entry__entry_date
+msgid "Depreciation Date"
+msgstr "Fecha de Depreciación"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_depreciation_entry__entry_date
+msgid "Date when this depreciation entry was recorded"
+msgstr "Fecha cuando esta entrada de depreciación fue registrada"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_depreciation_entry__notes
+msgid "Comments"
+msgstr "Comentarios"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_depreciation_entry__notes
+msgid "Additional information or remarks about this depreciation entry"
+msgstr "Información adicional o comentarios sobre esta entrada de depreciación"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_depreciation_entry__created_by
+msgid "Recorded By"
+msgstr "Registrado Por"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_depreciation_entry__created_by
+msgid "Person who created this depreciation entry"
+msgstr "Persona que creó esta entrada de depreciación"
+
+#. module: asset_management
+#: model:ir.model,name:asset_management.model_asset_type
+msgid "Asset Type"
+msgstr "Tipo de Activo"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_type__name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_type__color
+msgid "Color Index"
+msgstr "Índice de Color"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_type__depreciation_frequency
+msgid "Depreciation Frequency"
+msgstr "Frecuencia de Depreciación"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_type__depreciation_frequency
+msgid "How often depreciation is calculated (Yearly, Monthly, or Daily)"
+msgstr "Con qué frecuencia se calcula la depreciación (Anual, Mensual o Diaria)"
+
+#. module: asset_management
+#: model:ir.model.fields,selection:asset_management.field_asset_type__depreciation_frequency
+msgid "Monthly"
+msgstr "Mensual"
+
+#. module: asset_management
+#: model:ir.model.fields,selection:asset_management.field_asset_type__depreciation_frequency
+msgid "Yearly"
+msgstr "Anual"
+
+#. module: asset_management
+#: model:ir.model.fields,selection:asset_management.field_asset_type__depreciation_frequency
+msgid "Days"
+msgstr "Días"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_type__depreciation_method
+msgid "Depreciation Value Type"
+msgstr "Tipo de Valor de Depreciación"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_type__depreciation_method
+msgid "Whether depreciation is calculated as a percentage or fixed amount"
+msgstr "Si la depreciación se calcula como porcentaje o monto fijo"
+
+#. module: asset_management
+#: model:ir.model.fields,selection:asset_management.field_asset_type__depreciation_method
+msgid "Fix"
+msgstr "Fijo"
+
+#. module: asset_management
+#: model:ir.model.fields,selection:asset_management.field_asset_type__depreciation_method
+msgid "Percentage"
+msgstr "Porcentaje"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_type__depreciation_rate
+msgid "Depreciation Rate"
+msgstr "Tasa de Depreciación"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_type__depreciation_rate
+msgid "The percentage or fixed amount used to calculate depreciation"
+msgstr "El porcentaje o monto fijo utilizado para calcular la depreciación"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_type__depreciation_start_delay
+msgid "Depreciation Start Delay"
+msgstr "Retraso de Inicio de Depreciación"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_type__depreciation_start_delay
+msgid "Time duration before depreciation begins after asset acquisition"
+msgstr "Duración de tiempo antes de que comience la depreciación después de la adquisición del activo"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_type__depreciation_basis
+msgid "Depreciation Basis"
+msgstr "Base de Depreciación"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_type__depreciation_basis
+msgid "Whether depreciation is applied to the adjusted value (after previous depreciation) or the original value"
+msgstr "Si la depreciación se aplica al valor ajustado (después de la depreciación anterior) o al valor original"
+
+#. module: asset_management
+#: model:ir.model.fields,selection:asset_management.field_asset_type__depreciation_basis
+msgid "Purchase Price"
+msgstr "Precio de Compra"
+
+#. module: asset_management
+#: model:ir.model.fields,selection:asset_management.field_asset_type__depreciation_basis
+msgid "Book Price"
+msgstr "Precio Contable"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_type__maximum_depreciation_entries
+msgid "Maximum Depreciation Entries"
+msgstr "Máximo de Entradas de Depreciación"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_type__maximum_depreciation_entries
+msgid "The maximum number of depreciation entries allowed for this asset type"
+msgstr "El número máximo de entradas de depreciación permitidas para este tipo de activo"
+
+#. module: asset_management
+#: model:ir.model,name:asset_management.model_asset_vendor
+msgid "Asset Vendor"
+msgstr "Proveedor de Activos"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_vendor__name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_vendor__name
+msgid "Official registered name of the vendor company"
+msgstr "Nombre oficial registrado de la empresa proveedora"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_vendor__address
+msgid "Primary Address"
+msgstr "Dirección Principal"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_vendor__address
+msgid "Main business address of the vendor"
+msgstr "Dirección comercial principal del proveedor"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_vendor__location
+msgid "Service Area"
+msgstr "Área de Servicio"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_vendor__location
+msgid "Geographic regions where the vendor operates or provides services"
+msgstr "Regiones geográficas donde el proveedor opera o proporciona servicios"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_vendor__seller
+msgid "Primary Contact"
+msgstr "Contacto Principal"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_vendor__seller
+msgid "Name and position of the main point of contact"
+msgstr "Nombre y posición del punto de contacto principal"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_vendor__contact_phone
+msgid "Contact Phone"
+msgstr "Teléfono de Contacto"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_vendor__contact_phone
+msgid "Primary phone number for vendor communication"
+msgstr "Número de teléfono principal para comunicación con el proveedor"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_vendor__contact_email
+msgid "Contact Email"
+msgstr "Email de Contacto"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_vendor__contact_email
+msgid "Primary email address for vendor communication"
+msgstr "Dirección de email principal para comunicación con el proveedor"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_vendor__additional_services
+msgid "Additional Services"
+msgstr "Servicios Adicionales"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_vendor__additional_services
+msgid "Other relevant services offered by the vendor"
+msgstr "Otros servicios relevantes ofrecidos por el proveedor"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_vendor__repair_service
+msgid "Repair Services"
+msgstr "Servicios de Reparación"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_vendor__repair_service
+msgid "Indicates if the vendor offers repair services (Yes/No)"
+msgstr "Indica si el proveedor ofrece servicios de reparación (Sí/No)"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_vendor__maintenance_service
+msgid "Maintenance Services"
+msgstr "Servicios de Mantenimiento"
+
+#. module: asset_management
+#: model:ir.model.fields,help:asset_management.field_asset_vendor__maintenance_service
+msgid "Indicates if the vendor provides maintenance services (Yes/No)"
+msgstr "Indica si el proveedor proporciona servicios de mantenimiento (Sí/No)"
+
+#. module: asset_management
+#: model:ir.model,name:asset_management.model_asset_stock_movement_report
+msgid "Asset Stock Movement Analysis"
+msgstr "Análisis de Movimiento de Stock de Activos"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_stock_movement_report__asset_id
+msgid "Asset"
+msgstr "Activo"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_stock_movement_report__asset_name
+msgid "Asset Name"
+msgstr "Nombre del Activo"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_stock_movement_report__employee_id
+msgid "Employee"
+msgstr "Empleado"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_stock_movement_report__date
+msgid "Date"
+msgstr "Fecha"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_stock_movement_report__movement_type
+msgid "Movement Type"
+msgstr "Tipo de Movimiento"
+
+#. module: asset_management
+#: model:ir.model.fields,selection:asset_management.field_asset_stock_movement_report__movement_type
+msgid "Assigned"
+msgstr "Asignado"
+
+#. module: asset_management
+#: model:ir.model.fields,selection:asset_management.field_asset_stock_movement_report__movement_type
+msgid "Returned"
+msgstr "Devuelto"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_stock_movement_report__user_id
+msgid "Done By"
+msgstr "Realizado Por"
+
+#. module: asset_management
+#: code:addons/asset_management/models/asset_management.py:0
+#, python-format
+msgid "New"
+msgstr "Nuevo"
+
+#. module: asset_management
+#: code:addons/asset_management/models/asset_management.py:0
+#, python-format
+msgid "Transfer quantity must be greater than zero."
+msgstr "La cantidad de transferencia debe ser mayor que cero."
+
+#. module: asset_management
+#: code:addons/asset_management/models/asset_management.py:0
+#, python-format
+msgid "Cannot assign this asset: Insufficient stock available."
+msgstr "No se puede asignar este activo: Stock insuficiente disponible."
+
+#. module: asset_management
+#: model:ir.model.constraint,message:asset_management.constraint_asset_tag_name_uniq
+msgid "Tag name already exists!"
+msgstr "¡El nombre de la etiqueta ya existe!"
+
+#. module: asset_management
+#: model:ir.module.category,name:asset_management.maintenance_category
+msgid "Maintenance Management"
+msgstr "Gestión de Mantenimiento"
+
+#. module: asset_management
+#: model:res.groups,name:asset_management.maintenance_user_group
+msgid "User"
+msgstr "Usuario"
+
+#. module: asset_management
+#: model:res.groups,name:asset_management.maintenance_admin_group
+msgid "Administrator"
+msgstr "Administrador"
+
+#. module: asset_management
+#: model:ir.module.category,name:asset_management.depreciation_category
+msgid "Depreciation Management"
+msgstr "Gestión de Depreciación"
+
+#. module: asset_management
+#: model:res.groups,name:asset_management.depreciation_user_group
+msgid "User"
+msgstr "Usuario"
+
+#. module: asset_management
+#: model:res.groups,name:asset_management.depreciation_admin_group
+msgid "Administrator"
+msgstr "Administrador"
+
+#. module: asset_management
+#: model:ir.module.category,name:asset_management.reporting_category
+msgid "Reporting Management"
+msgstr "Gestión de Reportes"
+
+#. module: asset_management
+#: model:res.groups,name:asset_management.reporting_admin_group
+msgid "Administrator"
+msgstr "Administrador"
+
+#. module: asset_management
+#: model:ir.module.category,name:asset_management.transfer_category
+msgid "Transfer Management"
+msgstr "Gestión de Transferencias"
+
+#. module: asset_management
+#: model:res.groups,name:asset_management.transfer_user_group
+msgid "User"
+msgstr "Usuario"
+
+#. module: asset_management
+#: model:res.groups,name:asset_management.transfer_admin_group
+msgid "Administrator"
+msgstr "Administrador"
+
+#. module: asset_management
+#: model:ir.module.category,name:asset_management.assets_category
+msgid "Assets Management"
+msgstr "Gestión de Activos"
+
+#. module: asset_management
+#: model:res.groups,name:asset_management.assets_user_group
+msgid "User"
+msgstr "Usuario"
+
+#. module: asset_management
+#: model:res.groups,name:asset_management.assets_admin_group
+msgid "Administrator"
+msgstr "Administrador"
+
+#. module: asset_management
+#: model:ir.module.category,name:asset_management.vendor_category
+msgid "Vendor Management"
+msgstr "Gestión de Proveedores"
+
+#. module: asset_management
+#: model:res.groups,name:asset_management.vendor_user_group
+msgid "User"
+msgstr "Usuario"
+
+#. module: asset_management
+#: model:res.groups,name:asset_management.vendor_admin_group
+msgid "Administrator"
+
+#. module: asset_management
+msgid "Asset Depreciation Over Time"
+msgstr "Depreciación de Activos a lo Largo del Tiempo"
+
+
+#. module: asset_management
+msgid "Asset Status Overview"
+msgstr "Resumen del Estado de Activos"
+
+
+#. module: asset_management
+msgid "Asset Types Distribution"
+msgstr "Distribución de Tipos de Activos"
+
+
+#. module: asset_management
+msgid "Asset Vendors"
+msgstr "Proveedores de Activos"
+
+
+#. module: asset_management
+msgid "Assets Transfer Wise"
+msgstr "Transferencias de Activos"
+
+
+#. module: asset_management
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_form
+msgid "Basic Information"
+msgstr "Información Básica"
+
+
+#. module: asset_management
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_form
+msgid "Financial Information"
+msgstr "Información Financiera"
+
+
+#. module: asset_management
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_form
+msgid "Depreciation Settings"
+msgstr "Configuración de Depreciación"
+
+
+#. module: asset_management
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_form
+msgid "Maintenance Information"
+msgstr "Información de Mantenimiento"
+
+
+#. module: asset_management
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_form
+msgid "Vendor And Warranty"
+msgstr "Proveedor y Garantía"
+
+
+#. module: asset_management
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_form
+msgid "Documentation"
+msgstr "Documentación"
+
+
+#. module: asset_management
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_form
+msgid "Transfer"
+msgstr "Transferencia"
+
+
+#. module: asset_management
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_form
+msgid "Depreciation"
+msgstr "Depreciación"
+
+
+#. module: asset_management
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_vendor_form
+msgid "Vendor Profile"
+msgstr "Perfil del Proveedor"
+
+
+#. module: asset_management
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_vendor_form
+msgid "Contact Information"
+msgstr "Información de Contacto"
+
+
+#. module: asset_management
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_vendor_form
+msgid "Service Capabilities"
+msgstr "Capacidades de Servicio"
+
+#. module: asset_management
+msgid "Reporting"
+msgstr "Informes"
+
+#. module: asset_management
+msgid "Asset Type"
+msgstr "Tipo de Activo"
+
+#. module: asset_management
+msgid "Asset By Vendor"
+msgstr "Activo por Proveedor"
+
+#. module: asset_management
+msgid "Asset By status"
+msgstr "Activo por Estado"
+
+#. module: asset_management
+msgid "Asset Transfer"
+msgstr "Transferencia de Activos"
+
+#. module: asset_management
+msgid "Asset Maintenance"
+msgstr "Mantenimiento de Activos"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_reporting
+msgid "Reporting"
+msgstr "Informes"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_type_graph
+msgid "Asset Type"
+msgstr "Tipo de Activo"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_vendor_graph
+msgid "Asset By Vendor"
+msgstr "Activo por Proveedor"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_status_graph
+msgid "Asset By status"
+msgstr "Activo por Estado"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_transfer_graph
+msgid "Asset Transfer"
+msgstr "Transferencia de Activos"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_maintenance_graph
+msgid "Asset Maintenance"
+msgstr "Mantenimiento de Activos"
+
+#. module: asset_management
+#: model:ir.ui.menu,name:asset_management.menu_assets_depreciation_graph
+msgid "Asset Depreciation"
+msgstr "Depreciación de Activos"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__model_type
+msgid "Single Asset"
+msgstr "Activo Individual"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__model_type
+msgid "Multiple Assets"
+msgstr "Múltiples Activos"
+
+#. module: asset_management
+#: model:ir.model.fields.selection,name:asset_management.selection__asset_management__model_type__single
+msgid "Single Asset"
+msgstr "Activo Individual"
+
+#. module: asset_management
+#: model:ir.model.fields.selection,name:asset_management.selection__asset_management__model_type__multiple
+msgid "Multiple Assets"
+msgstr "Múltiples Activos"
+
+#. module: asset_management
+#: model:ir.model.fields,field_description:asset_management.field_asset_management__depreciation_count
+msgid "Number of Depreciation Entries"
+msgstr "Número de Asientos de Depreciación"
+
+#. module: asset_management
+#: model:ir.model.fields.selection,name:asset_management.selection__asset_management__status__assign
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_management_search
+msgid "Assign"
+msgstr "Asignar"
+
+#. module: asset_management
+#: model:ir.model.fields.selection,name:asset_management.selection__asset_management__status__return
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_management_search
+msgid "Return"
+msgstr "Devolver"
+
+#. module: asset_management
+#: model:ir.model.fields.selection,name:asset_management.selection__asset_management__status__on_hold
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_management_search
+msgid "On Hold"
+msgstr "En Espera"
+
+#. module: asset_management
+#: model:ir.model.fields.selection,name:asset_management.selection__asset_management__status__in_warehouse
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_management_search
+msgid "In Warehouse"
+msgstr "En Almacén"
+
+#. module: asset_management
+#: model:ir.model.fields.selection,name:asset_management.selection__asset_management__status__repair
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_management_search
+msgid "Repair"
+msgstr "Reparación"
+
+#. module: asset_management
+#: model:ir.model.fields.selection,name:asset_management.selection__asset_management__status__destroyed
+#: model_terms:ir.ui.view,arch_db:asset_management.view_asset_management_search
+msgid "Destroyed"
+msgstr "Destruido"
+
+
