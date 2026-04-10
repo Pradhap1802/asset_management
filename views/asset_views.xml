@@ -39,6 +39,8 @@
                             <field name="invoice_id"/>
                             <field name="invoice_date"/>
                             <field name="current_amount" readonly="1"/>
+                            <field name="vendor_partner_id" readonly="1"/>
+                            <field name="accounting_asset_id" readonly="1"/>
                         </group>
                         <!-- Depreciation Settings group -->
                         <group string="Depreciation Settings">

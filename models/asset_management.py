@@ -76,6 +76,22 @@ class Asset(models.Model):
     remaining_warranty = fields.Char(string="Remaining Warranty",
                                      compute="_compute_months_left", store=True)
     warranty_status = fields.Char(string='Warranty Status')
+    # Link back to the Odoo Enterprise accounting asset
+    accounting_asset_id = fields.Many2one(
+        'account.asset',
+        string="Accounting Asset",
+        readonly=True,
+        copy=False,
+        help="Linked Odoo Enterprise Accounting Asset record"
+    )
+    # Vendor from the linked invoice (res.partner)
+    vendor_partner_id = fields.Many2one(
+        'res.partner',
+        string="Invoice Vendor",
+        readonly=True,
+        copy=False,
+        help="Vendor/Supplier from the linked accounting invoice"
+    )
     
     @api.depends('transfer_ids', 'transfer_ids.status', 'transfer_ids.stock_qty')
     def _compute_active_transfers(self):
