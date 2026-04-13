@@ -342,19 +342,60 @@ class AssetTransferEntry(models.Model):
                     raise exceptions.ValidationError(_("Cannot assign this asset: Insufficient stock available."))
         records = super(AssetTransferEntry, self).create(vals_list)
         
-        # Automatically update the asset's company to the To Branch if assigned
+        # Branch Split & Transfer Logic
         for record in records:
-            if record.to_branch_id and record.asset_id and record.status == 'assigned':
-                record.asset_id.company_id = record.to_branch_id.id
+            if record.to_branch_id and record.asset_id.company_id != record.to_branch_id and record.status == 'assigned':
+                asset = record.asset_id
+                
+                # Full or Partial Transfer?
+                if record.stock_qty < asset.initial_stock:
+                    # Partial: Split
+                    asset.initial_stock -= record.stock_qty
+                    new_asset = asset.copy({
+                        'name': 'New',
+                        'company_id': record.to_branch_id.id,
+                        'initial_stock': record.stock_qty,
+                        'transfer_ids': False,
+                        'maintenance_ids': False,
+                        'depreciation_ids': False,
+                    })
+                    record.write({
+                        'asset_id': new_asset.id,
+                        'status': 'returned'
+                    })
+                else:
+                    # Full: Move original asset
+                    asset.company_id = record.to_branch_id.id
+                    record.write({'status': 'returned'})
+                        
         return records
 
     def write(self, vals):
         res = super(AssetTransferEntry, self).write(vals)
-        # Update asset's company if branch is updated and active
-        if 'to_branch_id' in vals or 'status' in vals:
-            for record in self:
-                if record.to_branch_id and record.asset_id and record.status == 'assigned':
-                    record.asset_id.company_id = record.to_branch_id.id
+        for record in self:
+            if record.to_branch_id and record.asset_id.company_id != record.to_branch_id and record.status == 'assigned':
+                asset = record.asset_id
+                
+                # Full or Partial Transfer?
+                if record.stock_qty < asset.initial_stock:
+                    # Partial: Split
+                    asset.initial_stock -= record.stock_qty
+                    new_asset = asset.copy({
+                        'name': 'New',
+                        'company_id': record.to_branch_id.id,
+                        'initial_stock': record.stock_qty,
+                        'transfer_ids': False,
+                        'maintenance_ids': False,
+                        'depreciation_ids': False,
+                    })
+                    record.write({
+                        'asset_id': new_asset.id,
+                        'status': 'returned'
+                    })
+                else:
+                    # Full: Move original asset
+                    asset.company_id = record.to_branch_id.id
+                    record.write({'status': 'returned'})
         return res
 
     @api.constrains('status', 'asset_id', 'stock_qty')
