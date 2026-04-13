@@ -629,7 +629,7 @@
         <field name="name">asset.type.kanban.dashboard</field>
         <field name="model">asset.type</field>
         <field name="arch" type="xml">
-            <kanban class="o_kanban_dashboard o_asset_dashboard" create="0">
+            <kanban class="o_asset_dashboard" create="0">
                 <field name="name"/>
                 <field name="color"/>
                 <field name="asset_count"/>
@@ -640,16 +640,15 @@
                         <t t-set="colors" t-value="['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#6f42c1', '#fd7e14', '#20c997', '#d63384', '#0dcaf0', '#198754']"/>
                         <t t-set="card_color" t-value="colors[(record.id.raw_value or 0) % 11]"/>
                         
-                        <div t-attf-class="position-relative d-flex flex-column align-items-center justify-content-center p-3 text-center text-white"
-                             t-attf-style="min-height: 180px; transition: all 0.3s ease; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); border: none; background-color: {{card_color}} !important;"
-                             onmouseover="this.style.transform='scale(1.05) translateY(-5px)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.3)';"
-                             onmouseout="this.style.transform='scale(1) translateY(0)'; this.style.boxShadow='0 8px 16px rgba(0,0,0,0.2)';"
-                             >
-                             
-                            <!-- Transparent Overlay Link for Click Action -->
-                            <a type="object" name="action_open_assets" class="position-absolute h-100 w-100 top-0 start-0 z-index-1" style="opacity: 0; cursor: pointer;"/>
+                        <button t-attf-class="position-relative d-flex flex-column align-items-center justify-content-center p-3 text-center text-white border-0 w-100"
+                                t-attf-style="min-height: 180px; transition: all 0.3s ease; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); background-color: {{card_color}} !important; cursor: pointer;"
+                                type="object" name="action_open_assets"
+                                onmouseover="this.style.transform='scale(1.05) translateY(-5px)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.3)';"
+                                onmouseout="this.style.transform='scale(1) translateY(0)'; this.style.boxShadow='0 8px 16px rgba(0,0,0,0.2)';"
+                                >
 
-                            <div class="o_kanban_card_header w-100 mb-3">
+                             
+                            <div class="o_kanban_card_header w-100 mb-3" type="object" name="action_open_assets">
                                 <div class="o_kanban_card_header_title">
                                     <div class="o_primary">
                                         <h2 class="mb-0 font-weight-bold text-white" style="text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
@@ -674,7 +673,7 @@
                                  </div>
                             </div>
 
-                            </div>
+                        </button>
 
                     </t>
                 </templates>

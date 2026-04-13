@@ -501,7 +501,12 @@ class AssetType(models.Model):
         wizard = self.env['asset.dashboard.wizard'].create({
             'asset_type_id': self.id
         })
+        wizard.populate_summary_lines()
         
         action = self.env.ref('asset_management.action_asset_dashboard_wizard').read()[0]
-        action['res_id'] = wizard.id
+        action.update({
+            'res_id': wizard.id,
+            'target': 'new',
+            'view_mode': 'form',
+        })
         return action
