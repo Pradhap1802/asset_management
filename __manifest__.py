@@ -8,7 +8,7 @@
     'category': 'Operations',
     'author': 'WebbyCrown Solutions',
     'website': 'https://www.webbycrown.com',
-    'depends': ['base', 'product', 'hr', 'account', 'account_asset'],
+    'depends': ['base', 'product', 'hr', 'account', 'account_asset', 'purchase'],
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
@@ -21,7 +21,8 @@
         'views/asset_views.xml',
         'views/asset_vendor_views.xml',
         'views/asset_report.xml',
-        'views/stock_movement_report_views.xml'
+        'views/stock_movement_report_views.xml',
+        'views/purchase_order_views.xml'
     ],
     'assets': {
         'web.report_assets_common': [

@@ -37,6 +37,14 @@ class AccountAsset(models.Model):
             return self.original_move_line_ids[0].product_id
         return self.env['product.product']
 
+    def _get_po_line_from_invoice(self):
+        """Extract Purchase Order line from the linked invoice move lines."""
+        self.ensure_one()
+        for line in self.original_move_line_ids:
+            if line.purchase_line_id:
+                return line.purchase_line_id
+        return self.env['purchase.order.line']
+
     def _get_or_create_asset_type(self):
         """
         Find an asset.type matching the Enterprise model_id name.
@@ -148,15 +156,24 @@ class AccountAsset(models.Model):
             target_company_id = invoice.company_id.id if invoice and invoice.company_id else (asset.company_id.id if asset.company_id else False)
             vendor_partner = asset._get_vendor_from_invoice()
             product = asset._get_product_from_invoice()
+            
+            po_line = asset._get_po_line_from_invoice()
+            po_serial = po_line.asset_serial_number if po_line else False
+            po_warranty = po_line.asset_warranty_date if po_line else False
+            
             asset_type = asset._get_or_create_asset_type()
 
             # Find existing management record for this product and company
             existing_mgmt = None
             if product:
-                existing_mgmt = self.env['asset.management'].search([
+                domain = [
                     ('product_id', '=', product.id),
                     ('company_id', '=', target_company_id),
-                ], limit=1)
+                ]
+                if po_serial:
+                    domain.append(('barcode', '=', po_serial))
+                
+                existing_mgmt = self.env['asset.management'].search(domain, limit=1)
 
             if not existing_mgmt and asset.asset_management_id:
                 existing_mgmt = asset.asset_management_id
@@ -183,6 +200,11 @@ class AccountAsset(models.Model):
                 'initial_stock': total_count,
                 'company_id': target_company_id,
             }
+
+            if po_serial:
+                vals['barcode'] = po_serial
+            if po_warranty:
+                vals['expired_warranty_date'] = po_warranty
 
 
             if existing_mgmt:

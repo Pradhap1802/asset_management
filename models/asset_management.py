@@ -357,6 +357,8 @@ class AssetMaintenanceEntry(models.Model):
     # Fields for tracking asset maintenance
     asset_id = fields.Many2one('asset.management', string="Asset Reference", help="Choose the asset for undergoing maintenance or repair is being recorded")
     maintenance_vendor_id = fields.Many2one('asset.vendor', string="Select Vendor", help="Vendor or technician performing the maintenance or repair")
+    product_id = fields.Many2one('product.product', string="Product / Equipment",
+                                 help="Select an existing product from inventory used as maintenance equipment or spare part")
     assign_date = fields.Date(string="Service Start Date", help="Date when the asset was sent for maintenance or repair")
     assign_by = fields.Many2one('res.users', string="Requested By", default=lambda self: self.env.user, help="Person who initiated the maintenance or repair request")
     return_date = fields.Date(string="Completion Date", help="Date when the maintenance or repair was completed")

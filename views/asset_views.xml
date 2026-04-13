@@ -24,6 +24,7 @@
                         <!-- Basic Information group -->
                         <group string="Basic Information">
                             <field name="product_id"/>
+                            <field name="barcode" string="Serial Number / Barcode"/>
                             <field name="asset_type_id"/>
                             <field name="company_id" readonly="accounting_asset_id != False"/>
                             <field name="accounting_asset_id" invisible="1"/>
@@ -117,9 +118,9 @@
         </field>
     </record>
 
-    <!-- Tree View for Asset Management -->
-    <record id="view_asset_tree" model="ir.ui.view">
-        <field name="name">asset.management.tree</field>
+    <!-- list View for Asset Management -->
+    <record id="view_asset_list" model="ir.ui.view">
+        <field name="name">asset.management.list</field>
         <field name="model">asset.management</field>
         <field name="arch" type="xml">
             <list>
@@ -130,8 +131,9 @@
                             class="oe_highlight"
                             groups="asset_management.assets_user_group,asset_management.assets_admin_group,base.group_system"/>
                 </header>
-                <!-- Fields to display in the tree view -->
+                <!-- Fields to display in the list view -->
                 <field name="name"/>
+                <field name="barcode" string="Serial / Barcode" optional="show"/>
                 <field name="tag_ids" widget="many2many_tags" optional="show"/>
                 <field name="initial_stock" optional="show"/>
                 <field name="current_stock" optional="show"/>
@@ -256,6 +258,16 @@
                                     <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
                                 </div>
                                 
+                                <!-- Serial Number -->
+                                <div class="mb-2" t-if="record.barcode.raw_value">
+                                    <div class="d-flex align-items-center text-muted">
+                                        <i class="fa fa-barcode me-2"></i>
+                                        <b class="text-truncate">
+                                            <field name="barcode"/>
+                                        </b>
+                                    </div>
+                                </div>
+                                
                                 <!-- Assigned User -->
                                 <div class="mb-2" t-if="record.assigned_user.raw_value">
                                     <div class="d-flex align-items-center text-muted">
@@ -349,13 +361,13 @@
         </field>
     </record>
 
-    <!-- Tree View for Asset Transfer Entries -->
-    <record id="view_asset_transfer_tree" model="ir.ui.view">
-        <field name="name">asset.transfer.tree</field>
+    <!-- list View for Asset Transfer Entries -->
+    <record id="view_asset_transfer_list" model="ir.ui.view">
+        <field name="name">asset.transfer.list</field>
         <field name="model">asset.transfer.entry</field>
         <field name="arch" type="xml">
-            <list editable="bottom">
-                <!-- Fields displayed in the tree view for asset transfers -->
+            <list>
+                <!-- Fields displayed in the list view for asset transfers -->
                 <field name="transfer_code"/>
                 <field name="asset_id"/>
                 <field name="transfer_employee_id"/>
@@ -368,15 +380,16 @@
         </field>
     </record>
 
-    <!-- Tree View for Asset Maintenance Entries -->
-    <record id="view_asset_maintenance_tree" model="ir.ui.view">
-        <field name="name">asset.maintenance.tree</field>
+    <!-- list View for Asset Maintenance Entries -->
+    <record id="view_asset_maintenance_list" model="ir.ui.view">
+        <field name="name">asset.maintenance.list</field>
         <field name="model">asset.maintenance.entry</field>
         <field name="arch" type="xml">
-            <list editable="bottom">
-                <!-- Fields displayed in the tree view for asset maintenance -->
+            <list>
+                <!-- Fields displayed in the list view for asset maintenance -->
                 <field name="asset_id"/>
                 <field name="maintenance_vendor_id"/>
+                <field name="product_id" string="Product / Equipment"/>
                 <field name="maintenance_amount"/>
                 <field name="assign_date"/>
                 <field name="assign_by"/>
@@ -386,25 +399,125 @@
         </field>
     </record>
 
-    <!-- Tree View for Asset Depreciation Entries -->
-    <record id="view_asset_depreciation_tree" model="ir.ui.view">
-        <field name="name">asset.depreciation.tree</field>
+    <!-- Form View for Asset Maintenance Entries -->
+    <record id="view_asset_maintenance_form" model="ir.ui.view">
+        <field name="name">asset.maintenance.form</field>
+        <field name="model">asset.maintenance.entry</field>
+        <field name="arch" type="xml">
+            <form string="Maintenance / Repair">
+                <sheet>
+                    <group>
+                        <group string="Asset &amp; Equipment">
+                            <field name="asset_id"/>
+                            <field name="product_id" string="Product / Equipment"
+                                   options="{'no_create': False}"
+                                   help="Select the existing product from inventory used as maintenance equipment or spare part"/>
+                            <field name="maintenance_vendor_id"/>
+                        </group>
+                        <group string="Service Details">
+                            <field name="assign_date"/>
+                            <field name="return_date"/>
+                            <field name="assign_by"/>
+                            <field name="maintenance_status"/>
+                            <field name="maintenance_amount"/>
+                            <field name="invoice_id"/>
+                        </group>
+                    </group>
+                    <group string="Documents">
+                        <field name="file_name" invisible="1"/>
+                        <field name="document" filename="file_name" widget="binary"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Form View for Asset Transfer Entries -->
+    <record id="view_asset_transfer_form" model="ir.ui.view">
+        <field name="name">asset.transfer.form</field>
+        <field name="model">asset.transfer.entry</field>
+        <field name="arch" type="xml">
+            <form string="Asset Transfer">
+                <sheet>
+                    <group>
+                        <group string="Transfer Details">
+                            <field name="transfer_code" readonly="1"/>
+                            <field name="asset_id"/>
+                            <field name="transfer_employee_id"/>
+                            <field name="stock_qty"/>
+                        </group>
+                        <group string="Dates &amp; Status">
+                            <field name="assign_date"/>
+                            <field name="return_date"/>
+                            <field name="assign_by"/>
+                            <field name="status"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View for Asset Depreciation Entries -->
+    <record id="view_asset_depreciation_search" model="ir.ui.view">
+        <field name="name">asset.depreciation.search</field>
         <field name="model">asset.depreciation.entry</field>
         <field name="arch" type="xml">
-            <list editable="bottom">
-                <!-- Fields displayed in the tree view for asset depreciation -->
+            <search string="Depreciation Entries">
+                <field name="asset_id"/>
+                <group>
+                    <filter string="Asset Reference" name="group_by_asset" context="{'group_by': 'asset_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- list View for Asset Depreciation Entries -->
+    <record id="view_asset_depreciation_list" model="ir.ui.view">
+        <field name="name">asset.depreciation.list</field>
+        <field name="model">asset.depreciation.entry</field>
+        <field name="arch" type="xml">
+            <list>
+                <!-- Fields displayed in the list view for asset depreciation -->
                 <field name="asset_id"/>
                 <field name="created_by"/>
                 <field name="depreciation_amount"/>
                 <field name="entry_date"/>
+                <field name="state"/>
                 <field name="notes"/>
             </list>
         </field>
     </record>
 
-    <!-- Tree View for Asset Tags -->
-    <record id="view_asset_tag_tree" model="ir.ui.view">
-        <field name="name">asset.tag.tree</field>
+    <!-- Form View for Asset Depreciation Entries -->
+    <record id="view_asset_depreciation_form" model="ir.ui.view">
+        <field name="name">asset.depreciation.form</field>
+        <field name="model">asset.depreciation.entry</field>
+        <field name="arch" type="xml">
+            <form string="Depreciation Entry">
+                <sheet>
+                    <group>
+                        <group string="Asset Information">
+                            <field name="asset_id"/>
+                            <field name="entry_date"/>
+                            <field name="state"/>
+                        </group>
+                        <group string="Depreciation Details">
+                            <field name="depreciation_amount"/>
+                            <field name="created_by"/>
+                        </group>
+                    </group>
+                    <group string="Notes">
+                        <field name="notes" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- list View for Asset Tags -->
+    <record id="view_asset_tag_list" model="ir.ui.view">
+        <field name="name">asset.tag.list</field>
         <field name="model">asset.tag</field>
         <field name="arch" type="xml">
             <list editable="bottom">
@@ -437,13 +550,13 @@
         </field>
     </record>
 
-    <!-- Tree View for Asset Types -->
-    <record id="view_asset_type_tree" model="ir.ui.view">
-        <field name="name">asset.type.tree</field>
+    <!-- list View for Asset Types -->
+    <record id="view_asset_type_list" model="ir.ui.view">
+        <field name="name">asset.type.list</field>
         <field name="model">asset.type</field>
         <field name="arch" type="xml">
             <list>
-                <!-- Fields displayed in the tree view for asset types -->
+                <!-- Fields displayed in the list view for asset types -->
                 <field name="name"/>
                 <field name="color" widget="color_picker"/>
                 <field name="depreciation_frequency"/>
@@ -461,7 +574,7 @@
         <field name="name">Print Labels</field>
         <field name="model_id" ref="model_asset_management"/>
         <field name="binding_model_id" ref="model_asset_management"/>
-        <field name="binding_view_types">kanban,tree</field>
+        <field name="binding_view_types">kanban,list</field>
         <field name="state">code</field>
         <field name="code">
             action = records.action_open_label_layout()
@@ -473,7 +586,7 @@
         <field name="name">Print Labels</field>
         <field name="model_id" ref="model_asset_management"/>
         <field name="binding_model_id" ref="model_asset_management"/>
-        <field name="binding_view_types">kanban,tree</field>
+        <field name="binding_view_types">kanban,list</field>
         <field name="state">code</field>
         <field name="code">
             action = records.action_open_label_layout()
@@ -508,7 +621,7 @@
     <record id="action_assets_maintenance_entry" model="ir.actions.act_window">
         <field name="name">Maintenance / Repair</field>
         <field name="res_model">asset.maintenance.entry</field>
-        <field name="view_mode">list</field>
+        <field name="view_mode">list,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first Record
@@ -520,7 +633,7 @@
     <record id="action_assets_transfer_entry" model="ir.actions.act_window">
         <field name="name">Transfer</field>
         <field name="res_model">asset.transfer.entry</field>
-        <field name="view_mode">list</field>
+        <field name="view_mode">list,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first Record
@@ -532,7 +645,8 @@
     <record id="action_assets_depreciation_entry" model="ir.actions.act_window">
         <field name="name">Depreciation</field>
         <field name="res_model">asset.depreciation.entry</field>
-        <field name="view_mode">list</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_group_by_asset': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first Record

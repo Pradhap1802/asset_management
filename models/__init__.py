@@ -4,3 +4,4 @@ from . import stock_movement_report
 from . import account_asset
 from . import res_partner
 from . import account_move
+from . import purchase_order
