@@ -90,25 +90,44 @@ class AccountAsset(models.Model):
     # -------------------------------------------------------------------------
     def _sync_depreciation_entries(self, mgmt_record):
         """
-        Sync posted depreciation moves from account.asset to asset.depreciation.entry.
-        Only adds NEW entries not already recorded.
+        Sync ALL depreciation moves (both draft and posted) from account.asset
+        to asset.depreciation.entry so the full schedule is visible.
+        Existing synced entries are rebuilt from the accounting board each time.
         """
         self.ensure_one()
-        posted_moves = self.depreciation_move_ids.filtered(
-            lambda m: m.state == 'posted' and m.depreciation_value
+        all_moves = self.depreciation_move_ids.filtered(
+            lambda m: m.state in ('draft', 'posted') and m.depreciation_value
         ).sorted(key=lambda m: m.date)
 
-        # Get already synced entry dates to avoid duplicates
-        existing_dates = set(mgmt_record.depreciation_ids.mapped('entry_date'))
+        if not all_moves:
+            return
 
-        for move in posted_moves:
-            if move.date not in existing_dates:
+        # Get existing auto-synced entries (identified by notes prefix)
+        existing_synced = mgmt_record.depreciation_ids.filtered(
+            lambda e: e.notes and e.notes.startswith('Auto-synced')
+        )
+        existing_dates = {e.entry_date: e for e in existing_synced}
+
+        for move in all_moves:
+            entry_date = move.date
+            amount = abs(float(move.depreciation_value))
+            status_note = 'Posted' if move.state == 'posted' else 'Planned'
+            note = 'Auto-synced [%s] from Accounting: %s' % (status_note, self.name)
+
+            if entry_date in existing_dates:
+                # Update existing entry if amount changed or state changed
+                existing_entry = existing_dates[entry_date]
+                if existing_entry.depreciation_amount != amount or existing_entry.state != move.state:
+                    existing_entry.write({'depreciation_amount': amount, 'notes': note, 'state': move.state})
+            else:
+                # Create new entry
                 self.env['asset.depreciation.entry'].create({
                     'asset_id': mgmt_record.id,
-                    'depreciation_amount': abs(move.depreciation_value),
-                    'entry_date': move.date,
-                    'notes': 'Auto-synced from Accounting: %s' % self.name,
-                    'created_by': self.env.uid,
+                    'depreciation_amount': amount,
+                    'entry_date': entry_date,
+                    'notes': note,
+                    'state': move.state,
+                    'created_by': self.create_uid.id if self.create_uid else self.env.uid,
                 })
 
     # -------------------------------------------------------------------------
@@ -116,43 +135,77 @@ class AccountAsset(models.Model):
     # -------------------------------------------------------------------------
     def _sync_to_asset_management(self):
         """
-        Create or update the corresponding asset.management record
-        with all essential details from the Enterprise accounting asset.
+        Create or update the corresponding asset.management record.
+        GROUPING RULE: All account.asset records with the SAME product_id
+        and company_id share ONE asset.management record.
+        The initial_stock represents the total counts of this asset.
         """
         for asset in self:
             if asset.state == 'model':
                 continue
 
             invoice = asset._get_invoice_from_move_lines()
+            target_company_id = invoice.company_id.id if invoice and invoice.company_id else (asset.company_id.id if asset.company_id else False)
             vendor_partner = asset._get_vendor_from_invoice()
             product = asset._get_product_from_invoice()
             asset_type = asset._get_or_create_asset_type()
 
+            # Find existing management record for this product and company
+            existing_mgmt = None
+            if product:
+                existing_mgmt = self.env['asset.management'].search([
+                    ('product_id', '=', product.id),
+                    ('company_id', '=', target_company_id),
+                ], limit=1)
+
+            if not existing_mgmt and asset.asset_management_id:
+                existing_mgmt = asset.asset_management_id
+
+            if existing_mgmt:
+                # Get siblings already pointing to this management record
+                sibling_assets = self.env['account.asset'].search([('asset_management_id', '=', existing_mgmt.id)])
+                if asset.id not in sibling_assets.ids:
+                    sibling_assets |= asset
+            else:
+                sibling_assets = asset
+            
+            total_count = len(sibling_assets)
+
             vals = {
-                'name': asset.name,
-                'amount': asset.original_value or 0.0,
+                'name': product.name if product else asset.name,
+                'amount': sum(sibling_assets.mapped('original_value')),  # Summing total value of all assets!
                 'invoice_date': asset.acquisition_date or fields.Date.today(),
                 'invoice_id': invoice.id if invoice else False,
                 'vendor_partner_id': vendor_partner.id if vendor_partner else False,
                 'product_id': product.id if product else False,
                 'asset_type_id': asset_type.id if asset_type else False,
                 'depreciation_apply': bool(asset_type),
+                'initial_stock': total_count,
+                'company_id': target_company_id,
             }
 
-            if asset.asset_management_id:
-                # Update existing record
-                asset.asset_management_id.write(vals)
-                mgmt_record = asset.asset_management_id
+
+            if existing_mgmt:
+                # Update the shared record with latest count and cumulative info
+                existing_mgmt.write(vals)
+                # Ensure all siblings point to this mgmt record
+                for sibling in sibling_assets:
+                    if sibling.asset_management_id != existing_mgmt:
+                        sibling.asset_management_id = existing_mgmt.id
+                mgmt_record = existing_mgmt
             else:
-                # Create new record in asset.management and link back
+                # No existing record — create one shared record
                 mgmt_record = self.env['asset.management'].create({
                     **vals,
                     'accounting_asset_id': asset.id,
                 })
-                asset.asset_management_id = mgmt_record.id
+                # Link all siblings to this newly created record
+                for sibling in sibling_assets:
+                    sibling.asset_management_id = mgmt_record.id
 
-            # Sync any posted depreciation entries
+            # Sync depreciation entries (Note: Depreciation syncing handles accumulating values perfectly)
             asset._sync_depreciation_entries(mgmt_record)
+
 
     # -------------------------------------------------------------------------
     # ORM OVERRIDES
@@ -169,6 +222,7 @@ class AccountAsset(models.Model):
             'name', 'original_value', 'acquisition_date',
             'original_move_line_ids', 'state', 'model_id',
             'method', 'method_period', 'method_number', 'method_progress_factor',
+            'company_id',
         }
         if sync_triggers & set(vals.keys()):
             self._sync_to_asset_management()

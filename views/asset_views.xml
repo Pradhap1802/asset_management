@@ -25,13 +25,13 @@
                         <group string="Basic Information">
                             <field name="product_id"/>
                             <field name="asset_type_id"/>
+                            <field name="company_id" readonly="accounting_asset_id != False"/>
+                            <field name="accounting_asset_id" invisible="1"/>
                             <field name="transfer_count"/>
                             <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
-                            <field name="model_type" widget="radio"/>
-                            <field name="initial_stock" invisible="model_type == 'single'"
-                                   required="model_type == 'multiple'"/>
-                            <field name="current_stock" invisible="model_type == 'single'"/>
-                            <field name="active_transfers" invisible="model_type == 'single'"/>
+                            <field name="initial_stock" required="1"/>
+                            <field name="current_stock"/>
+                            <field name="active_transfers"/>
                         </group>
                         <!-- Financial Information group -->
                         <group string="Financial Information">
@@ -133,7 +133,6 @@
                 <!-- Fields to display in the tree view -->
                 <field name="name"/>
                 <field name="tag_ids" widget="many2many_tags" optional="show"/>
-                <field name="model_type"/>
                 <field name="initial_stock" optional="show"/>
                 <field name="current_stock" optional="show"/>
                 <field name="active_transfers" optional="show"/>
@@ -168,19 +167,16 @@
                 <filter string="In Repair" name="repair" domain="[('status', '=', 'repair')]"/>
                 <filter string="Destroyed" name="destroyed" domain="[('status', '=', 'destroyed')]"/>
 
-                <filter string="Single Assets" name="single_assets" domain="[('model_type', '=', 'single')]"/>
-                <filter string="Multiple Assets" name="multiple_assets" domain="[('model_type', '=', 'multiple')]"/>
                 <filter string="Out of Stock" name="out_of_stock"
-                        domain="[('model_type', '=', 'multiple'), ('current_stock', '&lt;=', 0)]"/>
+                        domain="[('current_stock', '&lt;=', 0)]"/>
                 <filter string="In Stock" name="in_stock"
-                        domain="[('model_type', '=', 'multiple'), ('current_stock', '&gt;', 0)]"/>
+                        domain="[('current_stock', '&gt;', 0)]"/>
 
                 <group>
                     <filter string="Status" name="group_by_status" context="{'group_by': 'status'}"/>
                     <filter string="Asset Type" name="group_by_asset_type" context="{'group_by': 'asset_type_id'}"/>
                     <filter string="Vendor" name="group_by_vendor" context="{'group_by': 'vendor_id'}"/>
                     <filter string="Tags" name="group_by_tags" context="{'group_by': 'tag_ids'}"/>
-                    <filter string="Model Type" name="group_by_model_type" context="{'group_by': 'model_type'}"/>
                 </group>
 
             </search>
@@ -211,7 +207,6 @@
                 <field name="total_depreciation_amount"/>
                 <field name="total_maintenance_amount"/>
                 <field name="tag_ids"/>
-                <field name="model_type"/>
                 <field name="initial_stock"/>
                 <field name="current_stock"/>
                 <field name="active_transfers"/>
@@ -271,8 +266,8 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Stock Information for Multiple Assets -->
-                                <div class="mb-2" t-if="record.model_type.raw_value == 'multiple'">
+                                <!-- Stock Information -->
+                                <div class="mb-2">
                                     <div class="d-flex gap-2 flex-wrap">
                                         <span class="badge bg-info">
                                             <i class="fa fa-cubes me-1"></i>

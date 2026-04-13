@@ -32,8 +32,6 @@ class AssetStockMovementReport(models.Model):
                     asset_transfer_entry t
                 JOIN
                     asset_management a ON t.asset_id = a.id
-                WHERE
-                    a.model_type = 'multiple'
                 UNION ALL
                 SELECT
                     t.id + 100000,
@@ -48,7 +46,6 @@ class AssetStockMovementReport(models.Model):
                 JOIN
                     asset_management a ON t.asset_id = a.id
                 WHERE
-                    a.model_type = 'multiple'
-                    AND t.return_date IS NOT NULL
+                    t.return_date IS NOT NULL
             )
         """ % self._table)

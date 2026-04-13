@@ -13,12 +13,6 @@ class Asset(models.Model):
     barcode = fields.Char(string="Barcode", copy=False, help="Barcode for asset identification and scanning")
     product_id = fields.Many2one('product.product', string="Associated Product", help="Select the product used in this asset from available options")
     asset_type_id = fields.Many2one('asset.type', string="Asset Type", help="Classification of the asset (e.g., Equipment, Vehicle, Building)")
-    # Model Type and Stock Management
-    model_type = fields.Selection([
-        ('single', 'Single Asset'),
-        ('multiple', 'Multiple Assets')
-    ], string="Model Type", default='single', required=True, 
-       help="Single: Unique asset with specific tracking. Multiple: Assets with stock management")
     
     initial_stock = fields.Integer(string="Initial Stock", default=1,
                                   help="Initial quantity of this asset")
@@ -60,7 +54,7 @@ class Asset(models.Model):
     depreciation_ids = fields.One2many('asset.depreciation.entry', 'asset_id', string="Depreciation Entries")
     
     # Additional Information
-    last_depreciation_date = fields.Date(string="Last Depreciation Date", help="Last Depreciation Entry Date", readonly=True)
+    last_depreciation_date = fields.Date(string="Last Depreciation Date", help="Last Depreciation Entry Date", compute='_compute_last_depreciation_date', store=True)
     transfer_count = fields.Integer(string='Asset Transfer History',
                                     compute='_compute_all_count', store=True)
     maintenance_count = fields.Integer(string='Maintenance Records',
@@ -92,7 +86,16 @@ class Asset(models.Model):
         copy=False,
         help="Vendor/Supplier from the linked accounting invoice"
     )
+    # Company / Branch that owns this asset
+    company_id = fields.Many2one(
+        'res.company',
+        string="Company / Branch",
+        default=lambda self: self.env.company,
+        copy=False,
+        help="The company or branch for which this asset was created (e.g., Salem Branch)"
+    )
     
+
     @api.depends('transfer_ids', 'transfer_ids.status', 'transfer_ids.stock_qty')
     def _compute_active_transfers(self):
         for record in self:
@@ -169,22 +172,32 @@ class Asset(models.Model):
                 record.assigned_user = ''
                 record.assign_by = ''
 
-    @api.depends('transfer_ids', 'maintenance_ids', 'depreciation_ids')
+    @api.depends('transfer_ids', 'maintenance_ids', 'depreciation_ids.state')
     def _compute_all_count(self):
         for record in self:
             record.transfer_count = len(record.transfer_ids)
             record.maintenance_count = len(record.maintenance_ids)
-            record.depreciation_count = len(record.depreciation_ids)
+            record.depreciation_count = len(record.depreciation_ids.filtered(lambda d: d.state in ('posted', False)))
 
     @api.depends('amount',)
     def _compute_current_amount(self):
         for record in self:
             record.current_amount = record.amount - record.total_depreciation_amount
 
-    @api.depends('depreciation_ids.depreciation_amount')
+    @api.depends('depreciation_ids.depreciation_amount', 'depreciation_ids.state')
     def _compute_total_depreciation_amount(self):
         for record in self:
-            record.total_depreciation_amount = sum(record.depreciation_ids.mapped('depreciation_amount'))
+            posted_entries = record.depreciation_ids.filtered(lambda d: d.state in ('posted', False))
+            record.total_depreciation_amount = sum(posted_entries.mapped('depreciation_amount'))
+
+    @api.depends('depreciation_ids.entry_date', 'depreciation_ids.state')
+    def _compute_last_depreciation_date(self):
+        for record in self:
+            posted_entries = record.depreciation_ids.filtered(lambda d: d.state in ('posted', False) and d.entry_date)
+            if posted_entries:
+                record.last_depreciation_date = max(posted_entries.mapped('entry_date'))
+            else:
+                record.last_depreciation_date = False
 
     @api.depends('maintenance_ids.maintenance_amount')
     def _compute_total_maintenance_amount(self):
@@ -317,16 +330,15 @@ class AssetTransferEntry(models.Model):
                 if vals.get('stock_qty', 1) <= 0:
                     raise exceptions.ValidationError(_("Transfer quantity must be greater than zero."))
                     
-                if asset.model_type == 'multiple':
-                    if asset.current_stock < vals.get('stock_qty', 1):
-                        raise exceptions.ValidationError(_("Cannot assign this asset: Insufficient stock available."))
+                if asset.current_stock < vals.get('stock_qty', 1):
+                    raise exceptions.ValidationError(_("Cannot assign this asset: Insufficient stock available."))
         return super(AssetTransferEntry, self).create(vals_list)
 
     @api.constrains('status', 'asset_id', 'stock_qty')
     def _check_stock_availability(self):
         """Ensure stock is available when assigning assets"""
         for record in self:
-            if record.status == 'assigned' and record.asset_id.model_type == 'multiple':
+            if record.status == 'assigned':
                 # Get current stock after excluding this record (important for updates)
                 other_transfers = self.search([
                     ('asset_id', '=', record.asset_id.id),
@@ -367,6 +379,7 @@ class AssetDepreciationEntry(models.Model):
     asset_id = fields.Many2one('asset.management', string="Asset Reference", help="Choose the asset for which depreciation is being recorded")
     depreciation_amount = fields.Float(string="Amount", help="The monetary value of depreciation applied in this entry")
     entry_date = fields.Date(string="Depreciation Date", help="Date when this depreciation entry was recorded")
+    state = fields.Selection([('draft', 'Planned'), ('posted', 'Posted')], string='Status', default='posted')
     notes = fields.Text(string="Comments", help="Additional information or remarks about this depreciation entry")
     created_by = fields.Many2one('res.users', string="Recorded By", default=lambda self: self.env.user, help="Person who created this depreciation entry")
 
