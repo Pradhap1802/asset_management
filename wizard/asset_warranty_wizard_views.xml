@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_asset_warranty_wizard_form" model="ir.ui.view">
+        <field name="name">asset.warranty.wizard.form</field>
+        <field name="model">asset.warranty.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Warranty Expiry Check">
+                <div class="alert alert-warning text-center" role="alert">
+                    Choose the number of days ahead to scan for expiring asset warranties.
+                </div>
+                <group>
+                    <field name="days_ahead" class="oe_inline"/>
+                </group>
+                <field name="asset_ids" readonly="1">
+                    <list>
+                        <field name="name" string="Asset"/>
+                        <field name="company_id" string="Location / Branch"/>
+                        <field name="amount" string="Original Value"/>
+                        <field name="current_amount" string="Current Book Value"/>
+                        <field name="invoice_date" string="Bill Date"/>
+                        <field name="expired_warranty_date" string="Expiry Date" 
+                               decoration-danger="expired_warranty_date &lt; current_date"/>
+                    </list>
+                </field>
+                <footer>
+                    <button string="Close" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_asset_warranty_wizard" model="ir.actions.act_window">
+        <field name="name">Check Dying Warranties</field>
+        <field name="res_model">asset.warranty.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    
+</odoo>

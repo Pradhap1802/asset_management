@@ -15,3 +15,4 @@ access_asset_tag_system,asset.tag.system,model_asset_tag,base.group_system,1,1,1
 access_asset_stock_movement_report_user,asset.stock.movement.report.user,model_asset_stock_movement_report,assets_user_group,1,0,0,0
 access_asset_stock_movement_report_admin,asset.stock.movement.report.admin,model_asset_stock_movement_report,assets_admin_group,1,0,0,0
 access_asset_label_layout,asset.label.layout,model_asset_label_layout,assets_user_group,1,1,1,1
+access_asset_warranty_wizard,asset.warranty.wizard,model_asset_warranty_wizard,base.group_user,1,1,1,1

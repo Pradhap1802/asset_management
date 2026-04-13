@@ -189,7 +189,6 @@ class AccountAsset(models.Model):
             total_count = len(sibling_assets)
 
             vals = {
-                'name': product.name if product else asset.name,
                 'amount': sum(sibling_assets.mapped('original_value')),  # Summing total value of all assets!
                 'invoice_date': asset.acquisition_date or fields.Date.today(),
                 'invoice_id': invoice.id if invoice else False,

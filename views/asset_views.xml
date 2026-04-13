@@ -24,7 +24,7 @@
                         <!-- Basic Information group -->
                         <group string="Basic Information">
                             <field name="product_id"/>
-                            <field name="barcode" string="Serial Number / Barcode"/>
+                            <field name="barcode" string="Serial Number / Barcode" widget="char"/>
                             <field name="asset_type_id"/>
                             <field name="company_id" readonly="accounting_asset_id != False"/>
                             <field name="accounting_asset_id" invisible="1"/>
@@ -133,7 +133,7 @@
                 </header>
                 <!-- Fields to display in the list view -->
                 <field name="name"/>
-                <field name="barcode" string="Serial / Barcode" optional="show"/>
+                <field name="barcode" string="Serial / Barcode" optional="show" widget="char"/>
                 <field name="tag_ids" widget="many2many_tags" optional="show"/>
                 <field name="initial_stock" optional="show"/>
                 <field name="current_stock" optional="show"/>
@@ -682,11 +682,30 @@
               web_icon="asset_management,static/description/icon.png"
               groups="asset_management.assets_user_group,asset_management.assets_admin_group,base.group_system"/>
 
-    <!-- Assets Menu: Links to the main asset list -->
+    <!-- Server Action for dynamic app entry logic -->
+    <record id="action_asset_management_entry" model="ir.actions.server">
+        <field name="name">Asset Management Entry</field>
+        <field name="model_id" ref="asset_management.model_asset_management"/>
+        <field name="state">code</field>
+        <field name="code">
+target_date = datetime.date.today() + datetime.timedelta(days=30)
+domain = [('expired_warranty_date', '!=', False), ('expired_warranty_date', '&lt;=', target_date), ('status', 'not in', ['destroyed'])]
+expiring = env['asset.management'].search(domain, limit=1)
+
+if expiring:
+    wizard = env['asset.warranty.wizard'].create({'days_ahead': 30})
+    action = env.ref('asset_management.action_asset_warranty_wizard').read()[0]
+    action['res_id'] = wizard.id
+else:
+    action = env.ref('asset_management.action_assets').read()[0]
+        </field>
+    </record>
+
+    <!-- Assets Menu: Links to the main asset list via logic -->
     <menuitem id="menu_asset"
               name="Assets"
               parent="menu_asset_root"
-              action="action_assets"
+              action="action_asset_management_entry"
               groups="assets_user_group,assets_admin_group,base.group_system"
               sequence="10"/>
 

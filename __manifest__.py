@@ -15,6 +15,7 @@
         'data/sequence.xml',
         # 'data/demo_data.xml',
         'wizard/asset_label_wizard_view.xml',
+        'wizard/asset_warranty_wizard_views.xml',
         'report/asset_label_report.xml',
         'report/asset_label_templates.xml',
         'report/asset_template_templates.xml',
