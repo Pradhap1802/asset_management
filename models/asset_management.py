@@ -467,6 +467,7 @@ class AssetType(models.Model):
         ('fix', 'Fix'),
         ('percentage', 'Percentage')
     ], string='Depreciation Value Type', required=True, help="Whether depreciation is calculated as a percentage or fixed amount")
+    color = fields.Integer(string='Color Index', default=0)
 
     depreciation_rate = fields.Float(string='Depreciation Rate', help="The percentage or fixed amount used to calculate depreciation")
     depreciation_start_delay = fields.Integer(string='Depreciation Start Delay', help="Time duration before depreciation begins after asset acquisition")
@@ -475,3 +476,32 @@ class AssetType(models.Model):
         ('depreciation_value', 'Book Price')
     ], string='Depreciation Basis', required=True, help="Whether depreciation is applied to the adjusted value (after previous depreciation) or the original value")
     maximum_depreciation_entries = fields.Integer(string="Maximum Depreciation Entries", help="The maximum number of depreciation entries allowed for this asset type")
+
+    asset_count = fields.Integer(compute='_compute_asset_stats')
+    total_value = fields.Monetary(compute='_compute_asset_stats', string="Total Value", currency_field='currency_id')
+    currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env.company.currency_id)
+
+    def _compute_asset_stats(self):
+        for record in self:
+            # Aggregate stats across all companies if in Main Company, or specific companies if in branch
+            domain = [('asset_type_id', '=', record.id)]
+            
+            # If the active company has a parent, it's a branch: restrict to current active selection.
+            # If it has no parent, it's the Main Company: show everything from all branches.
+            if self.env.company.parent_id:
+                domain.append(('company_id', 'in', self.env.companies.ids))
+            
+            assets = self.env['asset.management'].search(domain)
+            record.asset_count = len(assets)
+            record.total_value = sum(assets.mapped('amount'))
+
+    def action_open_assets(self):
+        self.ensure_one()
+        # Create a new dashboard drill-down wizard for the selected type
+        wizard = self.env['asset.dashboard.wizard'].create({
+            'asset_type_id': self.id
+        })
+        
+        action = self.env.ref('asset_management.action_asset_dashboard_wizard').read()[0]
+        action['res_id'] = wizard.id
+        return action

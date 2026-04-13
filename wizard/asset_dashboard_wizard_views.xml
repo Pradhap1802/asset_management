@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_asset_dashboard_wizard_form" model="ir.ui.view">
+        <field name="name">asset.dashboard.wizard.form</field>
+        <field name="model">asset.dashboard.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Asset Category Overview">
+                <header>
+                    <div class="alert alert-info text-center" role="alert" style="margin-bottom: 0;">
+                        Displaying assets for category: <strong><field name="asset_type_id" options="{'no_open': True}"/></strong>
+                    </div>
+                </header>
+                <sheet>
+                    <div class="row text-center mb-3">
+                        <div class="col-6 border-end">
+                            <label for="total_count" class="d-block text-muted">Total Assets</label>
+                            <h3 class="fw-bold"><field name="total_count"/></h3>
+                        </div>
+                        <div class="col-6">
+                            <label for="total_value" class="d-block text-muted">Total Book Value</label>
+                            <h3 class="fw-bold text-primary">
+                                <field name="total_value" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            </h3>
+                        </div>
+                    </div>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="asset_ids" readonly="1">
+                        <list>
+                            <field name="name" string="Asset Name"/>
+                            <field name="company_id" string="Location / Branch"/>
+                            <field name="amount" string="Original Value" sum="Total Original"/>
+                            <field name="current_amount" string="Current Book Value" sum="Total Current"/>
+                            <field name="invoice_date" string="Purchase Date"/>
+                            <field name="expired_warranty_date" string="Warranty Expiry"/>
+                        </list>
+                    </field>
+                </sheet>
+                <footer>
+                    <button string="Close" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_asset_dashboard_wizard" model="ir.actions.act_window">
+        <field name="name">Asset Category Overview</field>
+        <field name="res_model">asset.dashboard.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

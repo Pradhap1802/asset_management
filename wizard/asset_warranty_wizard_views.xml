@@ -23,14 +23,14 @@
                     </list>
                 </field>
                 <footer>
-                    <button string="Close" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                    <button name="action_close" string="Close" type="object" class="btn-secondary" data-hotkey="z"/>
                 </footer>
             </form>
         </field>
     </record>
 
     <record id="action_asset_warranty_wizard" model="ir.actions.act_window">
-        <field name="name">Check Dying Warranties</field>
+        <field name="name">Asset Warranty Alert</field>
         <field name="res_model">asset.warranty.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>

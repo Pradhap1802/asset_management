@@ -6,8 +6,6 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <!-- Status bar at the top of the form -->
-                    <field name="status" widget="statusbar" options="{'clickable': '1'}"/>
                     <button string="Print Label" name="action_open_label_layout"
                             type="object" class="oe_highlight" icon="fa-print"
                             groups="asset_management.assets_user_group,asset_management.assets_admin_group,base.group_system"/>
@@ -55,10 +53,9 @@
                             <field name="total_maintenance_amount" readonly="1"/>
                             <field name="maintenance_count"/>
                         </group>
-                        <!-- Vendor And Warranty group -->
-                        <group string="Vendor And Warranty">
+                        <!-- Asset Warranty group -->
+                        <group string="Asset Warranty">
                             <field name="expired_warranty_date"/>
-                            <field name="vendor_id"/>
                         </group>
                         <!-- Documentation group -->
                         <group string="Documentation">
@@ -147,7 +144,6 @@
                 <field name="depreciation_count"/>
                 <field name="maintenance_count"/>
                 <field name="transfer_count"/>
-                <field name="status"/>
             </list>
         </field>
     </record>
@@ -162,22 +158,13 @@
                 <field name="product_id"/>
                 <field name="tag_ids"/>
 
-                <filter string="Assigned" name="assigned" domain="[('status', '=', 'assign')]"/>
-                <filter string="Returned" name="returned" domain="[('status', '=', 'return')]"/>
-                <filter string="On Hold" name="on_hold" domain="[('status', '=', 'on_hold')]"/>
-                <filter string="In Warehouse" name="in_warehouse" domain="[('status', '=', 'in_warehouse')]"/>
-                <filter string="In Repair" name="repair" domain="[('status', '=', 'repair')]"/>
-                <filter string="Destroyed" name="destroyed" domain="[('status', '=', 'destroyed')]"/>
-
                 <filter string="Out of Stock" name="out_of_stock"
                         domain="[('current_stock', '&lt;=', 0)]"/>
                 <filter string="In Stock" name="in_stock"
                         domain="[('current_stock', '&gt;', 0)]"/>
 
                 <group>
-                    <filter string="Status" name="group_by_status" context="{'group_by': 'status'}"/>
                     <filter string="Asset Type" name="group_by_asset_type" context="{'group_by': 'asset_type_id'}"/>
-                    <filter string="Vendor" name="group_by_vendor" context="{'group_by': 'vendor_id'}"/>
                     <filter string="Tags" name="group_by_tags" context="{'group_by': 'tag_ids'}"/>
                 </group>
 
@@ -190,10 +177,9 @@
         <field name="name">asset.management.kanban</field>
         <field name="model">asset.management</field>
         <field name="arch" type="xml">
-            <kanban default_group_by="status" class="o_kanban_dashboard" multi_selection="1" create="1">
+            <kanban default_group_by="asset_type_id" class="o_kanban_dashboard" multi_selection="1" create="1">
                 <field name="id"/>
                 <field name="name"/>
-                <field name="status"/>
                 <field name="asset_type_id"/>
                 <field name="barcode"/>
                 <field name="amount"/>
@@ -213,9 +199,8 @@
                 <field name="current_stock"/>
                 <field name="active_transfers"/>
                 <field name="product_id"/>
-                <field name="vendor_id"/>
                 <field name="company_id"/>
-                <progressbar field="status" colors='{"assign":"success","return":"info","on_hold":"warning","in_warehouse":"primary","repair":"danger","destroyed":"muted"}'/>
+
                 <templates>
                     <t t-name="card">
                         <div class="oe_kanban_global_click o_kanban_card oe_kanban_content" role="article">
@@ -227,17 +212,6 @@
                                             <strong class="text-truncate d-block" style="font-size: 1.1em;">
                                                 <field name="name"/>
                                             </strong>
-                                        </div>
-                                        <div class="ms-2">
-                                            <span t-attf-class="badge rounded-pill text-white lh-1 px-2 py-1 
-                                                #{record.status.raw_value == 'assign' ? 'bg-success' : 
-                                                  record.status.raw_value == 'return' ? 'bg-info' : 
-                                                  record.status.raw_value == 'on_hold' ? 'bg-warning' : 
-                                                  record.status.raw_value == 'in_warehouse' ? 'bg-primary' :
-                                                  record.status.raw_value == 'repair' ? 'bg-danger' :
-                                                  record.status.raw_value == 'destroyed' ? 'bg-secondary' : 'bg-secondary'}">
-                                                <field name="status"/>
-                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -650,6 +624,78 @@
         </field>
     </record>
 
+    <!-- Asset Type Kanban View for Dashboard (Tile Chart) -->
+    <record id="view_asset_type_kanban_dashboard" model="ir.ui.view">
+        <field name="name">asset.type.kanban.dashboard</field>
+        <field name="model">asset.type</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_dashboard o_asset_dashboard" create="0">
+                <field name="name"/>
+                <field name="color"/>
+                <field name="asset_count"/>
+                <field name="total_value"/>
+                <field name="currency_id"/>
+                <templates>
+                    <t t-name="card">
+                        <t t-set="colors" t-value="['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#6f42c1', '#fd7e14', '#20c997', '#d63384', '#0dcaf0', '#198754']"/>
+                        <t t-set="card_color" t-value="colors[(record.id.raw_value or 0) % 11]"/>
+                        
+                        <div t-attf-class="position-relative d-flex flex-column align-items-center justify-content-center p-3 text-center text-white"
+                             t-attf-style="min-height: 180px; transition: all 0.3s ease; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); border: none; background-color: {{card_color}} !important;"
+                             onmouseover="this.style.transform='scale(1.05) translateY(-5px)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.3)';"
+                             onmouseout="this.style.transform='scale(1) translateY(0)'; this.style.boxShadow='0 8px 16px rgba(0,0,0,0.2)';"
+                             >
+                             
+                            <!-- Transparent Overlay Link for Click Action -->
+                            <a type="object" name="action_open_assets" class="position-absolute h-100 w-100 top-0 start-0 z-index-1" style="opacity: 0; cursor: pointer;"/>
+
+                            <div class="o_kanban_card_header w-100 mb-3">
+                                <div class="o_kanban_card_header_title">
+                                    <div class="o_primary">
+                                        <h2 class="mb-0 font-weight-bold text-white" style="text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                                            <field name="name"/>
+                                        </h2>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="o_kanban_card_content w-100 text-white">
+                                <div class="mb-2">
+                                     <span class="d-block text-uppercase small" style="letter-spacing: 1px; opacity: 0.9;">Assets</span>
+                                     <div class="h2 mb-0 font-weight-bold" style="text-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                         <field name="asset_count"/>
+                                     </div>
+                                 </div>
+                                 <div>
+                                     <span class="d-block text-uppercase small" style="letter-spacing: 1px; opacity: 0.9;">Total Value</span>
+                                     <div class="h3 mb-0" style="text-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                         <field name="total_value" widget="monetary"/>
+                                     </div>
+                                 </div>
+                            </div>
+
+                            </div>
+
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action for Asset Dashboard -->
+    <record id="action_asset_dashboard" model="ir.actions.act_window">
+        <field name="name">Dashboard</field>
+        <field name="res_model">asset.type</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="view_id" ref="view_asset_type_kanban_dashboard"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No asset types defined.
+            </p>
+        </field>
+    </record>
+
+
     <!-- Action for Asset Depreciation Entries -->
     <record id="action_assets_depreciation_entry" model="ir.actions.act_window">
         <field name="name">Depreciation</field>
@@ -681,6 +727,14 @@
               sequence="10"
               web_icon="asset_management,static/description/icon.png"
               groups="asset_management.assets_user_group,asset_management.assets_admin_group,base.group_system"/>
+
+    <!-- Dashboard Menu -->
+    <menuitem id="menu_asset_dashboard"
+              name="Dashboard"
+              parent="menu_asset_root"
+              action="action_asset_dashboard"
+              groups="assets_user_group,assets_admin_group,base.group_system"
+              sequence="5"/>
 
     <!-- Server Action for dynamic app entry logic -->
     <record id="action_asset_management_entry" model="ir.actions.server">

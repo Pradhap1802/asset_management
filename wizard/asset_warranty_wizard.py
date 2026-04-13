@@ -22,3 +22,7 @@ class AssetWarrantyWizard(models.TransientModel):
             assets = self.env['asset.management'].search(domain)
             record.asset_ids = [(6, 0, assets.ids)]
 
+
+    def action_close(self):
+        """When closing the wizard, proceed to the main assets list anyway"""
+        return self.env.ref('asset_management.action_assets').read()[0]
