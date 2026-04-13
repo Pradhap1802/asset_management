@@ -478,7 +478,9 @@ class AssetType(models.Model):
     maximum_depreciation_entries = fields.Integer(string="Maximum Depreciation Entries", help="The maximum number of depreciation entries allowed for this asset type")
 
     asset_count = fields.Integer(compute='_compute_asset_stats')
-    total_value = fields.Monetary(compute='_compute_asset_stats', string="Total Value", currency_field='currency_id')
+    total_booked_value = fields.Monetary(compute='_compute_asset_stats', string="Total Booked Value", currency_field='currency_id')
+    total_current_value = fields.Monetary(compute='_compute_asset_stats', string="Current Value", currency_field='currency_id')
+    total_transfer_count = fields.Integer(compute='_compute_asset_stats', string="Total Transfers")
     currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env.company.currency_id)
 
     def _compute_asset_stats(self):
@@ -493,7 +495,9 @@ class AssetType(models.Model):
             
             assets = self.env['asset.management'].search(domain)
             record.asset_count = len(assets)
-            record.total_value = sum(assets.mapped('amount'))
+            record.total_booked_value = sum(assets.mapped('amount'))
+            record.total_current_value = sum(assets.mapped('current_amount'))
+            record.total_transfer_count = sum(assets.mapped('transfer_count'))
 
     def action_open_assets(self):
         self.ensure_one()
