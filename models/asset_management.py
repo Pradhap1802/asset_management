@@ -317,6 +317,14 @@ class AssetTransferEntry(models.Model):
     stock_qty = fields.Integer(string="Quantity", default=1, 
                               help="Quantity of assets being transferred (for multiple assets)")
     
+    from_branch_id = fields.Many2one('res.company', string="From Branch", help="Original branch/company the asset is transferred from", default=lambda self: self.env.company)
+    to_branch_id = fields.Many2one('res.company', string="To Branch", help="Destination branch/company the asset is transferred to")
+    
+    @api.onchange('asset_id')
+    def _onchange_asset_id(self):
+        if self.asset_id and self.asset_id.company_id:
+            self.from_branch_id = self.asset_id.company_id.id
+    
     @api.model_create_multi
     def create(self, vals_list):
         """Override create to generate transfer code and check stock availability"""
@@ -332,7 +340,22 @@ class AssetTransferEntry(models.Model):
                     
                 if asset.current_stock < vals.get('stock_qty', 1):
                     raise exceptions.ValidationError(_("Cannot assign this asset: Insufficient stock available."))
-        return super(AssetTransferEntry, self).create(vals_list)
+        records = super(AssetTransferEntry, self).create(vals_list)
+        
+        # Automatically update the asset's company to the To Branch if assigned
+        for record in records:
+            if record.to_branch_id and record.asset_id and record.status == 'assigned':
+                record.asset_id.company_id = record.to_branch_id.id
+        return records
+
+    def write(self, vals):
+        res = super(AssetTransferEntry, self).write(vals)
+        # Update asset's company if branch is updated and active
+        if 'to_branch_id' in vals or 'status' in vals:
+            for record in self:
+                if record.to_branch_id and record.asset_id and record.status == 'assigned':
+                    record.asset_id.company_id = record.to_branch_id.id
+        return res
 
     @api.constrains('status', 'asset_id', 'stock_qty')
     def _check_stock_availability(self):

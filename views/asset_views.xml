@@ -214,6 +214,7 @@
                 <field name="active_transfers"/>
                 <field name="product_id"/>
                 <field name="vendor_id"/>
+                <field name="company_id"/>
                 <progressbar field="status" colors='{"assign":"success","return":"info","on_hold":"warning","in_warehouse":"primary","repair":"danger","destroyed":"muted"}'/>
                 <templates>
                     <t t-name="card">
@@ -288,6 +289,10 @@
                                         <span class="badge bg-warning text-dark" t-if="record.active_transfers.raw_value">
                                             <i class="fa fa-exchange me-1"></i>
                                             Active: <field name="active_transfers"/>
+                                        </span>
+                                        <span t-if="record.company_id.raw_value" t-attf-class="badge rounded-pill o_tag_color_#{record.company_id.raw_value % 11} text-black">
+                                            <i class="fa fa-building me-1"></i>
+                                            <field name="company_id"/>
                                         </span>
                                     </div>
                                 </div>
@@ -370,6 +375,8 @@
                 <!-- Fields displayed in the list view for asset transfers -->
                 <field name="transfer_code"/>
                 <field name="asset_id"/>
+                <field name="from_branch_id"/>
+                <field name="to_branch_id"/>
                 <field name="transfer_employee_id"/>
                 <field name="assign_date"/>
                 <field name="assign_by"/>
@@ -443,6 +450,8 @@
                         <group string="Transfer Details">
                             <field name="transfer_code" readonly="1"/>
                             <field name="asset_id"/>
+                            <field name="from_branch_id"/>
+                            <field name="to_branch_id"/>
                             <field name="transfer_employee_id"/>
                             <field name="stock_qty"/>
                         </group>
