@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Stock Move Operations Form - Add Asset Warranty Date -->
+    <record id="view_stock_move_operations_inherit_asset_management" model="ir.ui.view">
+        <field name="name">stock.move.operations.form.inherit.asset.management</field>
+        <field name="model">stock.move</field>
+        <field name="inherit_id" ref="stock.view_stock_move_operations"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_uom_qty']" position="after">
+                <field name="asset_warranty_date"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Stock Move Line Operation Tree - Add Asset Warranty Date -->
+    <record id="view_stock_move_line_operation_tree_inherit_asset_management" model="ir.ui.view">
+        <field name="name">stock.move.line.operations.list.inherit.asset.management</field>
+        <field name="model">stock.move.line</field>
+        <field name="inherit_id" ref="stock.view_stock_move_line_operation_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='lot_name']" position="after">
+                <field name="asset_warranty_date" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Stock Move List - Add Asset Warranty Date to list view -->
+    <record id="stock_move_list_inherit_asset_management" model="ir.ui.view">
+        <field name="name">stock.move.list.inherit.asset.management</field>
+        <field name="model">stock.move</field>
+        <field name="inherit_id" ref="stock.view_move_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_id']" position="after">
+                <field name="asset_warranty_date" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -6,19 +6,15 @@ from datetime import datetime, timedelta
 class Asset(models.Model):
     _name = 'asset.management'
     _description = 'Asset Management'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     # Basic Asset Information
     name = fields.Char(string="Asset Reference", required=True, copy=False, readonly=True,
                        default=lambda self: _('New'))
     barcode = fields.Char(string="Barcode", copy=False, help="Barcode for asset identification and scanning")
+    serial_number_ids = fields.One2many('asset.serial.number', 'asset_id', string="Serial Numbers")
     product_id = fields.Many2one('product.product', string="Associated Product", help="Select the product used in this asset from available options")
     asset_type_id = fields.Many2one('asset.type', string="Asset Type", help="Classification of the asset (e.g., Equipment, Vehicle, Building)")
-    # Model Type and Stock Management
-    model_type = fields.Selection([
-        ('single', 'Single Asset'),
-        ('multiple', 'Multiple Assets')
-    ], string="Model Type", default='single', required=True, 
-       help="Single: Unique asset with specific tracking. Multiple: Assets with stock management")
     
     initial_stock = fields.Integer(string="Initial Stock", default=1,
                                   help="Initial quantity of this asset")
@@ -36,21 +32,27 @@ class Asset(models.Model):
     invoice_date = fields.Date(string="Invoice Date", help="Date when the asset was purchased or acquired")
     amount = fields.Float(string="Purchase Price", help="Initial cost of acquiring the asset")
     
+    # Lifecycle Dates
+    capitalization_date = fields.Date(string="Capitalization Date", help="Date when the asset was capitalized in the books")
+    end_of_life_date = fields.Date(string="End of Life Date", help="Expected or actual end of life date for the asset")
+    last_maintenance_date = fields.Date(string="Last Maintenance Date", compute="_compute_last_maintenance_date_field", store=True, help="Date of the last completed maintenance")
+    next_maintenance_due = fields.Date(string="Next Maintenance Due", compute="_compute_next_maintenance_due", store=True, help="Calculated next maintenance due date")
+    
+    # Asset Status Indicator
+    asset_status = fields.Selection([
+        ('active', 'Active'),
+        ('maintenance_due', 'Maintenance'),
+        ('expired', 'Expired/Scrap')
+    ], string="Asset Status", default='active', tracking=True, help="Current lifecycle status of the asset")
+    
     # Computed Financial Fields
     current_amount = fields.Float(string="Current Book Value", compute="_compute_current_amount", help="Current value of the asset after depreciation (Read-only)")
     total_depreciation_amount = fields.Float(string="Accumulated Depreciation",
                                              compute='_compute_total_depreciation_amount', store=True, help="Total depreciation applied to the asset to date (Read-only)")
     total_maintenance_amount = fields.Float(string="Total Maintenance Cost",
                                             compute='_compute_total_maintenance_amount', store=True, help="Sum of all maintenance expenses for this asset (Read-only)")
-    # Asset Status 
-    status = fields.Selection([
-        ('assign', 'Assign'),
-        ('return', 'Return'),
-        ('on_hold', 'On Hold'),
-        ('in_warehouse', 'In Warehouse'),
-        ('repair', 'Repair'),
-        ('destroyed', 'Destroyed')
-    ], string="Status", default="assign")
+    total_downtime_days = fields.Integer(string="Total Downtime (Days)",
+                                         compute='_compute_total_downtime_days', store=True, help="Total downtime days across all maintenance entries")
 
     # Related Documents and Entries
     document_ids = fields.Many2many('ir.attachment', string="Asset Documentation", help="Upload multiple documents related to the asset (e.g., Warranty,Invoice)")
@@ -60,7 +62,7 @@ class Asset(models.Model):
     depreciation_ids = fields.One2many('asset.depreciation.entry', 'asset_id', string="Depreciation Entries")
     
     # Additional Information
-    last_depreciation_date = fields.Date(string="Last Depreciation Date", help="Last Depreciation Entry Date", readonly=True)
+    last_depreciation_date = fields.Date(string="Last Depreciation Date", help="Last Depreciation Entry Date", compute='_compute_last_depreciation_date', store=True)
     transfer_count = fields.Integer(string='Asset Transfer History',
                                     compute='_compute_all_count', store=True)
     maintenance_count = fields.Integer(string='Maintenance Records',
@@ -76,7 +78,32 @@ class Asset(models.Model):
     remaining_warranty = fields.Char(string="Remaining Warranty",
                                      compute="_compute_months_left", store=True)
     warranty_status = fields.Char(string='Warranty Status')
+    # Link back to the Odoo Enterprise accounting asset
+    accounting_asset_id = fields.Many2one(
+        'account.asset',
+        string="Accounting Asset",
+        readonly=True,
+        copy=False,
+        help="Linked Odoo Enterprise Accounting Asset record"
+    )
+    # Vendor from the linked invoice (res.partner)
+    vendor_partner_id = fields.Many2one(
+        'res.partner',
+        string="Invoice Vendor",
+        readonly=True,
+        copy=False,
+        help="Vendor/Supplier from the linked accounting invoice"
+    )
+    # Company / Branch that owns this asset
+    company_id = fields.Many2one(
+        'res.company',
+        string="Company / Branch",
+        default=lambda self: self.env.company,
+        copy=False,
+        help="The company or branch for which this asset was created (e.g., Salem Branch)"
+    )
     
+
     @api.depends('transfer_ids', 'transfer_ids.status', 'transfer_ids.stock_qty')
     def _compute_active_transfers(self):
         for record in self:
@@ -149,31 +176,76 @@ class Asset(models.Model):
                     record.assigned_user = ''
                     record.assign_by = ''
             else:
-                # Handle the case where there are no transfer entries
                 record.assigned_user = ''
                 record.assign_by = ''
 
-    @api.depends('transfer_ids', 'maintenance_ids', 'depreciation_ids')
+    @api.depends('maintenance_ids.return_date')
+    def _compute_next_maintenance_due(self):
+        """Calculate next maintenance due date based on last maintenance + 90 days"""
+        for record in self:
+            if record.maintenance_ids:
+                # Get the last completed maintenance
+                completed_maintenance = record.maintenance_ids.filtered(lambda m: m.maintenance_status == 'completed')
+                if completed_maintenance:
+                    last_maintenance = max(completed_maintenance, key=lambda m: m.return_date)
+                    if last_maintenance.return_date:
+                        # Add 90 days for next maintenance
+                        record.next_maintenance_due = last_maintenance.return_date + timedelta(days=90)
+                    else:
+                        record.next_maintenance_due = False
+                else:
+                    record.next_maintenance_due = False
+            else:
+                record.next_maintenance_due = False
+
+    @api.depends('maintenance_ids.return_date', 'maintenance_ids.maintenance_status')
+    def _compute_last_maintenance_date_field(self):
+        """Get the date of the last completed maintenance"""
+        for record in self:
+            completed = record.maintenance_ids.filtered(
+                lambda m: m.maintenance_status == 'completed' and m.return_date
+            )
+            if completed:
+                record.last_maintenance_date = max(completed.mapped('return_date'))
+            else:
+                record.last_maintenance_date = False
+
+    @api.depends('transfer_ids', 'maintenance_ids', 'depreciation_ids.state')
     def _compute_all_count(self):
         for record in self:
             record.transfer_count = len(record.transfer_ids)
             record.maintenance_count = len(record.maintenance_ids)
-            record.depreciation_count = len(record.depreciation_ids)
+            record.depreciation_count = len(record.depreciation_ids.filtered(lambda d: d.state in ('posted', False)))
 
     @api.depends('amount',)
     def _compute_current_amount(self):
         for record in self:
             record.current_amount = record.amount - record.total_depreciation_amount
 
-    @api.depends('depreciation_ids.depreciation_amount')
+    @api.depends('depreciation_ids.depreciation_amount', 'depreciation_ids.state')
     def _compute_total_depreciation_amount(self):
         for record in self:
-            record.total_depreciation_amount = sum(record.depreciation_ids.mapped('depreciation_amount'))
+            posted_entries = record.depreciation_ids.filtered(lambda d: d.state in ('posted', False))
+            record.total_depreciation_amount = sum(posted_entries.mapped('depreciation_amount'))
+
+    @api.depends('depreciation_ids.entry_date', 'depreciation_ids.state')
+    def _compute_last_depreciation_date(self):
+        for record in self:
+            posted_entries = record.depreciation_ids.filtered(lambda d: d.state in ('posted', False) and d.entry_date)
+            if posted_entries:
+                record.last_depreciation_date = max(posted_entries.mapped('entry_date'))
+            else:
+                record.last_depreciation_date = False
 
     @api.depends('maintenance_ids.maintenance_amount')
     def _compute_total_maintenance_amount(self):
         for record in self:
             record.total_maintenance_amount = sum(record.maintenance_ids.mapped('maintenance_amount'))
+
+    @api.depends('maintenance_ids.downtime_days')
+    def _compute_total_downtime_days(self):
+        for record in self:
+            record.total_downtime_days = sum(record.maintenance_ids.mapped('downtime_days'))
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -185,7 +257,7 @@ class Asset(models.Model):
     def generate_depreciation_entries(self):
         """Generate depreciation entries with value subtraction."""
         assets = self.search(
-            [('status', '!=', 'destroyed'), ('depreciation_apply', '=', True)])
+            [('depreciation_apply', '=', True)])
 
         for asset in assets:
             # Check if the maximum number of depreciation entries has been reached
@@ -243,6 +315,7 @@ class Asset(models.Model):
                 'created_by': self.env.uid,
                 'depreciation_amount': depreciation_amount,
                 'entry_date': datetime.today().date(),
+                'bill_id': asset.invoice_id.id if asset.invoice_id else False,
             })
 
             print(
@@ -268,12 +341,28 @@ class AssetTag(models.Model):
     ]
 
 
+class AssetSerialNumber(models.Model):
+    _name = 'asset.serial.number'
+    _description = 'Asset Serial Number'
+    _rec_name = 'name'
+
+    name = fields.Char(string="Serial Number", required=True)
+    asset_id = fields.Many2one('asset.management', string="Asset", required=True, ondelete='cascade')
+    company_id = fields.Many2one('res.company', string="Branch", related='asset_id.company_id', store=True, readonly=True)
+
+    _sql_constraints = [
+        ('unique_serial', 'unique(name)', 'Serial number must be unique!'),
+    ]
+
+
 class AssetTransferEntry(models.Model):
     _name = 'asset.transfer.entry'
     _description = 'Asset Transfer Entry'
 
     # Fields for tracking asset transfers
     asset_id = fields.Many2one('asset.management', string="Asset Reference", help="Choose the asset for which the transfer is being recorded")
+    product_id = fields.Many2one('product.product', string="Product", related='asset_id.product_id', store=True, readonly=True)
+    serial_number_id = fields.Many2one('asset.serial.number', string="Serial Number", help="Select the specific serial number being transferred")
     transfer_employee_id = fields.Many2one('hr.employee', string="Assigned To", help="Employee who is receiving or has received the asset")
     assign_date = fields.Date(string="Assign Date", help="Date when the asset was assigned to the employee")
     assign_by = fields.Many2one('res.users', string="Assign By", default=lambda self: self.env.user, help="Person responsible for assigning the asset")
@@ -288,6 +377,14 @@ class AssetTransferEntry(models.Model):
     stock_qty = fields.Integer(string="Quantity", default=1, 
                               help="Quantity of assets being transferred (for multiple assets)")
     
+    from_branch_id = fields.Many2one('res.company', string="From Branch", help="Original branch/company the asset is transferred from", default=lambda self: self.env.company)
+    to_branch_id = fields.Many2one('res.company', string="To Branch", help="Destination branch/company the asset is transferred to")
+    
+    @api.onchange('asset_id')
+    def _onchange_asset_id(self):
+        if self.asset_id and self.asset_id.company_id:
+            self.from_branch_id = self.asset_id.company_id.id
+    
     @api.model_create_multi
     def create(self, vals_list):
         """Override create to generate transfer code and check stock availability"""
@@ -301,16 +398,79 @@ class AssetTransferEntry(models.Model):
                 if vals.get('stock_qty', 1) <= 0:
                     raise exceptions.ValidationError(_("Transfer quantity must be greater than zero."))
                     
-                if asset.model_type == 'multiple':
-                    if asset.current_stock < vals.get('stock_qty', 1):
-                        raise exceptions.ValidationError(_("Cannot assign this asset: Insufficient stock available."))
-        return super(AssetTransferEntry, self).create(vals_list)
+                if asset.current_stock < vals.get('stock_qty', 1):
+                    raise exceptions.ValidationError(_("Cannot assign this asset: Insufficient stock available."))
+        records = super(AssetTransferEntry, self).create(vals_list)
+        
+        # Branch Split & Transfer Logic
+        for record in records:
+            if record.to_branch_id and record.asset_id.company_id != record.to_branch_id and record.status == 'assigned':
+                asset = record.asset_id
+                
+                # Full or Partial Transfer?
+                if record.stock_qty < asset.initial_stock:
+                    # Partial: Split
+                    asset.initial_stock -= record.stock_qty
+                    new_asset = asset.copy({
+                        'name': 'New',
+                        'company_id': record.to_branch_id.id,
+                        'initial_stock': record.stock_qty,
+                        'transfer_ids': False,
+                        'maintenance_ids': False,
+                        'depreciation_ids': False,
+                        'serial_number_ids': False,
+                    })
+                    # Move transferred serial number to the new asset
+                    if record.serial_number_id:
+                        record.serial_number_id.asset_id = new_asset.id
+                    record.write({
+                        'asset_id': new_asset.id,
+                        'status': 'returned'
+                    })
+                else:
+                    # Full: Move original asset
+                    asset.company_id = record.to_branch_id.id
+                    record.write({'status': 'returned'})
+                        
+        return records
+
+    def write(self, vals):
+        res = super(AssetTransferEntry, self).write(vals)
+        for record in self:
+            if record.to_branch_id and record.asset_id.company_id != record.to_branch_id and record.status == 'assigned':
+                asset = record.asset_id
+                
+                # Full or Partial Transfer?
+                if record.stock_qty < asset.initial_stock:
+                    # Partial: Split
+                    asset.initial_stock -= record.stock_qty
+                    new_asset = asset.copy({
+                        'name': 'New',
+                        'company_id': record.to_branch_id.id,
+                        'initial_stock': record.stock_qty,
+                        'transfer_ids': False,
+                        'maintenance_ids': False,
+                        'depreciation_ids': False,
+                        'serial_number_ids': False,
+                    })
+                    # Move transferred serial number to the new asset
+                    if record.serial_number_id:
+                        record.serial_number_id.asset_id = new_asset.id
+                    record.write({
+                        'asset_id': new_asset.id,
+                        'status': 'returned'
+                    })
+                else:
+                    # Full: Move original asset
+                    asset.company_id = record.to_branch_id.id
+                    record.write({'status': 'returned'})
+        return res
 
     @api.constrains('status', 'asset_id', 'stock_qty')
     def _check_stock_availability(self):
         """Ensure stock is available when assigning assets"""
         for record in self:
-            if record.status == 'assigned' and record.asset_id.model_type == 'multiple':
+            if record.status == 'assigned':
                 # Get current stock after excluding this record (important for updates)
                 other_transfers = self.search([
                     ('asset_id', '=', record.asset_id.id),
@@ -328,7 +488,16 @@ class AssetMaintenanceEntry(models.Model):
 
     # Fields for tracking asset maintenance
     asset_id = fields.Many2one('asset.management', string="Asset Reference", help="Choose the asset for undergoing maintenance or repair is being recorded")
+    serial_number_id = fields.Many2one('asset.serial.number', string="Serial Number", help="Select the specific serial number undergoing maintenance")
+    maintenance_type = fields.Selection([
+        ('preventive', 'Preventive'),
+        ('breakdown', 'Breakdown'),
+    ], string="Maintenance Type", help="Type of maintenance: Preventive (scheduled) or Breakdown (unplanned)")
     maintenance_vendor_id = fields.Many2one('asset.vendor', string="Select Vendor", help="Vendor or technician performing the maintenance or repair")
+    amc_vendor_id = fields.Many2one('asset.vendor', string="AMC Vendor", help="Annual Maintenance Contract vendor responsible for this asset")
+    amc_cost = fields.Float(string="AMC Cost", help="Annual Maintenance Contract cost")
+    product_id = fields.Many2one('product.product', string="Product / Equipment",
+                                 help="Select an existing product from inventory used as maintenance equipment or spare part")
     assign_date = fields.Date(string="Service Start Date", help="Date when the asset was sent for maintenance or repair")
     assign_by = fields.Many2one('res.users', string="Requested By", default=lambda self: self.env.user, help="Person who initiated the maintenance or repair request")
     return_date = fields.Date(string="Completion Date", help="Date when the maintenance or repair was completed")
@@ -337,10 +506,20 @@ class AssetMaintenanceEntry(models.Model):
         ('pending', 'Pending'),
         ('completed', 'Completed')
     ], string="Status", help="Current status of the maintenance or repair process")
-    maintenance_amount = fields.Float(string="Amount")
+    maintenance_amount = fields.Float(string="Service Cost", help="Cost of this maintenance service")
+    downtime_days = fields.Integer(string="Downtime (Days)", compute='_compute_downtime_days', store=True, help="Number of days the asset was unavailable during maintenance")
     invoice_id = fields.Many2one('account.move', string="Invoice")
     file_name = fields.Char(string='File Name')
     document = fields.Binary(string='Documents', required=True)
+
+    @api.depends('assign_date', 'return_date')
+    def _compute_downtime_days(self):
+        for record in self:
+            if record.assign_date and record.return_date:
+                delta = record.return_date - record.assign_date
+                record.downtime_days = max(delta.days, 0)
+            else:
+                record.downtime_days = 0
 
 
 class AssetDepreciationEntry(models.Model):
@@ -349,8 +528,11 @@ class AssetDepreciationEntry(models.Model):
 
     # Fields for tracking asset depreciation
     asset_id = fields.Many2one('asset.management', string="Asset Reference", help="Choose the asset for which depreciation is being recorded")
+    product_id = fields.Many2one('product.product', string="Product", related='asset_id.product_id', store=True, readonly=True)
+    bill_id = fields.Many2one('account.move', string="Bill Reference", domain="[('move_type', 'in', ['in_invoice', 'in_refund'])]", help="Vendor bill associated with this depreciation entry")
     depreciation_amount = fields.Float(string="Amount", help="The monetary value of depreciation applied in this entry")
     entry_date = fields.Date(string="Depreciation Date", help="Date when this depreciation entry was recorded")
+    state = fields.Selection([('draft', 'Planned'), ('posted', 'Posted')], string='Status', default='posted')
     notes = fields.Text(string="Comments", help="Additional information or remarks about this depreciation entry")
     created_by = fields.Many2one('res.users', string="Recorded By", default=lambda self: self.env.user, help="Person who created this depreciation entry")
 
@@ -372,6 +554,7 @@ class AssetType(models.Model):
         ('fix', 'Fix'),
         ('percentage', 'Percentage')
     ], string='Depreciation Value Type', required=True, help="Whether depreciation is calculated as a percentage or fixed amount")
+    color = fields.Integer(string='Color Index', default=0)
 
     depreciation_rate = fields.Float(string='Depreciation Rate', help="The percentage or fixed amount used to calculate depreciation")
     depreciation_start_delay = fields.Integer(string='Depreciation Start Delay', help="Time duration before depreciation begins after asset acquisition")
@@ -380,3 +563,43 @@ class AssetType(models.Model):
         ('depreciation_value', 'Book Price')
     ], string='Depreciation Basis', required=True, help="Whether depreciation is applied to the adjusted value (after previous depreciation) or the original value")
     maximum_depreciation_entries = fields.Integer(string="Maximum Depreciation Entries", help="The maximum number of depreciation entries allowed for this asset type")
+
+    asset_count = fields.Integer(compute='_compute_asset_stats')
+    total_booked_value = fields.Monetary(compute='_compute_asset_stats', string="Total Booked Value", currency_field='currency_id')
+    total_current_value = fields.Monetary(compute='_compute_asset_stats', string="Current Value", currency_field='currency_id')
+    total_transfer_count = fields.Integer(compute='_compute_asset_stats', string="Total Transfers")
+    total_maintenance_count = fields.Integer(compute='_compute_asset_stats', string="Total Maintenance")
+    currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env.company.currency_id)
+
+    def _compute_asset_stats(self):
+        for record in self:
+            # Aggregate stats across all companies if in Main Company, or specific companies if in branch
+            domain = [('asset_type_id', '=', record.id)]
+            
+            # If the active company has a parent, it's a branch: restrict to current active selection.
+            # If it has no parent, it's the Main Company: show everything from all branches.
+            if self.env.company.parent_id:
+                domain.append(('company_id', 'in', self.env.companies.ids))
+            
+            assets = self.env['asset.management'].search(domain)
+            record.asset_count = len(assets)
+            record.total_booked_value = sum(assets.mapped('amount'))
+            record.total_current_value = sum(assets.mapped('current_amount'))
+            record.total_transfer_count = sum(assets.mapped('transfer_count'))
+            record.total_maintenance_count = sum(assets.mapped('maintenance_count'))
+
+    def action_open_assets(self):
+        self.ensure_one()
+        # Create a new dashboard drill-down wizard for the selected type
+        wizard = self.env['asset.dashboard.wizard'].create({
+            'asset_type_id': self.id
+        })
+        wizard.populate_summary_lines()
+        
+        action = self.env.ref('asset_management.action_asset_dashboard_wizard').read()[0]
+        action.update({
+            'res_id': wizard.id,
+            'target': 'new',
+            'view_mode': 'form',
+        })
+        return action

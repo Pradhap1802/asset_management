@@ -143,7 +143,6 @@
             <field name="vendor_id" ref="demo_vendor_tech_solutions"/>
             <field name="invoice_date">2024-06-01</field>
             <field name="amount">1200.00</field>
-            <field name="status">assign</field>
             <field name="tag_ids" eval="[(6, 0, [ref('demo_asset_tag_high_value'), ref('demo_asset_tag_office')])]"/>
         </record>
 
@@ -157,7 +156,6 @@
             <field name="vendor_id" ref="demo_vendor_furniture_warehouse"/>
             <field name="invoice_date">2024-09-01</field>
             <field name="amount">450.00</field>
-            <field name="status">in_warehouse</field>
             <field name="tag_ids" eval="[(6, 0, [ref('demo_asset_tag_office')])]"/>
         </record>
 
@@ -171,7 +169,6 @@
             <field name="vendor_id" ref="demo_vendor_auto_services"/>
             <field name="invoice_date">2023-12-01</field>
             <field name="amount">25000.00</field>
-            <field name="status">assign</field>
             <field name="tag_ids" eval="[(6, 0, [ref('demo_asset_tag_high_value'), ref('demo_asset_tag_critical')])]"/>
         </record>
 
@@ -186,7 +183,6 @@
             <field name="vendor_id" ref="demo_vendor_furniture_warehouse"/>
             <field name="invoice_date">2024-10-01</field>
             <field name="amount">150.00</field>
-            <field name="status">in_warehouse</field>
             <field name="tag_ids" eval="[(6, 0, [ref('demo_asset_tag_office')])]"/>
         </record>
 
@@ -200,7 +196,6 @@
             <field name="vendor_id" ref="demo_vendor_tech_solutions"/>
             <field name="invoice_date">2024-08-01</field>
             <field name="amount">300.00</field>
-            <field name="status">in_warehouse</field>
             <field name="tag_ids" eval="[(6, 0, [ref('demo_asset_tag_office')])]"/>
         </record>
 
@@ -214,7 +209,6 @@
             <field name="vendor_id" ref="demo_vendor_office_supplies"/>
             <field name="invoice_date">2024-11-01</field>
             <field name="amount">800.00</field>
-            <field name="status">in_warehouse</field>
             <field name="tag_ids" eval="[(6, 0, [ref('demo_asset_tag_office')])]"/>
         </record>
 
