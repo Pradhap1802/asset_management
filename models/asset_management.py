@@ -12,6 +12,7 @@ class Asset(models.Model):
     name = fields.Char(string="Asset Reference", required=True, copy=False, readonly=True,
                        default=lambda self: _('New'))
     barcode = fields.Char(string="Barcode", copy=False, help="Barcode for asset identification and scanning")
+    serial_number_ids = fields.One2many('asset.serial.number', 'asset_id', string="Serial Numbers")
     product_id = fields.Many2one('product.product', string="Associated Product", help="Select the product used in this asset from available options")
     asset_type_id = fields.Many2one('asset.type', string="Asset Type", help="Classification of the asset (e.g., Equipment, Vehicle, Building)")
     
@@ -314,6 +315,7 @@ class Asset(models.Model):
                 'created_by': self.env.uid,
                 'depreciation_amount': depreciation_amount,
                 'entry_date': datetime.today().date(),
+                'bill_id': asset.invoice_id.id if asset.invoice_id else False,
             })
 
             print(
@@ -339,6 +341,20 @@ class AssetTag(models.Model):
     ]
 
 
+class AssetSerialNumber(models.Model):
+    _name = 'asset.serial.number'
+    _description = 'Asset Serial Number'
+    _rec_name = 'name'
+
+    name = fields.Char(string="Serial Number", required=True)
+    asset_id = fields.Many2one('asset.management', string="Asset", required=True, ondelete='cascade')
+    company_id = fields.Many2one('res.company', string="Branch", related='asset_id.company_id', store=True, readonly=True)
+
+    _sql_constraints = [
+        ('unique_serial', 'unique(name)', 'Serial number must be unique!'),
+    ]
+
+
 class AssetTransferEntry(models.Model):
     _name = 'asset.transfer.entry'
     _description = 'Asset Transfer Entry'
@@ -346,6 +362,7 @@ class AssetTransferEntry(models.Model):
     # Fields for tracking asset transfers
     asset_id = fields.Many2one('asset.management', string="Asset Reference", help="Choose the asset for which the transfer is being recorded")
     product_id = fields.Many2one('product.product', string="Product", related='asset_id.product_id', store=True, readonly=True)
+    serial_number_id = fields.Many2one('asset.serial.number', string="Serial Number", help="Select the specific serial number being transferred")
     transfer_employee_id = fields.Many2one('hr.employee', string="Assigned To", help="Employee who is receiving or has received the asset")
     assign_date = fields.Date(string="Assign Date", help="Date when the asset was assigned to the employee")
     assign_by = fields.Many2one('res.users', string="Assign By", default=lambda self: self.env.user, help="Person responsible for assigning the asset")
@@ -401,7 +418,11 @@ class AssetTransferEntry(models.Model):
                         'transfer_ids': False,
                         'maintenance_ids': False,
                         'depreciation_ids': False,
+                        'serial_number_ids': False,
                     })
+                    # Move transferred serial number to the new asset
+                    if record.serial_number_id:
+                        record.serial_number_id.asset_id = new_asset.id
                     record.write({
                         'asset_id': new_asset.id,
                         'status': 'returned'
@@ -430,7 +451,11 @@ class AssetTransferEntry(models.Model):
                         'transfer_ids': False,
                         'maintenance_ids': False,
                         'depreciation_ids': False,
+                        'serial_number_ids': False,
                     })
+                    # Move transferred serial number to the new asset
+                    if record.serial_number_id:
+                        record.serial_number_id.asset_id = new_asset.id
                     record.write({
                         'asset_id': new_asset.id,
                         'status': 'returned'
@@ -463,6 +488,7 @@ class AssetMaintenanceEntry(models.Model):
 
     # Fields for tracking asset maintenance
     asset_id = fields.Many2one('asset.management', string="Asset Reference", help="Choose the asset for undergoing maintenance or repair is being recorded")
+    serial_number_id = fields.Many2one('asset.serial.number', string="Serial Number", help="Select the specific serial number undergoing maintenance")
     maintenance_type = fields.Selection([
         ('preventive', 'Preventive'),
         ('breakdown', 'Breakdown'),
@@ -502,6 +528,7 @@ class AssetDepreciationEntry(models.Model):
 
     # Fields for tracking asset depreciation
     asset_id = fields.Many2one('asset.management', string="Asset Reference", help="Choose the asset for which depreciation is being recorded")
+    product_id = fields.Many2one('product.product', string="Product", related='asset_id.product_id', store=True, readonly=True)
     bill_id = fields.Many2one('account.move', string="Bill Reference", domain="[('move_type', 'in', ['in_invoice', 'in_refund'])]", help="Vendor bill associated with this depreciation entry")
     depreciation_amount = fields.Float(string="Amount", help="The monetary value of depreciation applied in this entry")
     entry_date = fields.Date(string="Depreciation Date", help="Date when this depreciation entry was recorded")

@@ -9,6 +9,8 @@ access_asset_depreciation_entry_assets_user,asset.depreciation.entry.assets.user
 access_asset_vendor,asset.vendor,model_asset_vendor,vendor_user_group,1,1,1,1
 access_asset_vendor_assets_user,asset.vendor.assets.user,model_asset_vendor,assets_user_group,1,1,1,1
 access_asset_type_user,asset.type.user,model_asset_type,assets_user_group,1,1,1,1
+access_asset_serial_number_user,asset.serial.number.user,model_asset_serial_number,assets_user_group,1,1,1,1
+access_asset_serial_number_admin,asset.serial.number.admin,model_asset_serial_number,assets_admin_group,1,1,1,1
 access_asset_tag_user,asset.tag.user,model_asset_tag,assets_user_group,1,0,0,0
 access_asset_tag_admin,asset.tag.admin,model_asset_tag,assets_admin_group,1,1,1,1
 access_asset_tag_system,asset.tag.system,model_asset_tag,base.group_system,1,1,1,1

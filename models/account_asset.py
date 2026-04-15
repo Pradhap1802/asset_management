@@ -58,21 +58,36 @@ class AccountAsset(models.Model):
         return self.env['purchase.order.line']
 
     def _get_stock_move_from_invoice(self):
-        """Extract stock move related to this asset from invoice."""
+        """Extract stock move related to this asset from invoice via PO line or date fallback."""
         self.ensure_one()
-        # Try to find stock move(s) associated with the invoice
-        if self.original_move_line_ids:
-            invoice = self.original_move_line_ids[0].move_id
-            # Search for picking with same date and product
-            product = self._get_product_from_invoice()
-            if product:
-                stock_moves = self.env['stock.move'].search([
-                    ('product_id', '=', product.id),
-                    ('create_date', '>=', invoice.invoice_date - timedelta(days=1)),
-                    ('create_date', '<=', invoice.invoice_date + timedelta(days=1)),
-                ], limit=1)
-                if stock_moves:
-                    return stock_moves
+        if not self.original_move_line_ids:
+            return self.env['stock.move']
+
+        product = self._get_product_from_invoice()
+        if not product:
+            return self.env['stock.move']
+
+        # 1. Try via purchase order line link (most reliable)
+        po_line = self._get_po_line_from_invoice()
+        if po_line:
+            stock_moves = self.env['stock.move'].search([
+                ('product_id', '=', product.id),
+                ('purchase_line_id', '=', po_line.id),
+            ], limit=1)
+            if stock_moves:
+                return stock_moves
+
+        # 2. Fallback: search by product and invoice date range
+        invoice = self.original_move_line_ids[0].move_id
+        if invoice.invoice_date:
+            stock_moves = self.env['stock.move'].search([
+                ('product_id', '=', product.id),
+                ('create_date', '>=', invoice.invoice_date - timedelta(days=30)),
+                ('create_date', '<=', invoice.invoice_date + timedelta(days=30)),
+            ], limit=1)
+            if stock_moves:
+                return stock_moves
+
         return self.env['stock.move']
 
     def _get_asset_serial_number(self):
@@ -80,10 +95,39 @@ class AccountAsset(models.Model):
         self.ensure_one()
         stock_move = self._get_stock_move_from_invoice()
         if stock_move:
-            # Try to get from lot_ids
             if stock_move.move_line_ids and stock_move.move_line_ids[0].lot_id:
                 return stock_move.move_line_ids[0].lot_id.name
         return None
+
+    def _get_all_serial_numbers(self):
+        """Extract all serial/lot numbers from stock moves linked to this asset's invoice."""
+        self.ensure_one()
+        serials = []
+        product = self._get_product_from_invoice()
+        if not product:
+            return serials
+
+        # 1. Try via purchase order line (gets all move lines from the receipt)
+        po_line = self._get_po_line_from_invoice()
+        if po_line:
+            stock_moves = self.env['stock.move'].search([
+                ('product_id', '=', product.id),
+                ('purchase_line_id', '=', po_line.id),
+            ])
+            for move in stock_moves:
+                for ml in move.move_line_ids:
+                    if ml.lot_id and ml.lot_id.name not in serials:
+                        serials.append(ml.lot_id.name)
+            if serials:
+                return serials
+
+        # 2. Fallback: from single stock move
+        stock_move = self._get_stock_move_from_invoice()
+        if stock_move:
+            for ml in stock_move.move_line_ids:
+                if ml.lot_id and ml.lot_id.name not in serials:
+                    serials.append(ml.lot_id.name)
+        return serials
 
     def _get_asset_warranty_date(self):
         """Extract warranty date from stock move."""
@@ -158,6 +202,9 @@ class AccountAsset(models.Model):
         if not all_moves:
             return
 
+        # Get original bill reference from account.asset
+        original_bill = self.original_move_line_ids.move_id[:1]
+
         # Get existing auto-synced entries (identified by notes prefix)
         existing_synced = mgmt_record.depreciation_ids.filtered(
             lambda e: e.notes and e.notes.startswith('Auto-synced')
@@ -173,8 +220,13 @@ class AccountAsset(models.Model):
             if entry_date in existing_dates:
                 # Update existing entry if amount changed or state changed
                 existing_entry = existing_dates[entry_date]
+                vals = {}
                 if existing_entry.depreciation_amount != amount or existing_entry.state != move.state:
-                    existing_entry.write({'depreciation_amount': amount, 'notes': note, 'state': move.state})
+                    vals.update({'depreciation_amount': amount, 'notes': note, 'state': move.state})
+                if not existing_entry.bill_id and original_bill:
+                    vals['bill_id'] = original_bill.id
+                if vals:
+                    existing_entry.write(vals)
             else:
                 # Create new entry
                 self.env['asset.depreciation.entry'].create({
@@ -183,6 +235,7 @@ class AccountAsset(models.Model):
                     'entry_date': entry_date,
                     'notes': note,
                     'state': move.state,
+                    'bill_id': original_bill.id if original_bill else False,
                     'created_by': self.create_uid.id if self.create_uid else self.env.uid,
                 })
 
@@ -245,12 +298,9 @@ class AccountAsset(models.Model):
             }
 
             # Get and add serial number: prefer account.asset field, fallback to stock move
-            if asset.asset_serial_number:
-                vals['barcode'] = asset.asset_serial_number
-            else:
-                serial_number = asset._get_asset_serial_number()
-                if serial_number:
-                    vals['barcode'] = serial_number
+            serial_value = asset.asset_serial_number or asset._get_asset_serial_number()
+            if serial_value:
+                vals['barcode'] = serial_value
             
             # Get and add warranty date: prefer account.asset field, fallback to stock move
             if asset.asset_warranty_date:
@@ -280,6 +330,22 @@ class AccountAsset(models.Model):
 
             # Sync depreciation entries (Note: Depreciation syncing handles accumulating values perfectly)
             asset._sync_depreciation_entries(mgmt_record)
+
+            # Sync serial numbers from all siblings' stock moves
+            all_serials = set()
+            for sibling in sibling_assets:
+                # From account.asset field
+                if sibling.asset_serial_number:
+                    all_serials.add(sibling.asset_serial_number)
+                # From stock move lots
+                all_serials.update(sibling._get_all_serial_numbers())
+
+            existing_serials = set(mgmt_record.serial_number_ids.mapped('name'))
+            for serial_name in all_serials - existing_serials:
+                self.env['asset.serial.number'].create({
+                    'asset_id': mgmt_record.id,
+                    'name': serial_name,
+                })
 
 
     # -------------------------------------------------------------------------
