@@ -676,53 +676,57 @@
                 <field name="currency_id"/>
                 <templates>
                     <t t-name="card">
-                        <t t-set="colors" t-value="['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#6f42c1', '#fd7e14', '#20c997', '#d63384', '#0dcaf0', '#198754']"/>
-                        <t t-set="card_color" t-value="colors[(record.id.raw_value or 0) % 11]"/>
-                        
-                        <button t-attf-class="position-relative d-flex flex-column align-items-center p-0 text-center text-white border-0 w-100"
-                                t-attf-style="min-height: 240px; transition: all 0.3s ease; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); background-color: {{card_color}} !important; cursor: pointer;"
-                                type="object" name="action_open_assets"
-                                onmouseover="this.style.transform='scale(1.05) translateY(-5px)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.3)';"
-                                onmouseout="this.style.transform='scale(1) translateY(0)'; this.style.boxShadow='0 8px 16px rgba(0,0,0,0.2)';"
-                                >
-                             
-                            <!-- SECTION 1: ASSET TYPE NAME -->
-                            <div class="w-100 p-3" style="background: rgba(0,0,0,0.1); border-radius: 12px 12px 0 0;">
-                                <h2 class="mb-0 font-weight-bold text-white" style="text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                        <t t-set="border_colors" t-value="['#00A1E4', '#FF6B6B', '#2EC4B6', '#F7B731', '#A55EEA', '#26de81', '#fd9644', '#4b7bec', '#d63384', '#0dcaf0', '#198754']"/>
+                        <t t-set="top_color" t-value="border_colors[(record.id.raw_value or 0) % 11]"/>
+
+                        <button type="object" name="action_open_assets"
+                                class="d-flex flex-column align-items-center p-0 border-0 w-100 bg-white"
+                                t-attf-style="border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.08); transition: all 0.3s ease; cursor: pointer;"
+                                onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.15)';"
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 12px rgba(0,0,0,0.08)';">
+
+                            <!-- Colored Top Border -->
+                            <div class="w-100" t-attf-style="height: 5px; background: {{top_color}};"/>
+
+                            <!-- Asset Type Name -->
+                            <div class="w-100 pt-4 pb-2 px-3 text-center">
+                                <h3 class="mb-0 fw-bold text-dark">
                                     <field name="name"/>
-                                </h2>
+                                </h3>
                             </div>
 
-                            <!-- SECTION 2: ASSETS & BOOKED VALUE -->
-                            <div class="w-100 p-3 d-flex justify-content-around align-items-center border-bottom border-white-25" style="border-color: rgba(255,255,255,0.2) !important;">
-                                <div class="text-center">
-                                     <span class="d-block text-uppercase small" style="letter-spacing: 1px; opacity: 0.8;">Assets</span>
-                                     <div class="h2 mb-0 font-weight-bold">
-                                         <field name="asset_count"/>
-                                     </div>
-                                 </div>
-                                 <div class="text-center">
-                                     <span class="d-block text-uppercase small" style="letter-spacing: 1px; opacity: 0.8;">Booked Value</span>
-                                     <div class="h3 mb-0">
-                                         <field name="total_booked_value" widget="monetary"/>
-                                     </div>
-                                 </div>
+                            <!-- Highlight: Asset Count -->
+                            <div class="w-100 py-3 px-3 text-center">
+                                <div class="display-4 fw-bold" t-attf-style="color: {{top_color}};">
+                                    <field name="asset_count"/>
+                                </div>
+                                <span class="text-muted text-uppercase small" style="letter-spacing: 1.5px;">Total Assets</span>
                             </div>
 
-                            <!-- SECTION 3: CURRENT VALUE & TRANSFERS -->
-                            <div class="w-100 p-3 d-flex justify-content-around align-items-center">
-                                <div class="text-center">
-                                     <span class="d-block text-uppercase small" style="letter-spacing: 1px; opacity: 0.8;">Current Value</span>
-                                     <div class="h3 mb-0">
-                                         <field name="total_current_value" widget="monetary"/>
-                                     </div>
-                                 </div>
-                                 <div class="text-center">
-                                     <span class="d-block text-uppercase small" style="letter-spacing: 1px; opacity: 0.8;">Transfers</span>
-                                     <div class="h3 mb-0 font-weight-bold">
-                                         <field name="total_transfer_count"/>
-                                     </div>
-                                 </div>
+                            <!-- Divider -->
+                            <div class="w-75 mx-auto" style="height: 1px; background: #e9ecef;"/>
+
+                            <!-- Details List -->
+                            <div class="w-100 py-3 px-4 text-start">
+                                <div class="d-flex justify-content-between align-items-center py-2">
+                                    <span class="text-muted small">Booked Value</span>
+                                    <strong class="text-dark"><field name="total_booked_value" widget="monetary"/></strong>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center py-2">
+                                    <span class="text-muted small">Current Value</span>
+                                    <strong t-attf-style="color: {{top_color}};"><field name="total_current_value" widget="monetary"/></strong>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center py-2">
+                                    <span class="text-muted small">Transfers</span>
+                                    <strong class="text-dark"><field name="total_transfer_count"/></strong>
+                                </div>
+                            </div>
+
+                            <!-- Footer Button Area -->
+                            <div class="w-100 p-3 text-center" style="background: #f8f9fa; border-top: 1px solid #e9ecef;">
+                                <span class="fw-semibold small" t-attf-style="color: {{top_color}};">
+                                    View Details <i class="fa fa-arrow-right ms-1"/>
+                                </span>
                             </div>
 
                         </button>
