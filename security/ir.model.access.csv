@@ -18,3 +18,5 @@ access_asset_label_layout,asset.label.layout,model_asset_label_layout,assets_use
 access_asset_warranty_wizard,asset.warranty.wizard,model_asset_warranty_wizard,base.group_user,1,1,1,1
 access_asset_dashboard_wizard,asset.dashboard.wizard,model_asset_dashboard_wizard,base.group_user,1,1,1,1
 access_asset_dashboard_wizard_line,asset.dashboard.wizard.line,model_asset_dashboard_wizard_line,base.group_user,1,1,1,1
+access_ir_actions_act_window_assets_user,ir.actions.act_window.assets.user,base.model_ir_actions_act_window,assets_user_group,1,0,0,0
+access_ir_actions_act_window_assets_admin,ir.actions.act_window.assets.admin,base.model_ir_actions_act_window,assets_admin_group,1,0,0,0
