@@ -10,7 +10,8 @@
                             type="object" class="oe_highlight" icon="fa-print"
                             groups="asset_management.assets_user_group,asset_management.assets_admin_group,base.group_system"/>
                     <field name="asset_status" widget="statusbar"
-                           statusbar_visible="active,maintenance_due,expired"/>
+                           statusbar_visible="active,maintenance_due,expired"
+                           options="{'clickable': '1'}"/>
                 </header>
                 <sheet>
                     <!-- Title section with asset name -->
@@ -50,10 +51,11 @@
                             <field name="last_depreciation_date"/>
                             <field name="depreciation_count"/>
                         </group>
-                        <!-- Maintenance Information group -->
-                        <group string="Maintenance Information">
+                        <!-- Maintenance & AMC Tracking -->
+                        <group string="Maintenance &amp; AMC Tracking">
                             <field name="total_maintenance_amount" readonly="1"/>
                             <field name="maintenance_count"/>
+                            <field name="total_downtime_days" readonly="1"/>
                         </group>
                         <!-- Asset Warranty group -->
                         <group string="Asset Warranty">
@@ -88,6 +90,7 @@
                             <field name="transfer_ids">
                                 <list editable="bottom">
                                     <field name="transfer_code"/>
+                                    <field name="product_id" readonly="1"/>
                                     <field name="transfer_employee_id"/>
                                     <field name="assign_date"/>
                                     <field name="assign_by"/>
@@ -103,15 +106,17 @@
                               groups="asset_management.maintenance_user_group,base.group_system">
                             <field name="maintenance_ids">
                                 <list editable="bottom">
+                                    <field name="maintenance_type"/>
                                     <field name="maintenance_vendor_id"/>
                                     <field name="assign_date"/>
                                     <field name="return_date"/>
+                                    <field name="downtime_days" readonly="1"/>
                                     <field name="assign_by"/>
+                                    <field name="maintenance_amount"/>
                                     <field name="invoice_id"/>
                                     <field name="file_name" column_invisible="1"/>
                                     <field name="document" filename="file_name"
                                            widget="binary"/>
-                                    <field name="maintenance_amount"/>
                                     <field name="maintenance_status"/>
                                 </list>
                             </field>
@@ -122,14 +127,17 @@
                             <field name="depreciation_ids">
                                 <list editable="bottom">
                                     <field name="depreciation_amount"/>
+                                    <field name="bill_id"/>
                                     <field name="created_by"/>
                                     <field name="entry_date"/>
+                                    <field name="state"/>
                                     <field name="notes"/>
                                 </list>
                             </field>
                         </page>
                     </notebook>
                 </sheet>
+                <chatter/>
             </form>
         </field>
     </record>
@@ -243,6 +251,9 @@
                                             <strong class="text-truncate d-block" style="font-size: 1.1em;">
                                                 <field name="name"/>
                                             </strong>
+                                            <div class="text-muted text-truncate" style="font-size: 0.9em;" t-if="record.product_id.value">
+                                                <field name="product_id"/>
+                                            </div>
                                         </div>
                                         <!-- Asset Status Badge -->
                                         <div>
@@ -386,6 +397,7 @@
                 <!-- Fields displayed in the list view for asset transfers -->
                 <field name="transfer_code"/>
                 <field name="asset_id"/>
+                <field name="product_id"/>
                 <field name="from_branch_id"/>
                 <field name="to_branch_id"/>
                 <field name="transfer_employee_id"/>
@@ -461,6 +473,7 @@
                         <group string="Transfer Details">
                             <field name="transfer_code" readonly="1"/>
                             <field name="asset_id"/>
+                            <field name="product_id" readonly="1"/>
                             <field name="from_branch_id"/>
                             <field name="to_branch_id"/>
                             <field name="transfer_employee_id"/>
@@ -500,6 +513,7 @@
             <list>
                 <!-- Fields displayed in the list view for asset depreciation -->
                 <field name="asset_id"/>
+                <field name="bill_id"/>
                 <field name="created_by"/>
                 <field name="depreciation_amount"/>
                 <field name="entry_date"/>
@@ -524,6 +538,7 @@
                         </group>
                         <group string="Depreciation Details">
                             <field name="depreciation_amount"/>
+                            <field name="bill_id"/>
                             <field name="created_by"/>
                         </group>
                     </group>

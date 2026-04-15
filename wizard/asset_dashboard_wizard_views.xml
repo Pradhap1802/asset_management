@@ -76,9 +76,9 @@
 
                                         <hr class="my-0"/>
 
-                                        <!-- Financial Snapshot -->
+                                        <!-- Financial Report -->
                                         <div class="px-3 py-2">
-                                            <div class="text-uppercase fw-bold text-info small mb-2" style="letter-spacing: 1px;">Financial Snapshot</div>
+                                            <div class="text-uppercase fw-bold text-info small mb-2" style="letter-spacing: 1px;">Financial Report</div>
                                             <div class="d-flex justify-content-between py-1">
                                                 <span class="text-muted small">Purchase Value</span>
                                                 <strong><field name="original_value" widget="monetary"/></strong>

@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 class Asset(models.Model):
     _name = 'asset.management'
     _description = 'Asset Management'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     # Basic Asset Information
     name = fields.Char(string="Asset Reference", required=True, copy=False, readonly=True,
@@ -41,7 +42,7 @@ class Asset(models.Model):
         ('active', 'Active'),
         ('maintenance_due', 'Maintenance'),
         ('expired', 'Expired/Scrap')
-    ], string="Asset Status", default='active', help="Current lifecycle status of the asset")
+    ], string="Asset Status", default='active', tracking=True, help="Current lifecycle status of the asset")
     
     # Computed Financial Fields
     current_amount = fields.Float(string="Current Book Value", compute="_compute_current_amount", help="Current value of the asset after depreciation (Read-only)")
@@ -49,6 +50,8 @@ class Asset(models.Model):
                                              compute='_compute_total_depreciation_amount', store=True, help="Total depreciation applied to the asset to date (Read-only)")
     total_maintenance_amount = fields.Float(string="Total Maintenance Cost",
                                             compute='_compute_total_maintenance_amount', store=True, help="Sum of all maintenance expenses for this asset (Read-only)")
+    total_downtime_days = fields.Integer(string="Total Downtime (Days)",
+                                         compute='_compute_total_downtime_days', store=True, help="Total downtime days across all maintenance entries")
 
     # Related Documents and Entries
     document_ids = fields.Many2many('ir.attachment', string="Asset Documentation", help="Upload multiple documents related to the asset (e.g., Warranty,Invoice)")
@@ -238,6 +241,11 @@ class Asset(models.Model):
         for record in self:
             record.total_maintenance_amount = sum(record.maintenance_ids.mapped('maintenance_amount'))
 
+    @api.depends('maintenance_ids.downtime_days')
+    def _compute_total_downtime_days(self):
+        for record in self:
+            record.total_downtime_days = sum(record.maintenance_ids.mapped('downtime_days'))
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
@@ -337,6 +345,7 @@ class AssetTransferEntry(models.Model):
 
     # Fields for tracking asset transfers
     asset_id = fields.Many2one('asset.management', string="Asset Reference", help="Choose the asset for which the transfer is being recorded")
+    product_id = fields.Many2one('product.product', string="Product", related='asset_id.product_id', store=True, readonly=True)
     transfer_employee_id = fields.Many2one('hr.employee', string="Assigned To", help="Employee who is receiving or has received the asset")
     assign_date = fields.Date(string="Assign Date", help="Date when the asset was assigned to the employee")
     assign_by = fields.Many2one('res.users', string="Assign By", default=lambda self: self.env.user, help="Person responsible for assigning the asset")
@@ -454,7 +463,13 @@ class AssetMaintenanceEntry(models.Model):
 
     # Fields for tracking asset maintenance
     asset_id = fields.Many2one('asset.management', string="Asset Reference", help="Choose the asset for undergoing maintenance or repair is being recorded")
+    maintenance_type = fields.Selection([
+        ('preventive', 'Preventive'),
+        ('breakdown', 'Breakdown'),
+    ], string="Maintenance Type", help="Type of maintenance: Preventive (scheduled) or Breakdown (unplanned)")
     maintenance_vendor_id = fields.Many2one('asset.vendor', string="Select Vendor", help="Vendor or technician performing the maintenance or repair")
+    amc_vendor_id = fields.Many2one('asset.vendor', string="AMC Vendor", help="Annual Maintenance Contract vendor responsible for this asset")
+    amc_cost = fields.Float(string="AMC Cost", help="Annual Maintenance Contract cost")
     product_id = fields.Many2one('product.product', string="Product / Equipment",
                                  help="Select an existing product from inventory used as maintenance equipment or spare part")
     assign_date = fields.Date(string="Service Start Date", help="Date when the asset was sent for maintenance or repair")
@@ -465,10 +480,20 @@ class AssetMaintenanceEntry(models.Model):
         ('pending', 'Pending'),
         ('completed', 'Completed')
     ], string="Status", help="Current status of the maintenance or repair process")
-    maintenance_amount = fields.Float(string="Amount")
+    maintenance_amount = fields.Float(string="Service Cost", help="Cost of this maintenance service")
+    downtime_days = fields.Integer(string="Downtime (Days)", compute='_compute_downtime_days', store=True, help="Number of days the asset was unavailable during maintenance")
     invoice_id = fields.Many2one('account.move', string="Invoice")
     file_name = fields.Char(string='File Name')
     document = fields.Binary(string='Documents', required=True)
+
+    @api.depends('assign_date', 'return_date')
+    def _compute_downtime_days(self):
+        for record in self:
+            if record.assign_date and record.return_date:
+                delta = record.return_date - record.assign_date
+                record.downtime_days = max(delta.days, 0)
+            else:
+                record.downtime_days = 0
 
 
 class AssetDepreciationEntry(models.Model):
@@ -477,6 +502,7 @@ class AssetDepreciationEntry(models.Model):
 
     # Fields for tracking asset depreciation
     asset_id = fields.Many2one('asset.management', string="Asset Reference", help="Choose the asset for which depreciation is being recorded")
+    bill_id = fields.Many2one('account.move', string="Bill Reference", domain="[('move_type', 'in', ['in_invoice', 'in_refund'])]", help="Vendor bill associated with this depreciation entry")
     depreciation_amount = fields.Float(string="Amount", help="The monetary value of depreciation applied in this entry")
     entry_date = fields.Date(string="Depreciation Date", help="Date when this depreciation entry was recorded")
     state = fields.Selection([('draft', 'Planned'), ('posted', 'Posted')], string='Status', default='posted')
