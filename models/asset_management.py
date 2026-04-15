@@ -30,21 +30,25 @@ class Asset(models.Model):
     invoice_date = fields.Date(string="Invoice Date", help="Date when the asset was purchased or acquired")
     amount = fields.Float(string="Purchase Price", help="Initial cost of acquiring the asset")
     
+    # Lifecycle Dates
+    capitalization_date = fields.Date(string="Capitalization Date", help="Date when the asset was capitalized in the books")
+    end_of_life_date = fields.Date(string="End of Life Date", help="Expected or actual end of life date for the asset")
+    last_maintenance_date = fields.Date(string="Last Maintenance Date", compute="_compute_last_maintenance_date_field", store=True, help="Date of the last completed maintenance")
+    next_maintenance_due = fields.Date(string="Next Maintenance Due", compute="_compute_next_maintenance_due", store=True, help="Calculated next maintenance due date")
+    
+    # Asset Status Indicator
+    asset_status = fields.Selection([
+        ('active', 'Active'),
+        ('maintenance_due', 'Maintenance Due'),
+        ('expired', 'Expired/Scrap')
+    ], string="Asset Status", default='active', help="Current lifecycle status of the asset")
+    
     # Computed Financial Fields
     current_amount = fields.Float(string="Current Book Value", compute="_compute_current_amount", help="Current value of the asset after depreciation (Read-only)")
     total_depreciation_amount = fields.Float(string="Accumulated Depreciation",
                                              compute='_compute_total_depreciation_amount', store=True, help="Total depreciation applied to the asset to date (Read-only)")
     total_maintenance_amount = fields.Float(string="Total Maintenance Cost",
                                             compute='_compute_total_maintenance_amount', store=True, help="Sum of all maintenance expenses for this asset (Read-only)")
-    # Asset Status 
-    status = fields.Selection([
-        ('assign', 'Assign'),
-        ('return', 'Return'),
-        ('on_hold', 'On Hold'),
-        ('in_warehouse', 'In Warehouse'),
-        ('repair', 'Repair'),
-        ('destroyed', 'Destroyed')
-    ], string="Status", default="assign")
 
     # Related Documents and Entries
     document_ids = fields.Many2many('ir.attachment', string="Asset Documentation", help="Upload multiple documents related to the asset (e.g., Warranty,Invoice)")
@@ -168,9 +172,39 @@ class Asset(models.Model):
                     record.assigned_user = ''
                     record.assign_by = ''
             else:
-                # Handle the case where there are no transfer entries
                 record.assigned_user = ''
                 record.assign_by = ''
+
+    @api.depends('maintenance_ids.return_date')
+    def _compute_next_maintenance_due(self):
+        """Calculate next maintenance due date based on last maintenance + 90 days"""
+        for record in self:
+            if record.maintenance_ids:
+                # Get the last completed maintenance
+                completed_maintenance = record.maintenance_ids.filtered(lambda m: m.maintenance_status == 'completed')
+                if completed_maintenance:
+                    last_maintenance = max(completed_maintenance, key=lambda m: m.return_date)
+                    if last_maintenance.return_date:
+                        # Add 90 days for next maintenance
+                        record.next_maintenance_due = last_maintenance.return_date + timedelta(days=90)
+                    else:
+                        record.next_maintenance_due = False
+                else:
+                    record.next_maintenance_due = False
+            else:
+                record.next_maintenance_due = False
+
+    @api.depends('maintenance_ids.return_date', 'maintenance_ids.maintenance_status')
+    def _compute_last_maintenance_date_field(self):
+        """Get the date of the last completed maintenance"""
+        for record in self:
+            completed = record.maintenance_ids.filtered(
+                lambda m: m.maintenance_status == 'completed' and m.return_date
+            )
+            if completed:
+                record.last_maintenance_date = max(completed.mapped('return_date'))
+            else:
+                record.last_maintenance_date = False
 
     @api.depends('transfer_ids', 'maintenance_ids', 'depreciation_ids.state')
     def _compute_all_count(self):
@@ -214,7 +248,7 @@ class Asset(models.Model):
     def generate_depreciation_entries(self):
         """Generate depreciation entries with value subtraction."""
         assets = self.search(
-            [('status', '!=', 'destroyed'), ('depreciation_apply', '=', True)])
+            [('depreciation_apply', '=', True)])
 
         for asset in assets:
             # Check if the maximum number of depreciation entries has been reached

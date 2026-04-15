@@ -9,6 +9,8 @@
                     <button string="Print Label" name="action_open_label_layout"
                             type="object" class="oe_highlight" icon="fa-print"
                             groups="asset_management.assets_user_group,asset_management.assets_admin_group,base.group_system"/>
+                    <field name="asset_status" widget="statusbar"
+                           statusbar_visible="active,maintenance_due,expired"/>
                 </header>
                 <sheet>
                     <!-- Title section with asset name -->
@@ -62,8 +64,25 @@
                             <field name="document_ids" widget="many2many_binary"/>
                         </group>
                     </group>
+
                     <!-- Notebook for additional details -->
                     <notebook>
+                        <!-- Lifecycle Timeline Page -->
+                        <page string="Lifecycle Timeline">
+                            <group>
+                                <group string="Key Dates">
+                                    <field name="invoice_date" string="Purchase Date" readonly="1"/>
+                                    <field name="capitalization_date"/>
+                                    <field name="last_maintenance_date" readonly="1"/>
+                                </group>
+                                <group string="Upcoming / Expiry">
+                                    <field name="next_maintenance_due" readonly="1"/>
+                                    <field name="expired_warranty_date" string="Warranty Expiry" readonly="1"/>
+                                    <field name="end_of_life_date"/>
+                                </group>
+                            </group>
+                        </page>
+
                         <!-- Transfer Page -->
                         <page string="Transfer" groups="asset_management.transfer_user_group,base.group_system">
                             <field name="transfer_ids">
@@ -132,6 +151,10 @@
                 <field name="name"/>
                 <field name="barcode" string="Serial / Barcode" optional="show" widget="char"/>
                 <field name="tag_ids" widget="many2many_tags" optional="show"/>
+                <field name="asset_status" widget="badge" optional="show"
+                       decoration-success="asset_status == 'active'"
+                       decoration-warning="asset_status == 'maintenance_due'"
+                       decoration-danger="asset_status == 'expired'"/>
                 <field name="initial_stock" optional="show"/>
                 <field name="current_stock" optional="show"/>
                 <field name="active_transfers" optional="show"/>
@@ -162,6 +185,13 @@
                         domain="[('current_stock', '&lt;=', 0)]"/>
                 <filter string="In Stock" name="in_stock"
                         domain="[('current_stock', '&gt;', 0)]"/>
+                <separator/>
+                <filter string="Active" name="status_active"
+                        domain="[('asset_status', '=', 'active')]"/>
+                <filter string="Maintenance Due" name="status_maintenance_due"
+                        domain="[('asset_status', '=', 'maintenance_due')]"/>
+                <filter string="Expired / Scrap" name="status_expired"
+                        domain="[('asset_status', '=', 'expired')]"/>
 
                 <group>
                     <filter string="Asset Type" name="group_by_asset_type" context="{'group_by': 'asset_type_id'}"/>
@@ -181,6 +211,7 @@
                 <field name="id"/>
                 <field name="name"/>
                 <field name="asset_type_id"/>
+                <field name="asset_status"/>
                 <field name="barcode"/>
                 <field name="amount"/>
                 <field name="current_amount"/>
@@ -212,6 +243,12 @@
                                             <strong class="text-truncate d-block" style="font-size: 1.1em;">
                                                 <field name="name"/>
                                             </strong>
+                                        </div>
+                                        <!-- Asset Status Badge -->
+                                        <div>
+                                            <span t-if="record.asset_status.raw_value == 'active'" class="badge bg-success">🟢 Active</span>
+                                            <span t-if="record.asset_status.raw_value == 'maintenance_due'" class="badge bg-warning text-dark">🟡 Maintenance Due</span>
+                                            <span t-if="record.asset_status.raw_value == 'expired'" class="badge bg-danger">🔴 Expired/Scrap</span>
                                         </div>
                                     </div>
                                 </div>
@@ -756,7 +793,7 @@
         <field name="state">code</field>
         <field name="code">
 target_date = datetime.date.today() + datetime.timedelta(days=30)
-domain = [('expired_warranty_date', '!=', False), ('expired_warranty_date', '&lt;=', target_date), ('status', 'not in', ['destroyed'])]
+domain = [('expired_warranty_date', '!=', False), ('expired_warranty_date', '&lt;=', target_date), ('asset_status', '!=', 'expired')]
 expiring = env['asset.management'].search(domain, limit=1)
 
 if expiring:

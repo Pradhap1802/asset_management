@@ -1,4 +1,5 @@
 from odoo import models, fields, api
+from datetime import timedelta
 
 
 class AccountAsset(models.Model):
@@ -11,6 +12,17 @@ class AccountAsset(models.Model):
         copy=False,
         readonly=True,
         help="Linked physical asset tracking record in Asset Management module",
+    )
+
+    # Asset identification and warranty fields
+    asset_serial_number = fields.Char(
+        string="Serial Number",
+        help="Serial number or unique identifier for the asset",
+    )
+
+    asset_warranty_date = fields.Date(
+        string="Warranty Expiry Date",
+        help="Warranty expiry date for the asset",
     )
 
     # -------------------------------------------------------------------------
@@ -44,6 +56,42 @@ class AccountAsset(models.Model):
             if line.purchase_line_id:
                 return line.purchase_line_id
         return self.env['purchase.order.line']
+
+    def _get_stock_move_from_invoice(self):
+        """Extract stock move related to this asset from invoice."""
+        self.ensure_one()
+        # Try to find stock move(s) associated with the invoice
+        if self.original_move_line_ids:
+            invoice = self.original_move_line_ids[0].move_id
+            # Search for picking with same date and product
+            product = self._get_product_from_invoice()
+            if product:
+                stock_moves = self.env['stock.move'].search([
+                    ('product_id', '=', product.id),
+                    ('create_date', '>=', invoice.invoice_date - timedelta(days=1)),
+                    ('create_date', '<=', invoice.invoice_date + timedelta(days=1)),
+                ], limit=1)
+                if stock_moves:
+                    return stock_moves
+        return self.env['stock.move']
+
+    def _get_asset_serial_number(self):
+        """Extract serial number from stock move or lot."""
+        self.ensure_one()
+        stock_move = self._get_stock_move_from_invoice()
+        if stock_move:
+            # Try to get from lot_ids
+            if stock_move.move_line_ids and stock_move.move_line_ids[0].lot_id:
+                return stock_move.move_line_ids[0].lot_id.name
+        return None
+
+    def _get_asset_warranty_date(self):
+        """Extract warranty date from stock move."""
+        self.ensure_one()
+        stock_move = self._get_stock_move_from_invoice()
+        if stock_move and stock_move.asset_warranty_date:
+            return stock_move.asset_warranty_date
+        return None
 
     def _get_or_create_asset_type(self):
         """
@@ -158,8 +206,6 @@ class AccountAsset(models.Model):
             product = asset._get_product_from_invoice()
             
             po_line = asset._get_po_line_from_invoice()
-            po_serial = po_line.asset_serial_number if po_line else False
-            po_warranty = po_line.asset_warranty_date if po_line else False
             
             asset_type = asset._get_or_create_asset_type()
 
@@ -170,8 +216,6 @@ class AccountAsset(models.Model):
                     ('product_id', '=', product.id),
                     ('company_id', '=', target_company_id),
                 ]
-                if po_serial:
-                    domain.append(('barcode', '=', po_serial))
                 
                 existing_mgmt = self.env['asset.management'].search(domain, limit=1)
 
@@ -200,11 +244,21 @@ class AccountAsset(models.Model):
                 'company_id': target_company_id,
             }
 
-            if po_serial:
-                vals['barcode'] = po_serial
-            if po_warranty:
-                vals['expired_warranty_date'] = po_warranty
-
+            # Get and add serial number: prefer account.asset field, fallback to stock move
+            if asset.asset_serial_number:
+                vals['barcode'] = asset.asset_serial_number
+            else:
+                serial_number = asset._get_asset_serial_number()
+                if serial_number:
+                    vals['barcode'] = serial_number
+            
+            # Get and add warranty date: prefer account.asset field, fallback to stock move
+            if asset.asset_warranty_date:
+                vals['expired_warranty_date'] = asset.asset_warranty_date
+            else:
+                warranty_date = asset._get_asset_warranty_date()
+                if warranty_date:
+                    vals['expired_warranty_date'] = warranty_date
 
             if existing_mgmt:
                 # Update the shared record with latest count and cumulative info
@@ -233,6 +287,23 @@ class AccountAsset(models.Model):
     # -------------------------------------------------------------------------
     @api.model_create_multi
     def create(self, vals_list):
+        # Auto-populate serial number and warranty date from stock move before creating
+        for vals in vals_list:
+            # Create temporary record to use helper methods
+            temp_record = self.new(vals)
+            
+            # Get serial number from stock move if not already provided
+            if not vals.get('asset_serial_number'):
+                serial_number = temp_record._get_asset_serial_number()
+                if serial_number:
+                    vals['asset_serial_number'] = serial_number
+            
+            # Get warranty date from stock move if not already provided
+            if not vals.get('asset_warranty_date'):
+                warranty_date = temp_record._get_asset_warranty_date()
+                if warranty_date:
+                    vals['asset_warranty_date'] = warranty_date
+        
         records = super(AccountAsset, self).create(vals_list)
         records._sync_to_asset_management()
         return records
@@ -243,7 +314,7 @@ class AccountAsset(models.Model):
             'name', 'original_value', 'acquisition_date',
             'original_move_line_ids', 'state', 'model_id',
             'method', 'method_period', 'method_number', 'method_progress_factor',
-            'company_id',
+            'company_id', 'asset_serial_number', 'asset_warranty_date',
         }
         if sync_triggers & set(vals.keys()):
             self._sync_to_asset_management()

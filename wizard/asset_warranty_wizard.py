@@ -17,7 +17,6 @@ class AssetWarrantyWizard(models.TransientModel):
             domain = [
                 ('expired_warranty_date', '!=', False),
                 ('expired_warranty_date', '<=', target_date),
-                ('status', 'not in', ('destroyed',))
             ]
             assets = self.env['asset.management'].search(domain)
             record.asset_ids = [(6, 0, assets.ids)]

@@ -9,10 +9,11 @@
                     <field name="summary_line_ids" readonly="1">
                         <list string="Asset Location Tracking" sortable="false" create="0" delete="0">
                             <field name="company_id" string="Location / Branch"/>
-                            <field name="name" string="Asset Details"/>
+                            <field name="name" string="Asset Name"/>
                             <field name="count" string="Stock" sum="Total Stock"/>
                             <field name="original_value" string="Orig. Value" sum="Total Original"/>
                             <field name="current_value" string="Book Value" sum="Total Value"/>
+                            <field name="depreciated_amount" string="Depreciated Amount" sum="Total Depreciated"/>
                             <field name="transfer_count" string="Transfers" sum="Total Transfers"/>
                             <field name="maintenance_count" string="Maint." sum="Total Maint."/>
                         </list>
