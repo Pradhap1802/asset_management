@@ -9,9 +9,17 @@ access_asset_depreciation_entry_assets_user,asset.depreciation.entry.assets.user
 access_asset_vendor,asset.vendor,model_asset_vendor,vendor_user_group,1,1,1,1
 access_asset_vendor_assets_user,asset.vendor.assets.user,model_asset_vendor,assets_user_group,1,1,1,1
 access_asset_type_user,asset.type.user,model_asset_type,assets_user_group,1,1,1,1
+access_asset_serial_number_user,asset.serial.number.user,model_asset_serial_number,assets_user_group,1,1,1,1
+access_asset_serial_number_admin,asset.serial.number.admin,model_asset_serial_number,assets_admin_group,1,1,1,1
 access_asset_tag_user,asset.tag.user,model_asset_tag,assets_user_group,1,0,0,0
 access_asset_tag_admin,asset.tag.admin,model_asset_tag,assets_admin_group,1,1,1,1
 access_asset_tag_system,asset.tag.system,model_asset_tag,base.group_system,1,1,1,1
 access_asset_stock_movement_report_user,asset.stock.movement.report.user,model_asset_stock_movement_report,assets_user_group,1,0,0,0
 access_asset_stock_movement_report_admin,asset.stock.movement.report.admin,model_asset_stock_movement_report,assets_admin_group,1,0,0,0
 access_asset_label_layout,asset.label.layout,model_asset_label_layout,assets_user_group,1,1,1,1
+access_asset_warranty_wizard,asset.warranty.wizard,model_asset_warranty_wizard,base.group_user,1,1,1,1
+access_asset_dashboard_wizard,asset.dashboard.wizard,model_asset_dashboard_wizard,base.group_user,1,1,1,1
+access_asset_dashboard_wizard_line,asset.dashboard.wizard.line,model_asset_dashboard_wizard_line,base.group_user,1,1,1,1
+access_asset_dashboard_wizard_maintenance,asset.dashboard.wizard.maintenance,model_asset_dashboard_wizard_maintenance,base.group_user,1,1,1,1
+access_ir_actions_act_window_assets_user,ir.actions.act_window.assets.user,base.model_ir_actions_act_window,assets_user_group,1,0,0,0
+access_ir_actions_act_window_assets_admin,ir.actions.act_window.assets.admin,base.model_ir_actions_act_window,assets_admin_group,1,0,0,0

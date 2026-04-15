@@ -21,7 +21,7 @@
         <field name="model">asset.management</field>
         <field name="arch" type="xml">
             <graph string="Asset Status Overview" type="bar">
-                <field name="status" type="dimension"/>
+                <field name="asset_status" type="dimension"/>
                 <field name="id" type="measure"/>
             </graph>
         </field>

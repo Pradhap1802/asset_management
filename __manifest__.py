@@ -6,22 +6,23 @@
         Streamline your asset lifecycle management with our comprehensive Odoo module. Track assets, automate depreciation, manage maintenance, and handle transfers effortlessly. Generate detailed reports, monitor warranties, and optimize asset utilization. User-friendly interface ensures easy adoption. Suitable for businesses of all sizes, this module empowers you to make informed decisions and maximize the value of your assets.
     """,
     'category': 'Operations',
-    'author': 'WebbyCrown Solutions',
-    'website': 'https://www.webbycrown.com',
-    'depends': ['base', 'product', 'hr', 'account'],
+    'depends': ['base', 'product', 'hr', 'account', 'account_asset', 'purchase', 'stock', 'mail'],
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
         'data/sequence.xml',
-        # 'data/demo_data.xml',
         'wizard/asset_label_wizard_view.xml',
+        'wizard/asset_warranty_wizard_views.xml',
+        'wizard/asset_dashboard_wizard_views.xml',
         'report/asset_label_report.xml',
         'report/asset_label_templates.xml',
         'report/asset_template_templates.xml',
         'views/asset_views.xml',
         'views/asset_vendor_views.xml',
         'views/asset_report.xml',
-        'views/stock_movement_report_views.xml'
+        'views/account_asset_views.xml',
+        'views/stock_movement_report_views.xml',
+        'views/stock_picking_views.xml'
     ],
     'assets': {
         'web.report_assets_common': [
