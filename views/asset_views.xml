@@ -346,15 +346,15 @@
                             <div class="o_kanban_record_bottom">
                                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pt-2 border-top">
                                     <div class="d-flex gap-2 flex-wrap">
-                                        <span class="badge bg-light text-dark border" title="Depreciation Entries">
+                                        <span class="badge text-bg-secondary" title="Depreciation Entries">
                                             <i class="fa fa-chart-line me-1"></i>
                                             <field name="depreciation_count"/>
                                         </span>
-                                        <span class="badge bg-light text-dark border" title="Maintenance Records">
+                                        <span class="badge text-bg-secondary" title="Maintenance Records">
                                             <i class="fa fa-wrench me-1"></i>
                                             <field name="maintenance_count"/>
                                         </span>
-                                        <span class="badge bg-light text-dark border" title="Transfer History">
+                                        <span class="badge text-bg-secondary" title="Transfer History">
                                             <i class="fa fa-exchange me-1"></i>
                                             <field name="transfer_count"/>
                                         </span>
@@ -673,6 +673,7 @@
                 <field name="total_booked_value"/>
                 <field name="total_current_value"/>
                 <field name="total_transfer_count"/>
+                <field name="total_maintenance_count"/>
                 <field name="currency_id"/>
                 <templates>
                     <t t-name="card">
@@ -680,7 +681,7 @@
                         <t t-set="top_color" t-value="border_colors[(record.id.raw_value or 0) % 11]"/>
 
                         <button type="object" name="action_open_assets"
-                                class="d-flex flex-column align-items-center p-0 border-0 w-100 bg-white"
+                                class="d-flex flex-column p-0 border-0 w-100"
                                 t-attf-style="border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.08); transition: all 0.3s ease; cursor: pointer;"
                                 onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.15)';"
                                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 12px rgba(0,0,0,0.08)';">
@@ -688,42 +689,41 @@
                             <!-- Colored Top Border -->
                             <div class="w-100" t-attf-style="height: 5px; background: {{top_color}};"/>
 
-                            <!-- Asset Type Name -->
-                            <div class="w-100 pt-4 pb-2 px-3 text-center">
-                                <h3 class="mb-0 fw-bold text-dark">
+                            <!-- Header: Asset Type + Count -->
+                            <div class="w-100 px-4 pt-3 pb-2 d-flex justify-content-between align-items-center">
+                                <h4 class="mb-0 fw-bold">
                                     <field name="name"/>
-                                </h3>
-                            </div>
-
-                            <!-- Highlight: Asset Count -->
-                            <div class="w-100 py-3 px-3 text-center">
-                                <div class="display-4 fw-bold" t-attf-style="color: {{top_color}};">
-                                    <field name="asset_count"/>
-                                </div>
-                                <span class="text-muted text-uppercase small" style="letter-spacing: 1.5px;">Total Assets</span>
+                                </h4>
+                                <span class="badge fs-6 fw-bold" t-attf-style="background: {{top_color}}; color: white; padding: 6px 14px; border-radius: 20px;">
+                                    <field name="asset_count"/> Assets
+                                </span>
                             </div>
 
                             <!-- Divider -->
-                            <div class="w-75 mx-auto" style="height: 1px; background: #e9ecef;"/>
+                            <hr class="w-100 mx-auto my-0"/>
 
                             <!-- Details List -->
-                            <div class="w-100 py-3 px-4 text-start">
+                            <div class="w-100 py-2 px-4 text-start">
                                 <div class="d-flex justify-content-between align-items-center py-2">
-                                    <span class="text-muted small">Booked Value</span>
-                                    <strong class="text-dark"><field name="total_booked_value" widget="monetary"/></strong>
+                                    <span class="text-muted small"><i class="fa fa-money me-2"/>Booked Value</span>
+                                    <strong><field name="total_booked_value" widget="monetary"/></strong>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center py-2">
-                                    <span class="text-muted small">Current Value</span>
+                                    <span class="text-muted small"><i class="fa fa-line-chart me-2"/>Current Value</span>
                                     <strong t-attf-style="color: {{top_color}};"><field name="total_current_value" widget="monetary"/></strong>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center py-2">
-                                    <span class="text-muted small">Transfers</span>
-                                    <strong class="text-dark"><field name="total_transfer_count"/></strong>
+                                    <span class="text-muted small"><i class="fa fa-exchange me-2"/>Transfers</span>
+                                    <strong><field name="total_transfer_count"/></strong>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center py-2">
+                                    <span class="text-muted small"><i class="fa fa-wrench me-2"/>Maintenance</span>
+                                    <strong><field name="total_maintenance_count"/></strong>
                                 </div>
                             </div>
 
-                            <!-- Footer Button Area -->
-                            <div class="w-100 p-3 text-center" style="background: #f8f9fa; border-top: 1px solid #e9ecef;">
+                            <!-- Footer -->
+                            <div class="w-100 p-3 text-center border-top">
                                 <span class="fw-semibold small" t-attf-style="color: {{top_color}};">
                                     View Details <i class="fa fa-arrow-right ms-1"/>
                                 </span>

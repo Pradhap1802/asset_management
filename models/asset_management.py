@@ -39,7 +39,7 @@ class Asset(models.Model):
     # Asset Status Indicator
     asset_status = fields.Selection([
         ('active', 'Active'),
-        ('maintenance_due', 'Maintenance Due'),
+        ('maintenance_due', 'Maintenance'),
         ('expired', 'Expired/Scrap')
     ], string="Asset Status", default='active', help="Current lifecycle status of the asset")
     
@@ -515,6 +515,7 @@ class AssetType(models.Model):
     total_booked_value = fields.Monetary(compute='_compute_asset_stats', string="Total Booked Value", currency_field='currency_id')
     total_current_value = fields.Monetary(compute='_compute_asset_stats', string="Current Value", currency_field='currency_id')
     total_transfer_count = fields.Integer(compute='_compute_asset_stats', string="Total Transfers")
+    total_maintenance_count = fields.Integer(compute='_compute_asset_stats', string="Total Maintenance")
     currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env.company.currency_id)
 
     def _compute_asset_stats(self):
@@ -532,6 +533,7 @@ class AssetType(models.Model):
             record.total_booked_value = sum(assets.mapped('amount'))
             record.total_current_value = sum(assets.mapped('current_amount'))
             record.total_transfer_count = sum(assets.mapped('transfer_count'))
+            record.total_maintenance_count = sum(assets.mapped('maintenance_count'))
 
     def action_open_assets(self):
         self.ensure_one()

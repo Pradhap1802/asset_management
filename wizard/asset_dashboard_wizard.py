@@ -19,38 +19,50 @@ class AssetDashboardWizard(models.TransientModel):
             
             assets = self.env['asset.management'].sudo().search(domain)
             
-            # Group by Company and Product Name
-            summary_data = {}
-            for asset in assets:
-                # Use product name instead of asset reference
-                product_name = asset.product_id.name if asset.product_id else asset.name
-                key = (asset.company_id.id, product_name)
-                if key not in summary_data:
-                    summary_data[key] = {
-                        'count': 0, 
-                        'orig_value': 0.0, 
-                        'curr_value': 0.0,
-                        'transfers': 0,
-                        'maintenance': 0
-                    }
-                summary_data[key]['count'] += 1
-                summary_data[key]['orig_value'] += asset.amount
-                summary_data[key]['curr_value'] += asset.current_amount
-                summary_data[key]['transfers'] += asset.transfer_count
-                summary_data[key]['maintenance'] += asset.maintenance_count
-            
             lines = []
-            for (company_id, product_name), data in summary_data.items():
-                depreciated_amount = data['orig_value'] - data['curr_value']
+            for asset in assets:
+                product_name = asset.product_id.name if asset.product_id else asset.name
+                depreciated_amount = asset.amount - asset.current_amount
+                # Depreciation method info from asset type
+                dep_method = ''
+                dep_rate_display = ''
+                useful_life = ''
+                if asset.asset_type_id:
+                    at = asset.asset_type_id
+                    if at.depreciation_method == 'fix':
+                        dep_method = 'Straight Line (SLM)'
+                    else:
+                        dep_method = 'Written Down Value (WDV)'
+                    if at.depreciation_frequency == 'yearly':
+                        dep_rate_display = 'Yearly'
+                    elif at.depreciation_frequency == 'monthly':
+                        dep_rate_display = 'Monthly'
+                    else:
+                        dep_rate_display = 'Daily'
+                    if at.maximum_depreciation_entries:
+                        if at.depreciation_frequency == 'yearly':
+                            useful_life = '%d Years' % at.maximum_depreciation_entries
+                        elif at.depreciation_frequency == 'monthly':
+                            useful_life = '%d Months' % at.maximum_depreciation_entries
+                        else:
+                            useful_life = '%d Days' % at.maximum_depreciation_entries
+
                 lines.append((0, 0, {
-                    'company_id': company_id,
+                    'company_id': asset.company_id.id,
                     'name': product_name,
-                    'count': data['count'],
-                    'original_value': data['orig_value'],
-                    'current_value': data['curr_value'],
+                    'asset_ref': asset.name,
+                    'asset_status': asset.asset_status or 'active',
+                    'count': asset.initial_stock,
+                    'original_value': asset.amount,
+                    'current_value': asset.current_amount,
                     'depreciated_amount': depreciated_amount,
-                    'transfer_count': data['transfers'],
-                    'maintenance_count': data['maintenance'],
+                    'transfer_count': asset.transfer_count,
+                    'maintenance_count': asset.maintenance_count,
+                    'maintenance_cost': asset.total_maintenance_amount,
+                    'depreciation_method': dep_method,
+                    'depreciation_frequency': dep_rate_display,
+                    'useful_life': useful_life,
+                    'warranty_expiry': asset.expired_warranty_date,
                 }))
             
             # Collect all maintenance records for all assets
@@ -81,12 +93,23 @@ class AssetDashboardWizardLine(models.TransientModel):
     wizard_id = fields.Many2one('asset.dashboard.wizard', string="Wizard")
     company_id = fields.Many2one('res.company', string="Location / Branch")
     name = fields.Char(string="Asset Name")
+    asset_ref = fields.Char(string="Reference")
+    asset_status = fields.Selection([
+        ('active', 'Active'),
+        ('maintenance_due', 'Maintenance Due'),
+        ('expired', 'Expired/Scrap')
+    ], string="Status")
     count = fields.Integer(string="Stock Count")
-    original_value = fields.Float(string="Original Value")
-    current_value = fields.Float(string="Current Value")
-    depreciated_amount = fields.Float(string="Depreciated Amount")
+    original_value = fields.Float(string="Purchase Value")
+    current_value = fields.Float(string="Current Book Value")
+    depreciated_amount = fields.Float(string="Accumulated Depreciation")
     transfer_count = fields.Integer(string="Transfers")
     maintenance_count = fields.Integer(string="Maintenance")
+    maintenance_cost = fields.Float(string="Maintenance Cost")
+    depreciation_method = fields.Char(string="Depreciation Method")
+    depreciation_frequency = fields.Char(string="Frequency")
+    useful_life = fields.Char(string="Useful Life")
+    warranty_expiry = fields.Date(string="Warranty Expiry")
     currency_id = fields.Many2one('res.currency', related='wizard_id.currency_id')
 
 
