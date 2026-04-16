@@ -78,14 +78,6 @@ class Asset(models.Model):
     remaining_warranty = fields.Char(string="Remaining Warranty",
                                      compute="_compute_months_left", store=True)
     warranty_status = fields.Char(string='Warranty Status')
-    # Link back to the Odoo Enterprise accounting asset
-    accounting_asset_id = fields.Many2one(
-        'account.asset',
-        string="Accounting Asset",
-        readonly=True,
-        copy=False,
-        help="Linked Odoo Enterprise Accounting Asset record"
-    )
     # Vendor from the linked invoice (res.partner)
     vendor_partner_id = fields.Many2one(
         'res.partner',
@@ -253,6 +245,94 @@ class Asset(models.Model):
             if vals.get('name', 'New') == 'New':
                 vals['name'] = self.env['ir.sequence'].next_by_code('asset.management') or 'New'
         return super(Asset, self).create(vals_list)
+
+    def compute_depreciation_board(self):
+        """Compute full depreciation board/schedule for selected assets.
+        Removes existing draft entries and generates the complete planned schedule.
+        """
+        DepEntry = self.env['asset.depreciation.entry']
+        for asset in self:
+            if not asset.depreciation_apply or not asset.asset_type_id or not asset.amount:
+                continue
+
+            start_date = asset.invoice_date or asset.capitalization_date or fields.Date.today()
+            asset_type = asset.asset_type_id
+            max_entries = asset_type.maximum_depreciation_entries or 0
+
+            # Remove existing draft (planned) entries to recompute
+            draft_entries = asset.depreciation_ids.filtered(lambda d: d.state == 'draft')
+            draft_entries.unlink()
+
+            # Keep posted entries and compute cumulative from them
+            posted_entries = asset.depreciation_ids.filtered(lambda d: d.state == 'posted').sorted('entry_date')
+            cumulative = sum(posted_entries.mapped('depreciation_amount'))
+            remaining = asset.amount - cumulative
+            seq = len(posted_entries)
+
+            # Recompute cumulative/remaining on existing posted entries
+            running_cumulative = 0.0
+            for entry in posted_entries:
+                running_cumulative += entry.depreciation_amount
+                entry.write({
+                    'cumulative_depreciation': running_cumulative,
+                    'remaining_value': asset.amount - running_cumulative,
+                })
+
+            # Determine last entry date for scheduling
+            if posted_entries:
+                last_date = max(posted_entries.mapped('entry_date'))
+            else:
+                last_date = start_date
+
+            # Generate planned (draft) entries
+            new_entries = []
+            while remaining > 0:
+                if max_entries and seq >= max_entries:
+                    break
+
+                # Calculate next date
+                if asset_type.depreciation_frequency == 'yearly':
+                    next_date = last_date + relativedelta(years=asset_type.depreciation_start_delay or 1)
+                elif asset_type.depreciation_frequency == 'monthly':
+                    next_date = last_date + relativedelta(months=asset_type.depreciation_start_delay or 1)
+                elif asset_type.depreciation_frequency == 'days':
+                    next_date = last_date + timedelta(days=asset_type.depreciation_start_delay or 30)
+                else:
+                    break
+
+                # Calculate depreciation amount
+                if asset_type.depreciation_method == 'fix':
+                    dep_amount = asset_type.depreciation_rate
+                elif asset_type.depreciation_method == 'percentage':
+                    base = asset.amount if asset_type.depreciation_basis == 'real_value' else remaining
+                    dep_amount = (base * asset_type.depreciation_rate) / 100
+                else:
+                    break
+
+                # Don't depreciate below zero
+                dep_amount = min(dep_amount, remaining)
+                if dep_amount <= 0:
+                    break
+
+                seq += 1
+                cumulative += dep_amount
+                remaining -= dep_amount
+
+                new_entries.append({
+                    'asset_id': asset.id,
+                    'sequence': seq,
+                    'depreciation_amount': dep_amount,
+                    'cumulative_depreciation': cumulative,
+                    'remaining_value': remaining,
+                    'entry_date': next_date,
+                    'state': 'draft',
+                    'created_by': self.env.uid,
+                    'bill_id': asset.invoice_id.id if asset.invoice_id else False,
+                })
+                last_date = next_date
+
+            if new_entries:
+                DepEntry.create(new_entries)
 
     def generate_depreciation_entries(self):
         """Generate depreciation entries with value subtraction."""
@@ -525,14 +605,18 @@ class AssetMaintenanceEntry(models.Model):
 class AssetDepreciationEntry(models.Model):
     _name = 'asset.depreciation.entry'
     _description = 'Asset Depreciation Entry'
+    _order = 'sequence, entry_date'
 
     # Fields for tracking asset depreciation
     asset_id = fields.Many2one('asset.management', string="Asset Reference", help="Choose the asset for which depreciation is being recorded")
     product_id = fields.Many2one('product.product', string="Product", related='asset_id.product_id', store=True, readonly=True)
     bill_id = fields.Many2one('account.move', string="Bill Reference", domain="[('move_type', 'in', ['in_invoice', 'in_refund'])]", help="Vendor bill associated with this depreciation entry")
-    depreciation_amount = fields.Float(string="Amount", help="The monetary value of depreciation applied in this entry")
+    sequence = fields.Integer(string="#", default=1)
+    depreciation_amount = fields.Float(string="Depreciation", help="The monetary value of depreciation applied in this entry")
+    cumulative_depreciation = fields.Float(string="Cumulative Depreciation", readonly=True, help="Total depreciation accumulated up to and including this entry")
+    remaining_value = fields.Float(string="Remaining Value", readonly=True, help="Book value remaining after this depreciation entry")
     entry_date = fields.Date(string="Depreciation Date", help="Date when this depreciation entry was recorded")
-    state = fields.Selection([('draft', 'Planned'), ('posted', 'Posted')], string='Status', default='posted')
+    state = fields.Selection([('draft', 'Planned'), ('posted', 'Posted')], string='Status', default='draft')
     notes = fields.Text(string="Comments", help="Additional information or remarks about this depreciation entry")
     created_by = fields.Many2one('res.users', string="Recorded By", default=lambda self: self.env.user, help="Person who created this depreciation entry")
 

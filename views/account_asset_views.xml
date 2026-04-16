@@ -15,4 +15,16 @@
             </xpath>
         </field>
     </record>
+
+    <!-- Inject accounting_asset_id into asset.management form when Enterprise is available -->
+    <record id="view_asset_form_inherit_accounting" model="ir.ui.view">
+        <field name="name">asset.management.form.inherit.accounting</field>
+        <field name="model">asset.management</field>
+        <field name="inherit_id" ref="view_asset_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='vendor_partner_id']" position="after">
+                <field name="accounting_asset_id" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
 </odoo>

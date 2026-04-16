@@ -27,8 +27,7 @@
                             <field name="product_id"/>
                             <field name="serial_number_ids" widget="many2many_tags" string="Serial Number / Barcode"/>
                             <field name="asset_type_id"/>
-                            <field name="company_id" readonly="accounting_asset_id != False"/>
-                            <field name="accounting_asset_id" invisible="1"/>
+                            <field name="company_id"/>
                             <field name="transfer_count"/>
                             <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
                             <field name="initial_stock" required="1"/>
@@ -42,7 +41,6 @@
                             <field name="invoice_date"/>
                             <field name="current_amount" readonly="1"/>
                             <field name="vendor_partner_id" readonly="1"/>
-                            <field name="accounting_asset_id" readonly="1"/>
                         </group>
                         <!-- Depreciation Settings group -->
                         <group string="Depreciation Settings">
@@ -124,17 +122,24 @@
                             </field>
                         </page>
 
-                        <!-- Depreciation Page -->
-                        <page string="Depreciation" groups="asset_management.depreciation_user_group,base.group_system">
+                        <!-- Depreciation Board Page -->
+                        <page string="Depreciation Board" groups="asset_management.depreciation_user_group,base.group_system">
+                            <button name="compute_depreciation_board" type="object"
+                                    string="Compute Depreciation Board" class="btn-primary mb-3"
+                                    invisible="not depreciation_apply or not asset_type_id or not amount"/>
                             <field name="depreciation_ids">
-                                <list editable="bottom">
-                                    <field name="depreciation_amount"/>
-                                    <field name="product_id" readonly="1"/>
-                                    <field name="bill_id"/>
-                                    <field name="created_by"/>
-                                    <field name="entry_date"/>
+                                <list string="Depreciation Board" decoration-info="state == 'draft'"
+                                      decoration-success="state == 'posted'" default_order="sequence asc, entry_date asc"
+                                      editable="bottom">
+                                    <field name="sequence" readonly="1" string="#"/>
+                                    <field name="entry_date" string="Depreciation Date"/>
+                                    <field name="depreciation_amount" string="Depreciation"/>
+                                    <field name="cumulative_depreciation" readonly="1" string="Cumulative Depreciation"/>
+                                    <field name="remaining_value" readonly="1" string="Remaining Value"/>
+                                    <field name="bill_id" optional="hide"/>
+                                    <field name="created_by" optional="hide"/>
                                     <field name="state"/>
-                                    <field name="notes"/>
+                                    <field name="notes" optional="hide"/>
                                 </list>
                             </field>
                         </page>
@@ -514,16 +519,19 @@
         <field name="name">asset.depreciation.list</field>
         <field name="model">asset.depreciation.entry</field>
         <field name="arch" type="xml">
-            <list>
+            <list decoration-info="state == 'draft'" decoration-success="state == 'posted'" default_order="asset_id, sequence asc">
                 <!-- Fields displayed in the list view for asset depreciation -->
+                <field name="sequence" string="#"/>
                 <field name="asset_id"/>
                 <field name="product_id"/>
-                <field name="bill_id"/>
-                <field name="created_by"/>
-                <field name="depreciation_amount"/>
                 <field name="entry_date"/>
+                <field name="depreciation_amount" string="Depreciation"/>
+                <field name="cumulative_depreciation"/>
+                <field name="remaining_value"/>
+                <field name="bill_id" optional="hide"/>
+                <field name="created_by" optional="hide"/>
                 <field name="state"/>
-                <field name="notes"/>
+                <field name="notes" optional="hide"/>
             </list>
         </field>
     </record>
@@ -544,6 +552,8 @@
                         </group>
                         <group string="Depreciation Details">
                             <field name="depreciation_amount"/>
+                            <field name="cumulative_depreciation" readonly="1"/>
+                            <field name="remaining_value" readonly="1"/>
                             <field name="bill_id"/>
                             <field name="created_by"/>
                         </group>

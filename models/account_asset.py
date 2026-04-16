@@ -1,9 +1,30 @@
 from odoo import models, fields, api
+from odoo.orm.models import MetaModel
 from datetime import timedelta
 
+# Only define these classes if account_asset enterprise module is actually loaded.
+# get_module_path finds the directory on disk even when not installed, so we check
+# whether account_asset has registered any model classes via the metaclass.
+if not MetaModel._module_to_models__.get('account_asset'):
+    # account_asset not installed — skip all class definitions
+    raise ImportError("account_asset module is not installed")
+else:
 
-class AccountAsset(models.Model):
-    _inherit = 'account.asset'
+    class AssetManagementAccountAssetLink(models.Model):
+        """Add accounting_asset_id field to asset.management when account_asset is available."""
+        _inherit = 'asset.management'
+
+        accounting_asset_id = fields.Many2one(
+            'account.asset',
+            string="Accounting Asset",
+            readonly=True,
+            copy=False,
+            help="Linked Odoo Enterprise Accounting Asset record",
+        )
+
+
+    class AccountAsset(models.Model):
+        _inherit = 'account.asset'
 
     # Reverse link to the custom asset management record
     asset_management_id = fields.Many2one(
@@ -238,6 +259,17 @@ class AccountAsset(models.Model):
                     'bill_id': original_bill.id if original_bill else False,
                     'created_by': self.create_uid.id if self.create_uid else self.env.uid,
                 })
+
+        # Recompute sequence and cumulative values on all entries
+        all_entries = mgmt_record.depreciation_ids.sorted('entry_date')
+        cumulative = 0.0
+        for idx, entry in enumerate(all_entries, 1):
+            cumulative += entry.depreciation_amount
+            entry.write({
+                'sequence': idx,
+                'cumulative_depreciation': cumulative,
+                'remaining_value': mgmt_record.amount - cumulative,
+            })
 
     # -------------------------------------------------------------------------
     # MAIN SYNC METHOD
