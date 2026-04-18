@@ -311,8 +311,22 @@ class AccountAsset(models.Model):
                     vals['expired_warranty_date'] = warranty_date
 
             if existing_mgmt:
+                # Calculate how much initial_stock is growing so we can
+                # increase current_stock by the same delta (new purchase arrives).
+                old_initial = existing_mgmt.initial_stock
+                new_initial = vals.get('initial_stock', old_initial)
+                stock_delta = new_initial - old_initial
+
                 # Update the shared record with latest count and cumulative info
                 existing_mgmt.write(vals)
+
+                # Grow current_stock by the same amount as initial_stock grew
+                # (only add; never subtract — outgoing transfers handle the reduction)
+                if stock_delta > 0:
+                    existing_mgmt.sudo().write({
+                        'current_stock': existing_mgmt.current_stock + stock_delta
+                    })
+
                 # Ensure all siblings point to this mgmt record
                 for sibling in sibling_assets:
                     if sibling.asset_management_id != existing_mgmt:

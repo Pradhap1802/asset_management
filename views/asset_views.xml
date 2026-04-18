@@ -91,7 +91,9 @@
                                 <list editable="bottom">
                                     <field name="transfer_code"/>
                                     <field name="product_id" readonly="1"/>
-                                    <field name="serial_number_id" domain="[('asset_id', '=', parent.id)]"/>
+                                    <field name="serial_number_ids" widget="many2many_tags"
+                                               domain="[('asset_id', '=', parent.id)]"
+                                               string="Serial Numbers"/>
                                     <field name="transfer_employee_id"/>
                                     <field name="assign_date"/>
                                     <field name="assign_by"/>
@@ -103,7 +105,7 @@
                         </page>
 
                         <!-- Maintenance Page -->
-                        <page string="Maintenance / Repair"
+                        <page string="Maintenance"
                               groups="asset_management.maintenance_user_group,base.group_system">
                             <field name="maintenance_ids">
                                 <list editable="bottom">
@@ -399,7 +401,7 @@
                 <field name="transfer_code"/>
                 <field name="asset_id"/>
                 <field name="product_id"/>
-                <field name="serial_number_id"/>
+                <field name="serial_number_ids" widget="many2many_tags" string="Serial Numbers"/>
                 <field name="from_branch_id"/>
                 <field name="to_branch_id"/>
                 <field name="transfer_employee_id"/>
@@ -436,7 +438,7 @@
         <field name="name">asset.maintenance.form</field>
         <field name="model">asset.maintenance.entry</field>
         <field name="arch" type="xml">
-            <form string="Maintenance / Repair">
+            <form string="Maintenance">
                 <sheet>
                     <group>
                         <group string="Asset &amp; Equipment">
@@ -477,7 +479,9 @@
                             <field name="transfer_code" readonly="1"/>
                             <field name="asset_id"/>
                             <field name="product_id" readonly="1"/>
-                            <field name="serial_number_id" domain="[('asset_id', '=', asset_id)]"/>
+                            <field name="serial_number_ids" widget="many2many_tags"
+                                       domain="[('asset_id', '=', asset_id)]"
+                                       string="Serial Numbers"/>
                             <field name="from_branch_id"/>
                             <field name="to_branch_id"/>
                             <field name="transfer_employee_id"/>
@@ -660,7 +664,7 @@
 
     <!-- Action for Asset Maintenance Entries -->
     <record id="action_assets_maintenance_entry" model="ir.actions.act_window">
-        <field name="name">Maintenance / Repair</field>
+        <field name="name">Maintenance </field>
         <field name="res_model">asset.maintenance.entry</field>
         <field name="view_mode">list,form</field>
         <field name="help" type="html">
@@ -848,7 +852,7 @@ else:
 
     <!-- Maintenance Menu: For managing asset maintenance and repairs -->
     <menuitem id="menu_asset_maintenance"
-              name="Maintenance / Repair"
+              name="Maintenance"
               parent="menu_asset_root"
               action="action_assets_maintenance_entry"
               groups="maintenance_user_group,maintenance_admin_group,base.group_system"

@@ -16,10 +16,10 @@ class Asset(models.Model):
     product_id = fields.Many2one('product.product', string="Associated Product", help="Select the product used in this asset from available options")
     asset_type_id = fields.Many2one('asset.type', string="Asset Type", help="Classification of the asset (e.g., Equipment, Vehicle, Building)")
     
-    initial_stock = fields.Integer(string="Initial Stock", default=1,
-                                  help="Initial quantity of this asset")
-    current_stock = fields.Integer(string="Current Stock", compute='_compute_current_stock', store=True,
-                                  help="Current available quantity of this asset")
+    initial_stock = fields.Integer(string="Initial Stock", default=0,
+                                  help="Original quantity purchased / received for this asset")
+    current_stock = fields.Integer(string="Current Stock", default=0, store=True,
+                                  help="Current available quantity at this branch")
     active_transfers = fields.Integer(string="Active Transfers", compute='_compute_active_transfers', store=True,
                                      help="Number of assets currently assigned to users")
     
@@ -107,14 +107,16 @@ class Asset(models.Model):
     @api.depends('transfer_ids', 'transfer_ids.status', 'transfer_ids.stock_qty')
     def _compute_active_transfers(self):
         for record in self:
-            # Count transfers that are in 'assigned' status and sum their quantities
+            # Sum quantities in 'assigned' (employee-assigned) transfers for display
             assigned_transfers = record.transfer_ids.filtered(lambda t: t.status == 'assigned')
             record.active_transfers = sum(assigned_transfers.mapped('stock_qty'))
 
-    @api.depends('initial_stock', 'active_transfers')
-    def _compute_current_stock(self):
+    @api.onchange('initial_stock')
+    def _onchange_initial_stock(self):
+        """When initial_stock is set on a new record, mirror it to current_stock."""
         for record in self:
-            record.current_stock = record.initial_stock - record.active_transfers
+            if not record.id:  # Only for new unsaved records
+                record.current_stock = record.initial_stock
 
     # Compute methods
     @api.depends('expired_warranty_date')
@@ -252,6 +254,10 @@ class Asset(models.Model):
         for vals in vals_list:
             if vals.get('name', 'New') == 'New':
                 vals['name'] = self.env['ir.sequence'].next_by_code('asset.management') or 'New'
+            # Mirror initial_stock → current_stock when creating a new asset
+            # (unless current_stock is explicitly provided, e.g. from a branch split)
+            if 'initial_stock' in vals and 'current_stock' not in vals:
+                vals['current_stock'] = vals['initial_stock']
         return super(Asset, self).create(vals_list)
 
     def generate_depreciation_entries(self):
@@ -362,7 +368,14 @@ class AssetTransferEntry(models.Model):
     # Fields for tracking asset transfers
     asset_id = fields.Many2one('asset.management', string="Asset Reference", help="Choose the asset for which the transfer is being recorded")
     product_id = fields.Many2one('product.product', string="Product", related='asset_id.product_id', store=True, readonly=True)
-    serial_number_id = fields.Many2one('asset.serial.number', string="Serial Number", help="Select the specific serial number being transferred")
+    serial_number_ids = fields.Many2many(
+        'asset.serial.number',
+        'asset_transfer_serial_rel',
+        'transfer_id',
+        'serial_id',
+        string="Serial Numbers",
+        help="Select the serial numbers being transferred (one per unit)"
+    )
     transfer_employee_id = fields.Many2one('hr.employee', string="Assigned To", help="Employee who is receiving or has received the asset")
     assign_date = fields.Date(string="Assign Date", help="Date when the asset was assigned to the employee")
     assign_by = fields.Many2one('res.users', string="Assign By", default=lambda self: self.env.user, help="Person responsible for assigning the asset")
@@ -387,98 +400,128 @@ class AssetTransferEntry(models.Model):
     
     @api.model_create_multi
     def create(self, vals_list):
-        """Override create to generate transfer code and check stock availability"""
+        """Override create to generate transfer code and handle branch stock updates."""
         for vals in vals_list:
             if vals.get('transfer_code', 'New') == 'New':
                 vals['transfer_code'] = self.env['ir.sequence'].next_by_code('asset.transfer.entry') or 'New'
-            
-            if vals.get('asset_id') and vals.get('status') == 'assigned':
+
+            if vals.get('asset_id') and vals.get('to_branch_id'):
                 asset = self.env['asset.management'].browse(vals['asset_id'])
-                # Check if stock quantity is valid
-                if vals.get('stock_qty', 1) <= 0:
+                qty = vals.get('stock_qty', 1)
+                if qty <= 0:
                     raise exceptions.ValidationError(_("Transfer quantity must be greater than zero."))
-                    
-                if asset.current_stock < vals.get('stock_qty', 1):
+                if asset.current_stock < qty:
+                    raise exceptions.ValidationError(
+                        _("Cannot transfer %d unit(s): only %d currently in stock.") % (qty, asset.current_stock)
+                    )
+            elif vals.get('asset_id') and vals.get('status') == 'assigned':
+                asset = self.env['asset.management'].browse(vals['asset_id'])
+                qty = vals.get('stock_qty', 1)
+                if qty <= 0:
+                    raise exceptions.ValidationError(_("Transfer quantity must be greater than zero."))
+                if asset.current_stock < qty:
                     raise exceptions.ValidationError(_("Cannot assign this asset: Insufficient stock available."))
+
         records = super(AssetTransferEntry, self).create(vals_list)
-        
-        # Branch Split & Transfer Logic
+
+        # Branch Transfer Logic
         for record in records:
-            if record.to_branch_id and record.asset_id.company_id != record.to_branch_id and record.status == 'assigned':
-                asset = record.asset_id
-                
-                # Full or Partial Transfer?
-                if record.stock_qty < asset.initial_stock:
-                    # Partial: Split
-                    asset.initial_stock -= record.stock_qty
-                    new_asset = asset.copy({
-                        'name': 'New',
-                        'company_id': record.to_branch_id.id,
-                        'initial_stock': record.stock_qty,
-                        'transfer_ids': False,
-                        'maintenance_ids': False,
-                        'depreciation_ids': False,
-                        'serial_number_ids': False,
-                    })
-                    # Move transferred serial number to the new asset
-                    if record.serial_number_id:
-                        record.serial_number_id.asset_id = new_asset.id
-                    record.write({
-                        'asset_id': new_asset.id,
-                        'status': 'returned'
-                    })
-                else:
-                    # Full: Move original asset
-                    asset.company_id = record.to_branch_id.id
-                    record.write({'status': 'returned'})
-                        
+            if (
+                record.to_branch_id
+                and record.asset_id.company_id != record.to_branch_id
+            ):
+                self._do_branch_transfer(record)
+
         return records
 
+    def _do_branch_transfer(self, record):
+        """Handle stock updates when an asset is transferred to another branch.
+
+        Source branch (e.g., AVR):
+            - initial_stock  → UNCHANGED  (reflects what was purchased at AVR)
+            - current_stock  → decremented by transferred qty
+              e.g. 12 → 7 after sending 5 out
+
+        Destination branch (e.g., AVR Salem) — new asset record:
+            - initial_stock  → 0  (nothing was purchased at AVR Salem)
+            - current_stock  → equals the transferred qty (e.g. 5)
+        """
+        asset = record.asset_id
+        qty = record.stock_qty
+
+        if qty <= 0:
+            raise exceptions.ValidationError(_(
+                "Transfer quantity must be greater than zero."
+            ))
+        if qty > asset.current_stock:
+            raise exceptions.ValidationError(_(
+                "Cannot transfer %d unit(s): only %d currently in stock."
+            ) % (qty, asset.current_stock))
+
+        # Validate: number of serial numbers must not exceed qty
+        if record.serial_number_ids and len(record.serial_number_ids) > qty:
+            raise exceptions.ValidationError(_(
+                "You selected %d serial number(s) but the transfer quantity is %d. "
+                "Please match them."
+            ) % (len(record.serial_number_ids), qty))
+
+        # --- Source: reduce current_stock only; initial_stock stays as-is ---
+        asset.sudo().write({'current_stock': asset.current_stock - qty})
+
+        # --- Destination: new asset record at the target branch ---
+        #   initial_stock = 0  → nothing was purchased/received at this branch
+        #   current_stock = qty → the units that just arrived
+        new_asset = asset.copy({
+            'name': 'New',
+            'company_id': record.to_branch_id.id,
+            'initial_stock': 0,        # No purchase happened at destination
+            'current_stock': qty,      # Received quantity
+            'transfer_ids': False,
+            'maintenance_ids': False,
+            'depreciation_ids': False,
+            'serial_number_ids': False,
+        })
+
+        # Move ALL selected serial numbers to the new asset
+        if record.serial_number_ids:
+            record.serial_number_ids.write({'asset_id': new_asset.id})
+
+        # Mark the transfer entry as linked to the new branch asset and closed
+        record.write({
+            'asset_id': new_asset.id,
+            'status': 'returned',
+        })
+
     def write(self, vals):
+        """On write, trigger branch transfer only when to_branch_id is newly set."""
+        # Remember which records already had a to_branch_id before the write
+        already_transferred = {
+            r.id: (r.to_branch_id and r.asset_id.company_id != r.to_branch_id)
+            for r in self
+        }
         res = super(AssetTransferEntry, self).write(vals)
         for record in self:
-            if record.to_branch_id and record.asset_id.company_id != record.to_branch_id and record.status == 'assigned':
-                asset = record.asset_id
-                
-                # Full or Partial Transfer?
-                if record.stock_qty < asset.initial_stock:
-                    # Partial: Split
-                    asset.initial_stock -= record.stock_qty
-                    new_asset = asset.copy({
-                        'name': 'New',
-                        'company_id': record.to_branch_id.id,
-                        'initial_stock': record.stock_qty,
-                        'transfer_ids': False,
-                        'maintenance_ids': False,
-                        'depreciation_ids': False,
-                        'serial_number_ids': False,
-                    })
-                    # Move transferred serial number to the new asset
-                    if record.serial_number_id:
-                        record.serial_number_id.asset_id = new_asset.id
-                    record.write({
-                        'asset_id': new_asset.id,
-                        'status': 'returned'
-                    })
-                else:
-                    # Full: Move original asset
-                    asset.company_id = record.to_branch_id.id
-                    record.write({'status': 'returned'})
+            if (
+                record.to_branch_id
+                and record.asset_id.company_id != record.to_branch_id
+                and not already_transferred.get(record.id)
+            ):
+                self._do_branch_transfer(record)
         return res
 
     @api.constrains('status', 'asset_id', 'stock_qty')
     def _check_stock_availability(self):
-        """Ensure stock is available when assigning assets"""
+        """Ensure stock is available when assigning assets (employee assignments only)."""
         for record in self:
-            if record.status == 'assigned':
-                # Get current stock after excluding this record (important for updates)
-                other_transfers = self.search([
+            if record.status == 'assigned' and not record.to_branch_id:
+                # current_stock is the live on-hand quantity; check against it
+                other_assigned = self.search([
                     ('asset_id', '=', record.asset_id.id),
                     ('status', '=', 'assigned'),
-                    ('id', '!=', record.id)
+                    ('id', '!=', record.id),
                 ])
-                total_assigned = sum(other_transfers.mapped('stock_qty'))
-                available = record.asset_id.initial_stock - total_assigned
+                total_assigned = sum(other_assigned.mapped('stock_qty'))
+                available = record.asset_id.current_stock - total_assigned
                 if available < record.stock_qty:
                     raise exceptions.ValidationError(_("Cannot assign this asset: Insufficient stock available."))
 
