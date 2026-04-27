@@ -424,7 +424,7 @@ class AssetTransferEntry(models.Model):
     return_date = fields.Date(string="Return Date", help="Date when the asset was returned by the employee")
     status = fields.Selection([
         ('assigned', 'Assigned'),
-        ('returned', 'Returned'),
+        ('returned', 'Transfered'),
         ('under_maintenance', 'Under Maintenance')
     ], string="Status", help="Current status of the asset transfer")
     transfer_code = fields.Char(
@@ -592,6 +592,7 @@ class AssetMaintenanceEntry(models.Model):
     serial_number_id = fields.Many2one('asset.serial.number', string="Serial Number", help="Select the specific serial number undergoing maintenance")
     maintenance_type = fields.Selection([
         ('preventive', 'Preventive'),
+        ('amc','AMC'),
         ('breakdown', 'Breakdown'),
     ], string="Maintenance Type", help="Type of maintenance: Preventive (scheduled) or Breakdown (unplanned)")
     maintenance_vendor_id = fields.Many2one('asset.vendor', string="Select Vendor", help="Vendor or technician performing the maintenance or repair")
