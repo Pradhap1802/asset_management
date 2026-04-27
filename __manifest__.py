@@ -19,6 +19,7 @@
         'report/asset_template_templates.xml',
         'views/asset_views.xml',
         'views/asset_vendor_views.xml',
+        'views/asset_disposal_views.xml',
         'views/asset_report.xml',
         'views/account_asset_views.xml',
         'views/stock_movement_report_views.xml',
@@ -49,4 +50,6 @@
     'price': 0,
     'currency': 'EUR',
     'license': 'LGPL-3',
+    'post_init_hook': 'post_migrate_resync_serials',
+    'post_migrate': 'post_migrate_resync_serials',
 }

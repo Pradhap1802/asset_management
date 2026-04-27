@@ -91,13 +91,76 @@ class AccountAsset(models.Model):
         return self.env['stock.move']
 
     def _get_asset_serial_number(self):
-        """Extract serial number from stock move or lot."""
+        """
+        Extract the serial number for THIS specific asset using positional matching.
+
+        When a bill creates N assets for the same product, each account.asset
+        should map to a DIFFERENT serial number. We do this by:
+          1. Finding all sibling account.asset records from the same invoice line,
+             sorted by ID (creation order).
+          2. Collecting all serial/lot numbers from the linked stock move lines,
+             sorted by ID (receipt order).
+          3. Returning the serial at the same positional index as this asset.
+
+        e.g. for a bill of 3 sofas:
+          Asset #1 (smallest ID) → CUSS001
+          Asset #2               → CUSS002
+          Asset #3 (largest ID)  → CUSS003
+        """
         self.ensure_one()
-        stock_move = self._get_stock_move_from_invoice()
-        if stock_move:
-            if stock_move.move_line_ids and stock_move.move_line_ids[0].lot_id:
-                return stock_move.move_line_ids[0].lot_id.name
-        return None
+
+        # -- Step 1: Gather all serials from stock move, ordered by move_line ID --
+        all_serials = []
+
+        po_line = self._get_po_line_from_invoice()
+        product = self._get_product_from_invoice()
+
+        if po_line and product:
+            stock_moves = self.env['stock.move'].search([
+                ('product_id', '=', product.id),
+                ('purchase_line_id', '=', po_line.id),
+            ])
+            # Sort move lines by ID so order is deterministic
+            move_lines = stock_moves.move_line_ids.sorted('id')
+            for ml in move_lines:
+                if ml.lot_id and ml.lot_id.name not in all_serials:
+                    all_serials.append(ml.lot_id.name)
+        else:
+            # Fallback: single stock move
+            stock_move = self._get_stock_move_from_invoice()
+            if stock_move:
+                move_lines = stock_move.move_line_ids.sorted('id')
+                for ml in move_lines:
+                    if ml.lot_id and ml.lot_id.name not in all_serials:
+                        all_serials.append(ml.lot_id.name)
+
+        if not all_serials:
+            return None
+
+        # -- Step 2: Find this asset's position among its siblings ---------------
+        # Siblings = all account.asset records linked to the same invoice move line
+        if self.original_move_line_ids:
+            invoice_line_ids = self.original_move_line_ids.ids
+            siblings = self.env['account.asset'].search([
+                ('original_move_line_ids', 'in', invoice_line_ids),
+                ('state', '!=', 'model'),
+            ]).sorted('id')
+        else:
+            siblings = self
+
+        sibling_ids = siblings.ids
+        try:
+            position = sibling_ids.index(self.id)
+        except ValueError:
+            position = 0
+
+        # -- Step 3: Return the serial at this asset's position ------------------
+        if position < len(all_serials):
+            return all_serials[position]
+
+        # Fallback: return the last available serial if more assets than serials
+        return all_serials[-1]
+
 
     def _get_all_serial_numbers(self):
         """Extract all serial/lot numbers from stock moves linked to this asset's invoice."""
@@ -245,121 +308,91 @@ class AccountAsset(models.Model):
     def _sync_to_asset_management(self):
         """
         Create or update the corresponding asset.management record.
-        GROUPING RULE: All account.asset records with the SAME product_id
-        and company_id share ONE asset.management record.
-        The initial_stock represents the total counts of this asset.
+
+        RULE: Each account.asset gets its OWN asset.management record (1-to-1).
+        If 3 sofas are purchased from the same bill each becomes a separate
+        asset.management record with initial_stock=1 and its own serial number.
         """
         for asset in self:
             if asset.state == 'model':
                 continue
 
             invoice = asset._get_invoice_from_move_lines()
-            target_company_id = invoice.company_id.id if invoice and invoice.company_id else (asset.company_id.id if asset.company_id else False)
+            target_company_id = (
+                invoice.company_id.id if invoice and invoice.company_id
+                else (asset.company_id.id if asset.company_id else False)
+            )
             vendor_partner = asset._get_vendor_from_invoice()
             product = asset._get_product_from_invoice()
-            
-            po_line = asset._get_po_line_from_invoice()
-            
             asset_type = asset._get_or_create_asset_type()
 
-            # Find existing management record for this product and company
-            existing_mgmt = None
-            if product:
-                domain = [
-                    ('product_id', '=', product.id),
-                    ('company_id', '=', target_company_id),
-                ]
-                
-                existing_mgmt = self.env['asset.management'].search(domain, limit=1)
+            # Get serial number for THIS specific asset using positional lookup
+            # Always call _get_asset_serial_number() first since it uses positional
+            # matching on real IDs. Fall back to the manually-entered field only if
+            # the stock-move lookup yields nothing (e.g. no PO/lot data).
+            serial_value = asset._get_asset_serial_number() or asset.asset_serial_number
 
-            if not existing_mgmt and asset.asset_management_id:
-                existing_mgmt = asset.asset_management_id
+            # Write the resolved serial back to account.asset so the Accounting
+            # Assets form (asset_serial_number field) shows the correct individual
+            # serial for each asset, not just the first one in the batch.
+            # Use a context flag to prevent the write() → _sync_to_asset_management()
+            # re-entry (infinite recursion guard).
+            if serial_value and not asset.asset_serial_number:
+                asset.sudo().with_context(_no_serial_sync=True).write({'asset_serial_number': serial_value})
 
-            if existing_mgmt:
-                # Get siblings already pointing to this management record
-                sibling_assets = self.env['account.asset'].search([('asset_management_id', '=', existing_mgmt.id)])
-                if asset.id not in sibling_assets.ids:
-                    sibling_assets |= asset
-            else:
-                sibling_assets = asset
-            
-            total_count = len(sibling_assets)
+            # Get warranty date for this specific asset
+            warranty_date = asset.asset_warranty_date or asset._get_asset_warranty_date()
 
             vals = {
-                'amount': sum(sibling_assets.mapped('original_value')),  # Summing total value of all assets!
+                'amount': asset.original_value,
                 'invoice_date': asset.acquisition_date or fields.Date.today(),
                 'invoice_id': invoice.id if invoice else False,
                 'vendor_partner_id': vendor_partner.id if vendor_partner else False,
                 'product_id': product.id if product else False,
                 'asset_type_id': asset_type.id if asset_type else False,
                 'depreciation_apply': bool(asset_type),
-                'initial_stock': total_count,
+                'initial_stock': 1,
+                'current_stock': 1,
                 'company_id': target_company_id,
+                'accounting_asset_id': asset.id,
             }
 
-            # Get and add serial number: prefer account.asset field, fallback to stock move
-            serial_value = asset.asset_serial_number or asset._get_asset_serial_number()
             if serial_value:
                 vals['barcode'] = serial_value
-            
-            # Get and add warranty date: prefer account.asset field, fallback to stock move
-            if asset.asset_warranty_date:
-                vals['expired_warranty_date'] = asset.asset_warranty_date
+            if warranty_date:
+                vals['expired_warranty_date'] = warranty_date
+
+            # ── Use the already-linked record if it exists ──────────────────
+            mgmt_record = asset.asset_management_id
+
+            if mgmt_record:
+                # Update the existing 1-to-1 management record
+                mgmt_record.write({k: v for k, v in vals.items() if k not in ('initial_stock', 'current_stock', 'accounting_asset_id')})
             else:
-                warranty_date = asset._get_asset_warranty_date()
-                if warranty_date:
-                    vals['expired_warranty_date'] = warranty_date
+                # Create a brand-new individual record for this asset
+                mgmt_record = self.env['asset.management'].create(vals)
+                asset.asset_management_id = mgmt_record.id
 
-            if existing_mgmt:
-                # Calculate how much initial_stock is growing so we can
-                # increase current_stock by the same delta (new purchase arrives).
-                old_initial = existing_mgmt.initial_stock
-                new_initial = vals.get('initial_stock', old_initial)
-                stock_delta = new_initial - old_initial
-
-                # Update the shared record with latest count and cumulative info
-                existing_mgmt.write(vals)
-
-                # Grow current_stock by the same amount as initial_stock grew
-                # (only add; never subtract — outgoing transfers handle the reduction)
-                if stock_delta > 0:
-                    existing_mgmt.sudo().write({
-                        'current_stock': existing_mgmt.current_stock + stock_delta
-                    })
-
-                # Ensure all siblings point to this mgmt record
-                for sibling in sibling_assets:
-                    if sibling.asset_management_id != existing_mgmt:
-                        sibling.asset_management_id = existing_mgmt.id
-                mgmt_record = existing_mgmt
-            else:
-                # No existing record — create one shared record
-                mgmt_record = self.env['asset.management'].create({
-                    **vals,
-                    'accounting_asset_id': asset.id,
-                })
-                # Link all siblings to this newly created record
-                for sibling in sibling_assets:
-                    sibling.asset_management_id = mgmt_record.id
-
-            # Sync depreciation entries (Note: Depreciation syncing handles accumulating values perfectly)
+            # ── Sync depreciation entries ────────────────────────────────────
             asset._sync_depreciation_entries(mgmt_record)
 
-            # Sync serial numbers from all siblings' stock moves
-            all_serials = set()
-            for sibling in sibling_assets:
-                # From account.asset field
-                if sibling.asset_serial_number:
-                    all_serials.add(sibling.asset_serial_number)
-                # From stock move lots
-                all_serials.update(sibling._get_all_serial_numbers())
-
-            existing_serials = set(mgmt_record.serial_number_ids.mapped('name'))
-            for serial_name in all_serials - existing_serials:
-                self.env['asset.serial.number'].create({
-                    'asset_id': mgmt_record.id,
-                    'name': serial_name,
-                })
+            # ── Sync THIS asset's serial number only ─────────────────────────
+            if serial_value:
+                existing_names = set(mgmt_record.serial_number_ids.mapped('name'))
+                if serial_value not in existing_names:
+                    # Check global uniqueness before creating
+                    already_exists = self.env['asset.serial.number'].search(
+                        [('name', '=', serial_value)], limit=1
+                    )
+                    if not already_exists:
+                        self.env['asset.serial.number'].create({
+                            'asset_id': mgmt_record.id,
+                            'name': serial_value,
+                        })
+                    else:
+                        # Serial exists on another asset; just link it if unlinked
+                        if already_exists.asset_id != mgmt_record:
+                            already_exists.sudo().write({'asset_id': mgmt_record.id})
 
 
     # -------------------------------------------------------------------------
@@ -369,15 +402,15 @@ class AccountAsset(models.Model):
     def create(self, vals_list):
         # Auto-populate serial number and warranty date from stock move before creating
         for vals in vals_list:
-            # Create temporary record to use helper methods
+            # Create temporary record to use helper methods (for warranty date only)
             temp_record = self.new(vals)
-            
-            # Get serial number from stock move if not already provided
-            if not vals.get('asset_serial_number'):
-                serial_number = temp_record._get_asset_serial_number()
-                if serial_number:
-                    vals['asset_serial_number'] = serial_number
-            
+
+            # NOTE: We intentionally skip pre-populating asset_serial_number here.
+            # Temp records have no real DB ID, so the positional serial lookup would
+            # always return index 0 (first serial) for every asset in the batch.
+            # _sync_to_asset_management() runs after all records have real IDs and
+            # correctly maps each asset to its own serial by position.
+
             # Get warranty date from stock move if not already provided
             if not vals.get('asset_warranty_date'):
                 warranty_date = temp_record._get_asset_warranty_date()
@@ -390,6 +423,10 @@ class AccountAsset(models.Model):
 
     def write(self, vals):
         result = super(AccountAsset, self).write(vals)
+        # Skip sync when called from the serial writeback inside _sync_to_asset_management
+        # to prevent infinite recursion (write → sync → writeback → write → ...).
+        if self.env.context.get('_no_serial_sync'):
+            return result
         sync_triggers = {
             'name', 'original_value', 'acquisition_date',
             'original_move_line_ids', 'state', 'model_id',

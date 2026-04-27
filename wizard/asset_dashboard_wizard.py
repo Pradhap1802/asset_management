@@ -13,7 +13,7 @@ class AssetDashboardWizard(models.TransientModel):
 
     def populate_summary_lines(self):
         for record in self:
-            domain = [('asset_type_id', '=', record.asset_type_id.id)]
+            domain = [('asset_type_id', '=', record.asset_type_id.id), ('asset_status', '!=', 'expired')]
             if self.env.company.parent_id:
                 domain.append(('company_id', 'in', self.env.companies.ids))
             

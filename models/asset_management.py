@@ -60,6 +60,7 @@ class Asset(models.Model):
     transfer_ids = fields.One2many('asset.transfer.entry', 'asset_id', string="Transfer Entries")
     maintenance_ids = fields.One2many('asset.maintenance.entry', 'asset_id', string="Maintenance Entries")
     depreciation_ids = fields.One2many('asset.depreciation.entry', 'asset_id', string="Depreciation Entries")
+    disposal_ids = fields.One2many('asset.disposal', 'asset_id', string="Disposal Records")
     
     # Additional Information
     last_depreciation_date = fields.Date(string="Last Depreciation Date", help="Last Depreciation Entry Date", compute='_compute_last_depreciation_date', store=True)
@@ -69,6 +70,8 @@ class Asset(models.Model):
                                        compute='_compute_all_count', store=True)
     depreciation_count = fields.Integer(string='Depreciation Count',
                                         compute='_compute_all_count', store=True)
+    disposal_count = fields.Integer(string='Disposal Records',
+                                    compute='_compute_all_count', store=True)
     invoice_id = fields.Many2one('account.move', string="Associated Invoice")
     months_left = fields.Integer(string='Months Left',)
     assigned_user = fields.Char(string="Assigned User", compute='_compute_assigned_user',
@@ -212,12 +215,13 @@ class Asset(models.Model):
             else:
                 record.last_maintenance_date = False
 
-    @api.depends('transfer_ids', 'maintenance_ids', 'depreciation_ids.state')
+    @api.depends('transfer_ids', 'maintenance_ids', 'depreciation_ids.state', 'disposal_ids')
     def _compute_all_count(self):
         for record in self:
             record.transfer_count = len(record.transfer_ids)
             record.maintenance_count = len(record.maintenance_ids)
             record.depreciation_count = len(record.depreciation_ids.filtered(lambda d: d.state in ('posted', False)))
+            record.disposal_count = len(record.disposal_ids)
 
     @api.depends('amount',)
     def _compute_current_amount(self):
@@ -259,6 +263,26 @@ class Asset(models.Model):
             if 'initial_stock' in vals and 'current_stock' not in vals:
                 vals['current_stock'] = vals['initial_stock']
         return super(Asset, self).create(vals_list)
+
+    def write(self, vals):
+        """Auto-create a disposal record when asset_status is set to 'expired'."""
+        # Capture which assets are NOT yet expired before the write
+        previously_not_expired = self.filtered(lambda a: a.asset_status != 'expired')
+
+        res = super(Asset, self).write(vals)
+
+        if vals.get('asset_status') == 'expired':
+            for asset in previously_not_expired:
+                # Only create if no disposal record exists yet
+                if not asset.disposal_ids:
+                    self.env['asset.disposal'].create({
+                        'asset_id': asset.id,
+                        'disposal_date': fields.Date.today(),
+                        'disposal_method': 'scrap',
+                        'book_value_at_disposal': asset.current_amount,
+                        'state': 'draft',
+                    })
+        return res
 
     def generate_depreciation_entries(self):
         """Generate depreciation entries with value subtraction."""
@@ -482,12 +506,19 @@ class AssetTransferEntry(models.Model):
             'serial_number_ids': False,
         })
 
-        # Move ALL selected serial numbers to the new asset
-        if record.serial_number_ids:
-            record.serial_number_ids.write({'asset_id': new_asset.id})
+        # Move selected serial numbers to the destination asset
+        # Step 1: Snapshot the serials to transfer BEFORE any write
+        serials_to_transfer = record.serial_number_ids
+        if serials_to_transfer:
+            # Step 2: Detach from source asset first (prevents re-link via form save)
+            serials_to_transfer.sudo().write({'asset_id': new_asset.id})
+
+            # Step 3: Invalidate cache on source asset so serial_number_ids
+            #         reflects the removal immediately in any subsequent reads
+            asset.invalidate_recordset(['serial_number_ids'])
 
         # Mark the transfer entry as linked to the new branch asset and closed
-        record.write({
+        record.sudo().write({
             'asset_id': new_asset.id,
             'status': 'returned',
         })
@@ -617,7 +648,7 @@ class AssetType(models.Model):
     def _compute_asset_stats(self):
         for record in self:
             # Aggregate stats across all companies if in Main Company, or specific companies if in branch
-            domain = [('asset_type_id', '=', record.id)]
+            domain = [('asset_type_id', '=', record.id), ('asset_status', '!=', 'expired')]
             
             # If the active company has a parent, it's a branch: restrict to current active selection.
             # If it has no parent, it's the Main Company: show everything from all branches.

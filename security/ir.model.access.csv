@@ -23,3 +23,6 @@ access_asset_dashboard_wizard_line,asset.dashboard.wizard.line,model_asset_dashb
 access_asset_dashboard_wizard_maintenance,asset.dashboard.wizard.maintenance,model_asset_dashboard_wizard_maintenance,base.group_user,1,1,1,1
 access_ir_actions_act_window_assets_user,ir.actions.act_window.assets.user,base.model_ir_actions_act_window,assets_user_group,1,0,0,0
 access_ir_actions_act_window_assets_admin,ir.actions.act_window.assets.admin,base.model_ir_actions_act_window,assets_admin_group,1,0,0,0
+access_asset_disposal_user,asset.disposal.user,model_asset_disposal,assets_user_group,1,1,1,0
+access_asset_disposal_admin,asset.disposal.admin,model_asset_disposal,assets_admin_group,1,1,1,1
+access_asset_disposal_system,asset.disposal.system,model_asset_disposal,base.group_system,1,1,1,1

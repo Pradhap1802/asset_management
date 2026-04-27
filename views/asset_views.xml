@@ -140,6 +140,14 @@
                                 </list>
                             </field>
                         </page>
+
+                        <!-- Disposal Page -->
+                        <page string="Disposals" groups="asset_management.assets_user_group,asset_management.assets_admin_group,base.group_system">
+                            <field name="disposal_ids"
+                                   readonly="1"
+                                   views="[('list', 'asset_management.view_asset_disposal_inline_list')]">
+                            </field>
+                        </page>
                     </notebook>
                 </sheet>
                 <chatter/>

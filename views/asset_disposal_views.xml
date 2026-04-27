@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         Form View – Asset Disposal
+    ================================================================ -->
+    <record id="view_asset_disposal_form" model="ir.ui.view">
+        <field name="name">asset.disposal.form</field>
+        <field name="model">asset.disposal</field>
+        <field name="arch" type="xml">
+            <form string="Asset Disposal">
+                <header>
+                    <button name="action_confirm" string="Confirm"
+                            type="object" class="oe_highlight"
+                            invisible="state != 'draft'"/>
+                    <button name="action_done" string="Mark as Disposed"
+                            type="object" class="oe_highlight"
+                            invisible="state != 'confirmed'"/>
+                    <button name="action_reset_draft" string="Reset to Draft"
+                            type="object"
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,confirmed,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Asset Information">
+                            <field name="asset_id"
+                                   readonly="state != 'draft'"/>
+                            <field name="product_id" readonly="1"/>
+                            <field name="asset_type_id" readonly="1"/>
+                            <field name="company_id" readonly="1"/>
+                            <field name="serial_number_ids"
+                                   widget="many2many_tags"
+                                   domain="[('asset_id', '=', asset_id)]"
+                                   readonly="state == 'done'"
+                                   string="Serial Numbers"
+                                   options="{'no_create': True}"/>
+                        </group>
+                        <group string="Disposal Details">
+                            <field name="disposal_date"
+                                   readonly="state == 'done'"/>
+                            <field name="disposal_method"
+                                   readonly="state == 'done'"/>
+                            <field name="disposal_value"
+                                   readonly="state == 'done'"/>
+                            <field name="book_value_at_disposal"
+                                   readonly="1"/>
+                            <field name="loss_on_disposal" readonly="1"/>
+                            <field name="approved_by"
+                                   readonly="state == 'done'"/>
+                        </group>
+                    </group>
+                    <group string="Reason">
+                        <field name="disposal_reason" nolabel="1"
+                               readonly="state == 'done'"
+                               placeholder="Describe why this asset is being disposed…"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         List View – Asset Disposal
+    ================================================================ -->
+    <record id="view_asset_disposal_list" model="ir.ui.view">
+        <field name="name">asset.disposal.list</field>
+        <field name="model">asset.disposal</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="state == 'done'"
+                  decoration-info="state == 'draft'"
+                  decoration-success="state == 'confirmed'">
+                <field name="name"/>
+                <field name="asset_id"/>
+                <field name="product_id"/>
+                <field name="serial_number_ids" widget="many2many_tags" string="Serial Numbers"/>
+                <field name="company_id" string="Branch"/>
+                <field name="disposal_date"/>
+                <field name="disposal_method"/>
+                <field name="book_value_at_disposal"/>
+                <field name="disposal_value"/>
+                <field name="loss_on_disposal"/>
+                <field name="approved_by"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'confirmed'"
+                       decoration-danger="state == 'done'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         Search View – Asset Disposal
+    ================================================================ -->
+    <record id="view_asset_disposal_search" model="ir.ui.view">
+        <field name="name">asset.disposal.search</field>
+        <field name="model">asset.disposal</field>
+        <field name="arch" type="xml">
+            <search string="Asset Disposals">
+                <field name="name"/>
+                <field name="asset_id"/>
+                <field name="product_id"/>
+                <field name="company_id" string="Branch"/>
+                <separator/>
+                <filter string="Draft"     name="draft"
+                        domain="[('state','=','draft')]"/>
+                <filter string="Confirmed" name="confirmed"
+                        domain="[('state','=','confirmed')]"/>
+                <filter string="Disposed"  name="done"
+                        domain="[('state','=','done')]"/>
+                <separator/>
+                <filter string="Scrapped"  name="scrap"
+                        domain="[('disposal_method','=','scrap')]"/>
+                <filter string="Sold"      name="sold"
+                        domain="[('disposal_method','=','sold')]"/>
+                <group>
+                    <filter string="Branch" name="group_by_branch"
+                            context="{'group_by': 'company_id'}"/>
+                    <filter string="Method" name="group_by_method"
+                            context="{'group_by': 'disposal_method'}"/>
+                    <filter string="Asset Type" name="group_by_type"
+                            context="{'group_by': 'asset_type_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         Inline List for Disposal tab inside the Asset form
+    ================================================================ -->
+    <record id="view_asset_disposal_inline_list" model="ir.ui.view">
+        <field name="name">asset.disposal.inline.list</field>
+        <field name="model">asset.disposal</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="serial_number_ids" widget="many2many_tags" string="Serial Numbers"/>
+                <field name="disposal_date"/>
+                <field name="disposal_method"/>
+                <field name="book_value_at_disposal"/>
+                <field name="disposal_value"/>
+                <field name="loss_on_disposal"/>
+                <field name="approved_by"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'confirmed'"
+                       decoration-danger="state == 'done'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         Window Action – Asset Disposal
+    ================================================================ -->
+    <record id="action_asset_disposal" model="ir.actions.act_window">
+        <field name="name">Disposals</field>
+        <field name="res_model">asset.disposal</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_asset_disposal_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No disposal records yet.
+                <br/>
+                Disposing an asset (setting status to Expired/Scrap) will
+                automatically create a record here.
+            </p>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         Menu Item – Disposal
+    ================================================================ -->
+    <menuitem id="menu_asset_disposal"
+              name="Disposals"
+              parent="menu_asset_root"
+              action="action_asset_disposal"
+              groups="assets_user_group,assets_admin_group,base.group_system"
+              sequence="55"/>
+
+</odoo>
