@@ -138,7 +138,108 @@ class AssetDisposal(models.Model):
             if 'book_value_at_disposal' not in vals and vals.get('asset_id'):
                 asset = self.env['asset.management'].browse(vals['asset_id'])
                 vals['book_value_at_disposal'] = asset.current_amount
-        return super().create(vals_list)
+        records = super().create(vals_list)
+        # Handle rare case where disposal is created directly in 'done' state
+        for rec in records:
+            if rec.state == 'done':
+                rec._apply_disposal_stock_reduction()
+        return records
+
+    def write(self, vals):
+        # Snapshot records NOT yet in 'done' state before the write
+        not_yet_done = self.filtered(lambda r: r.state != 'done')
+        result = super().write(vals)
+        # If state is now 'done' for a record that wasn't done before → reduce stock
+        if vals.get('state') == 'done':
+            for rec in not_yet_done:
+                if rec.state == 'done':
+                    rec._apply_disposal_stock_reduction()
+        return result
+
+    # -------------------------------------------------------------------------
+    # Stock reduction helper (called from write, action_done, and create)
+    # -------------------------------------------------------------------------
+    def _apply_disposal_stock_reduction(self):
+        """
+        Reduce stock when a disposal is marked Done:
+          1. Reduce asset.management.current_stock (custom tracking field)
+          2. Create & validate stock.scrap records to reduce actual Odoo inventory
+          3. Retire (delete) disposed serial numbers
+          4. Mark the asset expired if stock reaches zero
+        """
+        self.ensure_one()
+        asset = self.asset_id
+        if not asset or not asset.product_id:
+            return
+
+        product = asset.product_id
+        company = asset.company_id or self.env.company
+        disposed_qty = len(self.serial_number_ids) if self.serial_number_ids else 1
+
+        # ── 1. Reduce custom current_stock ───────────────────────────────────
+        new_stock = max(asset.current_stock - disposed_qty, 0)
+        asset.sudo().write({'current_stock': new_stock})
+
+        # ── 2. Create stock.scrap to reduce actual Odoo inventory ────────────
+        # Find the source stock location for the company/branch
+        warehouse = self.env['stock.warehouse'].search(
+            [('company_id', '=', company.id)], limit=1
+        )
+        source_location = warehouse.lot_stock_id if warehouse else self.env['stock.location'].search(
+            [('usage', '=', 'internal'), ('company_id', '=', company.id)], limit=1
+        )
+
+        if source_location and product:
+            uom = product.uom_id
+
+            if self.serial_number_ids:
+                # Scrap one unit per serial number, matched to its lot if available
+                for serial in self.serial_number_ids:
+                    # Find the matching stock lot
+                    lot = self.env['stock.lot'].search([
+                        ('name', '=', serial.name),
+                        ('product_id', '=', product.id),
+                        ('company_id', '=', company.id),
+                    ], limit=1)
+                    scrap_vals = {
+                        'product_id': product.id,
+                        'product_uom_id': uom.id,
+                        'scrap_qty': 1,
+                        'location_id': source_location.id,
+                        'company_id': company.id,
+                        'origin': self.name,
+                    }
+                    if lot:
+                        scrap_vals['lot_id'] = lot.id
+                    scrap = self.env['stock.scrap'].sudo().create(scrap_vals)
+                    try:
+                        scrap.action_validate()
+                    except Exception:
+                        # If scrap validation fails (e.g. insufficient qty), log and continue
+                        pass
+            else:
+                # No serial selected — scrap 1 unit generically
+                scrap = self.env['stock.scrap'].sudo().create({
+                    'product_id': product.id,
+                    'product_uom_id': uom.id,
+                    'scrap_qty': 1,
+                    'location_id': source_location.id,
+                    'company_id': company.id,
+                    'origin': self.name,
+                })
+                try:
+                    scrap.action_validate()
+                except Exception:
+                    pass
+
+        # ── 3. Retire disposed serial numbers permanently ─────────────────────
+        if self.serial_number_ids:
+            self.serial_number_ids.sudo().unlink()
+            asset.invalidate_recordset(['serial_number_ids'])
+
+        # ── 4. Mark asset expired when stock hits zero ────────────────────────
+        if new_stock == 0 and asset.asset_status != 'expired':
+            asset.sudo().with_context(_no_disposal_sync=True).write({'asset_status': 'expired'})
 
     # -------------------------------------------------------------------------
     # Actions
@@ -150,11 +251,10 @@ class AssetDisposal(models.Model):
 
     def action_done(self):
         for rec in self:
-            if rec.state == 'confirmed':
-                rec.state = 'done'
-                # Ensure the linked asset is marked expired/scrap
-                if rec.asset_id.asset_status != 'expired':
-                    rec.asset_id.asset_status = 'expired'
+            if rec.state != 'confirmed':
+                continue
+            rec.state = 'done'
+            # Stock reduction is handled by write() → _apply_disposal_stock_reduction()
 
     def action_reset_draft(self):
         for rec in self:

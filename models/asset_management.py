@@ -271,7 +271,9 @@ class Asset(models.Model):
 
         res = super(Asset, self).write(vals)
 
-        if vals.get('asset_status') == 'expired':
+        # Skip auto-disposal creation when called from _apply_disposal_stock_reduction
+        # to prevent a create→write→create loop.
+        if vals.get('asset_status') == 'expired' and not self.env.context.get('_no_disposal_sync'):
             for asset in previously_not_expired:
                 # Only create if no disposal record exists yet
                 if not asset.disposal_ids:
