@@ -1,6 +1,9 @@
+import logging
 from odoo import models, fields, api, _, exceptions
 from dateutil.relativedelta import relativedelta
 from datetime import datetime, timedelta
+
+_logger = logging.getLogger(__name__)
 
 
 class Asset(models.Model):
@@ -73,14 +76,24 @@ class Asset(models.Model):
     disposal_count = fields.Integer(string='Disposal Records',
                                     compute='_compute_all_count', store=True)
     invoice_id = fields.Many2one('account.move', string="Associated Invoice")
-    months_left = fields.Integer(string='Months Left',)
+    months_left = fields.Integer(
+        string='Months Left',
+        compute='_compute_months_left',
+        store=True,
+        help="Remaining warranty months (0 if expired or no warranty)",
+    )
     assigned_user = fields.Char(string="Assigned User", compute='_compute_assigned_user',
                                 store=True)
     assign_by = fields.Char(string="Assigned By", compute='_compute_assigned_user',
                                 store=True)
     remaining_warranty = fields.Char(string="Remaining Warranty",
                                      compute="_compute_months_left", store=True)
-    warranty_status = fields.Char(string='Warranty Status')
+    warranty_status = fields.Selection([
+        ('success', 'Good'),
+        ('warning', 'Expiring Soon'),
+        ('danger', 'Critical / Expired'),
+        ('none', 'No Warranty'),
+    ], string='Warranty Status', compute='_compute_months_left', store=True)
     # Link back to the Odoo Enterprise accounting asset
     accounting_asset_id = fields.Many2one(
         'account.asset',
@@ -129,16 +142,17 @@ class Asset(models.Model):
             if record.expired_warranty_date:
                 if record.expired_warranty_date < today:
                     record.remaining_warranty = 'Expired'
-                    record.warranty_status = 'expired'
+                    record.warranty_status = 'danger'
+                    record.months_left = 0
 
                 elif record.expired_warranty_date == today:
                     record.remaining_warranty = 'Today'
                     record.warranty_status = 'danger'
+                    record.months_left = 0
 
                 else:
                     rd = relativedelta(record.expired_warranty_date, today)
-                    total_months = rd.years * 12 + rd.months + (
-                                rd.days / 30)  # Approximate
+                    total_months = rd.years * 12 + rd.months + (rd.days / 30)
 
                     if total_months > 6:
                         record.warranty_status = 'success'
@@ -146,37 +160,34 @@ class Asset(models.Model):
                         record.warranty_status = 'warning'
                     else:
                         record.warranty_status = 'danger'
-                    years = rd.years
-                    months = rd.months
-                    days = rd.days
+
+                    record.months_left = int(total_months)
 
                     parts = []
-                    if years > 0:
-                        parts = [f"{years} year{'s' if years > 1 else ''}"]
-                    elif months > 0:
-                        parts = [f"{months} month{'s' if months > 1 else ''}"]
-                    elif days > 0:
-                        parts = [f"{days} day{'s' if days > 1 else ''}"]
-                    
-                       
-                    print("parts : ", parts)
-                    record.remaining_warranty = ', '.join(parts)
+                    if rd.years > 0:
+                        parts.append(f"{rd.years} year{'s' if rd.years > 1 else ''}")
+                    if rd.months > 0:
+                        parts.append(f"{rd.months} month{'s' if rd.months > 1 else ''}")
+                    if rd.days > 0 and not rd.years:
+                        parts.append(f"{rd.days} day{'s' if rd.days > 1 else ''}")
+                    record.remaining_warranty = ', '.join(parts) if parts else 'Today'
 
             else:
                 record.remaining_warranty = 'No warranty'
-                record.warranty_status = 'expired'
+                record.warranty_status = 'none'
+                record.months_left = 0
 
-    @api.depends('transfer_ids')
+    @api.depends('transfer_ids', 'transfer_ids.assign_date')
     def _compute_assigned_user(self):
         for record in self:
-            # Check if there are any transfer entries
             if record.transfer_ids:
-                # Retrieve the most recent transfer entry based on 'assign_date'
-                last_transfer = record.transfer_ids[-1]
+                # Sort by assign_date descending to get the most recent assignment
+                last_transfer = record.transfer_ids.sorted(
+                    key=lambda t: t.assign_date or fields.Date.min, reverse=True
+                )[:1]
                 if last_transfer:
-                    # Get the user who assigned the asset in the last transfer
-                    record.assigned_user = last_transfer.transfer_employee_id.name
-                    record.assign_by = last_transfer.assign_by.id
+                    record.assigned_user = last_transfer.transfer_employee_id.name or ''
+                    record.assign_by = last_transfer.assign_by.name or ''
                 else:
                     record.assigned_user = ''
                     record.assign_by = ''
@@ -184,22 +195,21 @@ class Asset(models.Model):
                 record.assigned_user = ''
                 record.assign_by = ''
 
-    @api.depends('maintenance_ids.return_date')
+    @api.depends('maintenance_ids.return_date', 'asset_type_id.maintenance_interval_days')
     def _compute_next_maintenance_due(self):
-        """Calculate next maintenance due date based on last maintenance + 90 days"""
+        """Calculate next maintenance due using the asset type's maintenance interval."""
         for record in self:
-            if record.maintenance_ids:
-                # Get the last completed maintenance
-                completed_maintenance = record.maintenance_ids.filtered(lambda m: m.maintenance_status == 'completed')
-                if completed_maintenance:
-                    last_maintenance = max(completed_maintenance, key=lambda m: m.return_date)
-                    if last_maintenance.return_date:
-                        # Add 90 days for next maintenance
-                        record.next_maintenance_due = last_maintenance.return_date + timedelta(days=90)
-                    else:
-                        record.next_maintenance_due = False
-                else:
-                    record.next_maintenance_due = False
+            completed = record.maintenance_ids.filtered(
+                lambda m: m.maintenance_status == 'completed' and m.return_date
+            )
+            if completed:
+                last_date = max(completed.mapped('return_date'))
+                interval = (
+                    record.asset_type_id.maintenance_interval_days
+                    if record.asset_type_id and record.asset_type_id.maintenance_interval_days
+                    else 90
+                )
+                record.next_maintenance_due = last_date + timedelta(days=interval)
             else:
                 record.next_maintenance_due = False
 
@@ -287,61 +297,66 @@ class Asset(models.Model):
         return res
 
     def generate_depreciation_entries(self):
-        """Generate depreciation entries with value subtraction."""
-        assets = self.search(
-            [('depreciation_apply', '=', True)])
+        """
+        Generate depreciation entries for all eligible assets.
+
+        IMPORTANT: We never mutate `asset.amount` (the purchase price).
+        Depreciation is tracked exclusively via `asset.depreciation.entry` records,
+        and `_compute_current_amount` derives the book value as amount − Σ(entries).
+        """
+        assets = self.search([('depreciation_apply', '=', True)])
 
         for asset in assets:
-            # Check if the maximum number of depreciation entries has been reached
+            # Count ALL existing entries (any user) — not just admin-created ones
             existing_entries_count = self.env['asset.depreciation.entry'].search_count(
-                [('asset_id', '=', asset.id),('create_uid', '=', 1)])
+                [('asset_id', '=', asset.id)]
+            )
             max_entries = asset.asset_type_id.maximum_depreciation_entries
 
             if max_entries and existing_entries_count >= max_entries:
-                continue  # Skip this asset if the maximum number of entries has been reached
+                continue  # Useful life exhausted
 
             # Determine the starting date for depreciation
-            start_date = asset.last_depreciation_date if asset.last_depreciation_date else asset.invoice_date
+            start_date = asset.last_depreciation_date or asset.invoice_date
             if not start_date:
-                continue  # Skip if no valid starting date
+                continue
 
             # Calculate next depreciation date
-            if asset.asset_type_id.depreciation_frequency == 'yearly':
-                next_depreciation_date = start_date + relativedelta(
-                    years=asset.asset_type_id.depreciation_start_delay)
-            elif asset.asset_type_id.depreciation_frequency == 'monthly':
-                next_depreciation_date = start_date + relativedelta(
-                    months=asset.asset_type_id.depreciation_start_delay)
-            elif asset.asset_type_id.depreciation_frequency == 'days':
-                next_depreciation_date = start_date + timedelta(
-                    days=asset.asset_type_id.depreciation_start_delay)
+            delay = asset.asset_type_id.depreciation_start_delay or 1
+            freq = asset.asset_type_id.depreciation_frequency
+            if freq == 'yearly':
+                next_depreciation_date = start_date + relativedelta(years=delay)
+            elif freq == 'monthly':
+                next_depreciation_date = start_date + relativedelta(months=delay)
+            elif freq == 'days':
+                next_depreciation_date = start_date + timedelta(days=delay)
             else:
-                continue  # Invalid depreciation type
+                continue
 
-            # Check if depreciation needs to be applied today
             if next_depreciation_date > datetime.today().date():
-                continue  # Skip if next depreciation date is in the future
+                continue  # Not yet due
 
-            # Determine the depreciation amount and subtract it from the value
-            if asset.asset_type_id.depreciation_method == 'fix':
+            # Calculate the depreciation amount
+            method = asset.asset_type_id.depreciation_method
+            if method == 'fix':
                 depreciation_amount = asset.asset_type_id.depreciation_rate
-            elif asset.asset_type_id.depreciation_method == 'percentage':
-                base_amount = asset.amount if asset.asset_type_id.depreciation_basis == 'real_value' else asset.current_amount
-                depreciation_amount = (
-                                                  base_amount * asset.asset_type_id.depreciation_rate) / 100
+            elif method == 'percentage':
+                # Use purchase price (real_value) or current book value
+                if asset.asset_type_id.depreciation_basis == 'real_value':
+                    base_amount = asset.amount
+                else:
+                    base_amount = asset.current_amount
+                depreciation_amount = (base_amount * asset.asset_type_id.depreciation_rate) / 100
             else:
-                continue  # Invalid depreciation value type
+                continue
 
-            # Subtract the depreciation amount from the asset's value
-            if asset.asset_type_id.depreciation_basis == 'real_value':
-                asset.amount -= depreciation_amount
-            else:
-                asset.total_depreciation_amount -= depreciation_amount
+            # ── Never mutate asset.amount (purchase price) ──────────────────
+            # Depreciation is recorded purely as entries; current_amount is
+            # computed as amount − Σ(depreciation_entries).
+            # Update the last depreciation date for scheduling
+            asset.sudo().write({'last_depreciation_date': next_depreciation_date})
 
-            # Update the last depreciation date and create an entry in the depreciation model
-            asset.last_depreciation_date = next_depreciation_date
-
-            # Create a depreciation entry in the 'asset.depreciation' model
+            # Create the depreciation entry
             self.env['asset.depreciation.entry'].create({
                 'asset_id': asset.id,
                 'created_by': self.env.uid,
@@ -350,8 +365,9 @@ class Asset(models.Model):
                 'bill_id': asset.invoice_id.id if asset.invoice_id else False,
             })
 
-            print(
-                f"Depreciation Entry Created for {asset.name}: {depreciation_amount} deducted on {next_depreciation_date}"
+            _logger.info(
+                "Depreciation entry created for %s: %.2f on %s",
+                asset.name, depreciation_amount, next_depreciation_date
             )
 
     def action_open_label_layout(self):
@@ -411,8 +427,13 @@ class AssetTransferEntry(models.Model):
         ('returned', 'Returned'),
         ('under_maintenance', 'Under Maintenance')
     ], string="Status", help="Current status of the asset transfer")
-    transfer_code = fields.Char(string="Transfer Code", copy=False, readonly=True, 
-                               default=lambda self: _('New'), help="Unique identifier for this transfer")
+    transfer_code = fields.Char(
+        string="Transfer Code",
+        copy=False,
+        readonly=True,
+        default=lambda self: _('New'),
+        help="Unique identifier for this transfer",
+    )
     stock_qty = fields.Integer(string="Quantity", default=1, 
                               help="Quantity of assets being transferred (for multiple assets)")
     
@@ -542,6 +563,10 @@ class AssetTransferEntry(models.Model):
                 self._do_branch_transfer(record)
         return res
 
+    _constraints = [
+        models.Constraint('unique(transfer_code)', 'Transfer code must be unique!'),
+    ]
+
     @api.constrains('status', 'asset_id', 'stock_qty')
     def _check_stock_availability(self):
         """Ensure stock is available when assigning assets (employee assignments only)."""
@@ -631,7 +656,6 @@ class AssetType(models.Model):
         ('percentage', 'Percentage')
     ], string='Depreciation Value Type', required=True, help="Whether depreciation is calculated as a percentage or fixed amount")
     color = fields.Integer(string='Color Index', default=0)
-
     depreciation_rate = fields.Float(string='Depreciation Rate', help="The percentage or fixed amount used to calculate depreciation")
     depreciation_start_delay = fields.Integer(string='Depreciation Start Delay', help="Time duration before depreciation begins after asset acquisition")
     depreciation_basis = fields.Selection([
@@ -639,6 +663,11 @@ class AssetType(models.Model):
         ('depreciation_value', 'Book Price')
     ], string='Depreciation Basis', required=True, help="Whether depreciation is applied to the adjusted value (after previous depreciation) or the original value")
     maximum_depreciation_entries = fields.Integer(string="Maximum Depreciation Entries", help="The maximum number of depreciation entries allowed for this asset type")
+    maintenance_interval_days = fields.Integer(
+        string="Maintenance Interval (Days)",
+        default=90,
+        help="Number of days between scheduled maintenance events for this asset type",
+    )
 
     asset_count = fields.Integer(compute='_compute_asset_stats')
     total_booked_value = fields.Monetary(compute='_compute_asset_stats', string="Total Booked Value", currency_field='currency_id')

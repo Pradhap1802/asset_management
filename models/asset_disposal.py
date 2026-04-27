@@ -258,4 +258,45 @@ class AssetDisposal(models.Model):
 
     def action_reset_draft(self):
         for rec in self:
+            if rec.state == 'done' and rec.asset_id and rec.asset_id.product_id:
+                # Restore current_stock
+                disposed_qty = 1  # Serial numbers were deleted, so count = 1
+                asset = rec.asset_id
+                asset.sudo().write({'current_stock': asset.current_stock + disposed_qty})
+
+                # Reverse the scrap via a return stock move into the warehouse location
+                company = asset.company_id or self.env.company
+                warehouse = self.env['stock.warehouse'].search(
+                    [('company_id', '=', company.id)], limit=1
+                )
+                if warehouse:
+                    # Odoo 19: 'scrap_location' boolean field was removed.
+                    # Use the global scrap location via XML ref.
+                    scrap_location = self.env.ref(
+                        'stock.stock_location_scrapped', raise_if_not_found=False
+                    )
+                    if not scrap_location:
+                        # Fallback: find any virtual location used for scrapping
+                        scrap_location = self.env['stock.location'].search(
+                            [('usage', '=', 'inventory'), ('company_id', 'in', [company.id, False])],
+                            limit=1,
+                        )
+                    dest_location = warehouse.lot_stock_id
+                    if scrap_location and dest_location:
+                        self.env['stock.move'].sudo().create({
+                            # 'name' field is removed in Odoo 19 stock.move
+                            'product_id': asset.product_id.id,
+                            'product_uom_qty': disposed_qty,
+                            'product_uom': asset.product_id.uom_id.id,
+                            'location_id': scrap_location.id,
+                            'location_dest_id': dest_location.id,
+                            'company_id': company.id,
+                            'origin': rec.name,
+                            'state': 'draft',
+                        })._action_confirm()._action_assign()
+
+                # Restore asset status if it was expired only because of this disposal
+                if asset.asset_status == 'expired' and asset.current_stock > 0:
+                    asset.sudo().with_context(_no_disposal_sync=True).write({'asset_status': 'active'})
+
             rec.state = 'draft'
