@@ -613,6 +613,30 @@ class AssetMaintenanceEntry(models.Model):
     invoice_id = fields.Many2one('account.move', string="Invoice")
     file_name = fields.Char(string='File Name')
     document = fields.Binary(string='Documents', required=True)
+    maintenance_request_id = fields.Many2one('maintenance.request', string="Odoo Maintenance Request", readonly=True)
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super(AssetMaintenanceEntry, self).create(vals_list)
+        for record in records:
+            if self.env.context.get('_from_maintenance_request'):
+                continue
+
+            maintenance_type = 'preventive' if record.maintenance_type in ('preventive', 'amc') else 'corrective'
+            asset_name = record.asset_id.name or 'Unknown'
+            serial_name = record.serial_number_id.name or 'N/A'
+            req_vals = {
+                'name': f"Maintenance for {asset_name} ({serial_name})",
+                'maintenance_type': maintenance_type,
+                'request_date': record.assign_date or fields.Date.today(),
+            }
+            if record.assign_by:
+                req_vals['owner_user_id'] = record.assign_by.id
+                req_vals['user_id'] = record.assign_by.id
+            
+            m_request = self.env['maintenance.request'].with_context(_from_asset_maintenance=True).create(req_vals)
+            record.write({'maintenance_request_id': m_request.id})
+        return records
 
     @api.depends('assign_date', 'return_date')
     def _compute_downtime_days(self):
@@ -709,3 +733,50 @@ class AssetType(models.Model):
             'view_mode': 'form',
         })
         return action
+
+class MaintenanceRequest(models.Model):
+    _inherit = 'maintenance.request'
+
+    def copy(self, default=None):
+        new_request = super(MaintenanceRequest, self).copy(default)
+        
+        # Odoo's maintenance.request automatically calls copy() to create the 
+        # recurrent maintenance when a preventive maintenance request is set to done.
+        # Find if the original request was linked to an asset maintenance entry
+        entry = self.env['asset.maintenance.entry'].search([('maintenance_request_id', '=', self.id)], limit=1)
+        if entry:
+            # Duplicate the asset maintenance entry to match the new recurrent request
+            entry_copy_vals = {
+                'maintenance_request_id': new_request.id,
+                'assign_date': new_request.schedule_date.date() if new_request.schedule_date else fields.Date.today(),
+                'return_date': False,
+                'maintenance_status': 'pending',
+                'maintenance_amount': 0.0,
+            }
+            # We use context flag to skip triggering a new reverse maintenance request
+            entry.with_context(_from_maintenance_request=True).copy(entry_copy_vals)
+            
+        return new_request
+
+    def write(self, vals):
+        res = super(MaintenanceRequest, self).write(vals)
+        if 'stage_id' in vals and not self.env.context.get('_from_asset_maintenance'):
+            for request in self:
+                # Find linked asset maintenance entry mapping to this request
+                entry = self.env['asset.maintenance.entry'].search([('maintenance_request_id', '=', request.id)], limit=1)
+                if entry:
+                    if request.stage_id.done:
+                        status = 'completed'
+                    elif request.stage_id.sequence <= 1:
+                        status = 'pending'
+                    else:
+                        status = 'in_progress'
+                    
+                    if entry.maintenance_status != status:
+                        entry.with_context(_from_maintenance_request=True).write({'maintenance_status': status})
+                
+                # Check if it was moved to completed and we need to set return_date
+                if request.stage_id.done and entry and not entry.return_date:
+                    entry.with_context(_from_maintenance_request=True).write({'return_date': fields.Date.today()})
+
+        return res

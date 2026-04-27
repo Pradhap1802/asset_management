@@ -6,7 +6,7 @@
         Streamline your asset lifecycle management with our comprehensive Odoo module. Track assets, automate depreciation, manage maintenance, and handle transfers effortlessly. Generate detailed reports, monitor warranties, and optimize asset utilization. User-friendly interface ensures easy adoption. Suitable for businesses of all sizes, this module empowers you to make informed decisions and maximize the value of your assets.
     """,
     'category': 'Operations',
-    'depends': ['base', 'product', 'hr', 'account', 'account_asset', 'purchase', 'stock', 'mail'],
+    'depends': ['base', 'product', 'hr', 'account', 'account_asset', 'purchase', 'stock', 'mail', 'maintenance'],
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
