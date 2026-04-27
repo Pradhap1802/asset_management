@@ -66,11 +66,11 @@
                                         <!-- Location -->
                                         <div class="px-3 pb-2" t-if="record.company_id.raw_value">
                                             <span class="badge text-bg-info">
-                                                <i class="fa fa-building me-1"/>
+                                                <i class="fa fa-building me-1" title="Location" aria-label="Location"/>
                                                 <field name="company_id"/>
                                             </span>
                                             <span class="badge text-bg-secondary ms-1">
-                                                <i class="fa fa-cubes me-1"/>Stock: <field name="count"/>
+                                                <i class="fa fa-cubes me-1" title="Stock" aria-label="Stock"/>Stock: <field name="count"/>
                                             </span>
                                         </div>
 

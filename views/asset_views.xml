@@ -284,7 +284,7 @@
                                 <div class="mb-2" t-if="record.asset_type_id.raw_value">
                                     <span class="badge rounded-pill" 
                                           t-attf-class="badge rounded-pill #{record.asset_type_id.color and record.asset_type_id.color.raw_value ? 'o_tag_color_' + record.asset_type_id.color.raw_value : 'bg-secondary'} text-white">
-                                        <i class="fa fa-tag me-1"></i>
+                                        <i title="fa fa-tag me-1" aria-label="fa fa-tag me-1" class="fa fa-tag me-1"></i>
                                         <field name="asset_type_id"/>
                                     </span>
                                 </div>
@@ -297,7 +297,7 @@
                                 <!-- Serial Numbers -->
                                 <div class="mb-2" t-if="record.serial_number_ids.raw_value">
                                     <div class="d-flex align-items-center text-muted">
-                                        <i class="fa fa-barcode me-2"></i>
+                                        <i title="fa fa-barcode me-2" aria-label="fa fa-barcode me-2" class="fa fa-barcode me-2"></i>
                                         <field name="serial_number_ids" widget="many2many_tags"/>
                                     </div>
                                 </div>
@@ -305,7 +305,7 @@
                                 <!-- Assigned User -->
                                 <div class="mb-2" t-if="record.assigned_user.raw_value">
                                     <div class="d-flex align-items-center text-muted">
-                                        <i class="fa fa-user me-2"></i>
+                                        <i title="fa fa-user me-2" aria-label="fa fa-user me-2" class="fa fa-user me-2"></i>
                                         <span class="text-truncate">
                                             <field name="assigned_user"/>
                                         </span>
@@ -316,15 +316,15 @@
                                 <div class="mb-2">
                                     <div class="d-flex gap-2 flex-wrap">
                                         <span class="badge bg-info">
-                                            <i class="fa fa-cubes me-1"></i>
+                                            <i title="fa fa-cubes me-1" aria-label="fa fa-cubes me-1" class="fa fa-cubes me-1"></i>
                                             Stock: <field name="current_stock"/>/<field name="initial_stock"/>
                                         </span>
                                         <span class="badge bg-warning text-dark" t-if="record.active_transfers.raw_value">
-                                            <i class="fa fa-exchange me-1"></i>
+                                            <i title="fa fa-exchange me-1" aria-label="fa fa-exchange me-1" class="fa fa-exchange me-1"></i>
                                             Active: <field name="active_transfers"/>
                                         </span>
                                         <span t-if="record.company_id.raw_value" t-attf-class="badge rounded-pill o_tag_color_#{record.company_id.raw_value % 11} text-black">
-                                            <i class="fa fa-building me-1"></i>
+                                            <i title="fa fa-building me-1" aria-label="fa fa-building me-1" class="fa fa-building me-1"></i>
                                             <field name="company_id"/>
                                         </span>
                                     </div>
@@ -335,13 +335,13 @@
                                     <div class="d-flex flex-column gap-1">
                                         <div class="d-flex justify-content-between align-items-center" t-if="record.amount.raw_value">
                                             <span class="text-muted small">
-                                                <i class="fa fa-dollar-sign me-1"></i>Purchase Price:
+                                                <i title="fa fa-dollar-sign me-1" aria-label="fa fa-dollar-sign me-1" class="fa fa-dollar-sign me-1"></i>Purchase Price:
                                             </span>
                                             <strong><field name="amount" widget="monetary"/></strong>
                                         </div>
                                         <div class="d-flex justify-content-between align-items-center" t-if="record.current_amount.raw_value">
                                             <span class="text-muted small">
-                                                <i class="fa fa-chart-line me-1"></i>Book Value:
+                                                <i title="fa fa-chart-line me-1" aria-label="fa fa-chart-line me-1" class="fa fa-chart-line me-1"></i>Book Value:
                                             </span>
                                             <strong class="text-primary"><field name="current_amount" widget="monetary"/></strong>
                                         </div>
@@ -352,12 +352,12 @@
                                 <div class="mb-2">
                                     <div class="d-flex flex-column gap-1 small">
                                         <div t-if="record.invoice_date.raw_value" class="text-muted">
-                                            <i class="fa fa-calendar me-1"></i>
+                                            <i title="fa fa-calendar me-1" aria-label="fa fa-calendar me-1" class="fa fa-calendar me-1"></i>
                                             Purchase: <field name="invoice_date"/>
                                         </div>
                                         <div t-if="record.expired_warranty_date.raw_value" 
                                              t-attf-class="text-#{record.warranty_status.raw_value == 'expired' ? 'danger' : 'muted'}">
-                                            <i class="fa fa-shield-alt me-1"></i>
+                                            <i title="fa fa-shield-alt me-1" aria-label="fa fa-shield-alt me-1" class="fa fa-shield-alt me-1"></i>
                                             Warranty: <field name="expired_warranty_date"/>
                                         </div>
                                     </div>
@@ -369,15 +369,15 @@
                                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pt-2 border-top">
                                     <div class="d-flex gap-2 flex-wrap">
                                         <span class="badge text-bg-secondary" title="Depreciation Entries">
-                                            <i class="fa fa-chart-line me-1"></i>
+                                            <i title="fa fa-chart-line me-1" aria-label="fa fa-chart-line me-1" class="fa fa-chart-line me-1"></i>
                                             <field name="depreciation_count"/>
                                         </span>
                                         <span class="badge text-bg-secondary" title="Maintenance Records">
-                                            <i class="fa fa-wrench me-1"></i>
+                                            <i title="fa fa-wrench me-1" aria-label="fa fa-wrench me-1" class="fa fa-wrench me-1"></i>
                                             <field name="maintenance_count"/>
                                         </span>
                                         <span class="badge text-bg-secondary" title="Transfer History">
-                                            <i class="fa fa-exchange me-1"></i>
+                                            <i title="fa fa-exchange me-1" aria-label="fa fa-exchange me-1" class="fa fa-exchange me-1"></i>
                                             <field name="transfer_count"/>
                                         </span>
                                     </div>
@@ -386,7 +386,7 @@
                                             #{record.warranty_status.raw_value == 'expired' ? 'bg-danger' : 
                                               record.warranty_status.raw_value == 'expiring_soon' ? 'bg-warning text-dark' : 
                                               'bg-success'}">
-                                            <i class="fa fa-shield-alt me-1"></i>
+                                            <i title="fa fa-shield-alt me-1" aria-label="fa fa-shield-alt me-1" class="fa fa-shield-alt me-1"></i>
                                             <field name="remaining_warranty"/>
                                         </span>
                                     </div>
@@ -738,19 +738,19 @@
                             <!-- Details List -->
                             <div class="w-100 py-2 px-4 text-start">
                                 <div class="d-flex justify-content-between align-items-center py-2">
-                                    <span class="text-muted small"><i class="fa fa-money me-2"/>Booked Value</span>
+                                    <span class="text-muted small"><i title="fa fa-money me-2" aria-label="fa fa-money me-2" class="fa fa-money me-2"/>Booked Value</span>
                                     <strong><field name="total_booked_value" widget="monetary"/></strong>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center py-2">
-                                    <span class="text-muted small"><i class="fa fa-line-chart me-2"/>Current Value</span>
+                                    <span class="text-muted small"><i title="fa fa-line-chart me-2" aria-label="fa fa-line-chart me-2" class="fa fa-line-chart me-2"/>Current Value</span>
                                     <strong t-attf-style="color: {{top_color}};"><field name="total_current_value" widget="monetary"/></strong>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center py-2">
-                                    <span class="text-muted small"><i class="fa fa-exchange me-2"/>Transfers</span>
+                                    <span class="text-muted small"><i title="fa fa-exchange me-2" aria-label="fa fa-exchange me-2" class="fa fa-exchange me-2"/>Transfers</span>
                                     <strong><field name="total_transfer_count"/></strong>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center py-2">
-                                    <span class="text-muted small"><i class="fa fa-wrench me-2"/>Maintenance</span>
+                                    <span class="text-muted small"><i title="fa fa-wrench me-2" aria-label="fa fa-wrench me-2" class="fa fa-wrench me-2"/>Maintenance</span>
                                     <strong><field name="total_maintenance_count"/></strong>
                                 </div>
                             </div>
@@ -758,7 +758,7 @@
                             <!-- Footer -->
                             <div class="w-100 p-3 text-center border-top">
                                 <span class="fw-semibold small" t-attf-style="color: {{top_color}};">
-                                    View Details <i class="fa fa-arrow-right ms-1"/>
+                                    View Details <i title="fa fa-arrow-right ms-1" aria-label="fa fa-arrow-right ms-1" class="fa fa-arrow-right ms-1"/>
                                 </span>
                             </div>
 
