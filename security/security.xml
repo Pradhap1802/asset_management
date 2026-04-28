@@ -210,12 +210,12 @@
         <record model="ir.rule" id="assets_types_user_rule">
             <field name="name">Assets Types Visibility for Users</field>
             <field name="model_id" ref="model_asset_type"/>
-            <field name="domain_force">[('create_uid', '=', user.id)]</field>
+            <field name="domain_force">[(1, '=', 1)]</field>
             <field name="groups" eval="[(4, ref('assets_user_group'))]"/>
             <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
         </record>
 
         <record model="ir.rule" id="assets_types_admin_rule">
@@ -233,12 +233,12 @@
         <record model="ir.rule" id="assets_vendor_user_rule">
             <field name="name">Assets Vendor Visibility for Users</field>
             <field name="model_id" ref="model_asset_vendor"/>
-            <field name="domain_force">[('create_uid', '=', user.id)]</field>
+            <field name="domain_force">[(1, '=', 1)]</field>
             <field name="groups" eval="[(4, ref('assets_user_group'))]"/>
             <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
         </record>
 
         <record model="ir.rule" id="assets_vendor_admin_rule">
