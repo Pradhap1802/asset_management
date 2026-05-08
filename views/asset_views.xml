@@ -27,8 +27,7 @@
                             <field name="product_id"/>
                             <field name="serial_number_ids" widget="many2many_tags" string="Serial Number / Barcode"/>
                             <field name="asset_type_id"/>
-                            <field name="company_id" readonly="accounting_asset_id != False"/>
-                            <field name="accounting_asset_id" invisible="1"/>
+                            <field name="company_id" />
                             <field name="transfer_count"/>
                             <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
                             <field name="initial_stock" required="1"/>
@@ -42,7 +41,7 @@
                             <field name="invoice_date"/>
                             <field name="current_amount" readonly="1"/>
                             <field name="vendor_partner_id" readonly="1"/>
-                            <field name="accounting_asset_id" readonly="1"/>
+                            <field name="asset_status" readonly="1" decoration-info="asset_status == 'active'" decoration-danger="asset_status == 'expired'" widget="badge"/>
                         </group>
                         <!-- Depreciation Settings group -->
                         <group string="Depreciation Settings">

@@ -10,17 +10,20 @@
         <field name="arch" type="xml">
             <form string="Asset Disposal">
                 <header>
-                    <button name="action_confirm" string="Confirm"
+                    <button name="action_confirm" string="Submit for Approval"
                             type="object" class="oe_highlight"
                             invisible="state != 'draft'"/>
+                    <button name="action_approve" string="Approve"
+                            type="object" class="oe_highlight"
+                            invisible="state != 'confirmed'" groups="asset_management.assets_admin_group,base.group_system"/>
                     <button name="action_done" string="Mark as Disposed"
                             type="object" class="oe_highlight"
-                            invisible="state != 'confirmed'"/>
+                            invisible="state != 'approved'"/>
                     <button name="action_reset_draft" string="Reset to Draft"
                             type="object"
                             invisible="state == 'draft'"/>
                     <field name="state" widget="statusbar"
-                           statusbar_visible="draft,confirmed,done"/>
+                           statusbar_visible="draft,confirmed,approved,done"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
@@ -91,6 +94,7 @@
                 <field name="state" widget="badge"
                        decoration-info="state == 'draft'"
                        decoration-warning="state == 'confirmed'"
+                       decoration-primary="state == 'approved'"
                        decoration-danger="state == 'done'"/>
             </list>
         </field>
@@ -111,8 +115,10 @@
                 <separator/>
                 <filter string="Draft"     name="draft"
                         domain="[('state','=','draft')]"/>
-                <filter string="Confirmed" name="confirmed"
+                <filter string="Waiting Approval" name="confirmed"
                         domain="[('state','=','confirmed')]"/>
+                <filter string="Approved" name="approved"
+                        domain="[('state','=','approved')]"/>
                 <filter string="Disposed"  name="done"
                         domain="[('state','=','done')]"/>
                 <separator/>
@@ -151,6 +157,7 @@
                 <field name="state" widget="badge"
                        decoration-info="state == 'draft'"
                        decoration-warning="state == 'confirmed'"
+                       decoration-primary="state == 'approved'"
                        decoration-danger="state == 'done'"/>
             </list>
         </field>

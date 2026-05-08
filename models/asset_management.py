@@ -94,14 +94,7 @@ class Asset(models.Model):
         ('danger', 'Critical / Expired'),
         ('none', 'No Warranty'),
     ], string='Warranty Status', compute='_compute_months_left', store=True)
-    # Link back to the Odoo Enterprise accounting asset
-    accounting_asset_id = fields.Many2one(
-        'account.asset',
-        string="Accounting Asset",
-        readonly=True,
-        copy=False,
-        help="Linked Odoo Enterprise Accounting Asset record"
-    )
+
     # Vendor from the linked invoice (res.partner)
     vendor_partner_id = fields.Many2one(
         'res.partner',
@@ -117,6 +110,14 @@ class Asset(models.Model):
         default=lambda self: self.env.company,
         copy=False,
         help="The company or branch for which this asset was created (e.g., Salem Branch)"
+    )
+    # Accounting link (for synchronization with account.asset)
+    accounting_asset_id = fields.Many2one(
+        'account.asset',
+        string="Accounting Asset",
+        ondelete='cascade',
+        copy=False,
+        help="The linked accounting asset record in Odoo's core asset module"
     )
     
 
@@ -315,6 +316,8 @@ class Asset(models.Model):
 
             if max_entries and existing_entries_count >= max_entries:
                 continue  # Useful life exhausted
+
+
 
             # Determine the starting date for depreciation
             start_date = asset.last_depreciation_date or asset.invoice_date

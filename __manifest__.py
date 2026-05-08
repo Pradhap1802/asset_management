@@ -3,10 +3,10 @@
     "version": "1.0",
     'summary': 'Manage company assets, transfers, maintenance, and depreciation.',
     'description': """
-        Streamline your asset lifecycle management with our comprehensive Odoo module. Track assets, automate depreciation, manage maintenance, and handle transfers effortlessly. Generate detailed reports, monitor warranties, and optimize asset utilization. User-friendly interface ensures easy adoption. Suitable for businesses of all sizes, this module empowers you to make informed decisions and maximize the value of your assets.
+        Streamline your Fixed asset lifecycle management with our comprehensive Odoo module. Track assets, automate depreciation, manage maintenance, and handle transfers effortlessly. Generate detailed reports, monitor warranties, and optimize asset utilization. User-friendly interface ensures easy adoption. Suitable for businesses of all sizes, this module empowers you to make informed decisions and maximize the value of your assets.
     """,
     'category': 'Operations',
-    'depends': ['base', 'product', 'hr', 'account', 'account_asset', 'purchase', 'stock', 'mail', 'maintenance'],
+    'depends': ['base', 'product', 'hr', 'account', 'purchase', 'stock', 'mail', 'maintenance'],
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
@@ -47,9 +47,11 @@
                'static/description/formate_screenshot_6.png', 'static/description/formate_screenshot_7.png'],
     'application': True,
     'installable': True,
-    'price': 0,
-    'currency': 'EUR',
-    'license': 'LGPL-3',
+    'price': 40,
+    'currency': 'USD',
+    'license': 'OPL-1',
+    'author': 'Processdrive India Pvt Ltd.',
+    'website': 'https://processdrive.com',
     'post_init_hook': 'post_migrate_resync_serials',
     'post_migrate': 'post_migrate_resync_serials',
 }

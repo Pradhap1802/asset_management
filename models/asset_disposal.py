@@ -106,7 +106,8 @@ class AssetDisposal(models.Model):
     # -------------------------------------------------------------------------
     state = fields.Selection([
         ('draft', 'Draft'),
-        ('confirmed', 'Confirmed'),
+        ('confirmed', 'Waiting Approval'),
+        ('approved', 'Approved'),
         ('done', 'Disposed'),
     ], string="Status", default='draft', tracking=True)
 
@@ -249,9 +250,15 @@ class AssetDisposal(models.Model):
             if rec.state == 'draft':
                 rec.state = 'confirmed'
 
+    def action_approve(self):
+        for rec in self:
+            if rec.state == 'confirmed':
+                rec.state = 'approved'
+                rec.approved_by = self.env.user.id
+
     def action_done(self):
         for rec in self:
-            if rec.state != 'confirmed':
+            if rec.state != 'approved':
                 continue
             rec.state = 'done'
             # Stock reduction is handled by write() → _apply_disposal_stock_reduction()
