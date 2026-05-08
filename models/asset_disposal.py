@@ -1,4 +1,7 @@
+import logging
 from odoo import models, fields, api, _, exceptions
+
+_logger = logging.getLogger(__name__)
 
 
 class AssetDisposal(models.Model):
@@ -214,24 +217,25 @@ class AssetDisposal(models.Model):
                         scrap_vals['lot_id'] = lot.id
                     scrap = self.env['stock.scrap'].sudo().create(scrap_vals)
                     try:
-                        scrap.action_validate()
-                    except Exception:
-                        # If scrap validation fails (e.g. insufficient qty), log and continue
-                        pass
+                        # Use do_scrap() instead of action_validate() to bypass the 'insufficient qty' wizard
+                        # which cannot be handled in this automated backend context.
+                        scrap.do_scrap()
+                    except Exception as e:
+                        _logger.warning("Failed to validate scrap for serial %s: %s", serial.name, str(e))
             else:
                 # No serial selected — scrap 1 unit generically
                 scrap = self.env['stock.scrap'].sudo().create({
                     'product_id': product.id,
                     'product_uom_id': uom.id,
-                    'scrap_qty': 1,
+                    'scrap_qty': 1.0,
                     'location_id': source_location.id,
                     'company_id': company.id,
                     'origin': self.name,
                 })
                 try:
-                    scrap.action_validate()
-                except Exception:
-                    pass
+                    scrap.do_scrap()
+                except Exception as e:
+                    _logger.warning("Failed to validate generic scrap for disposal %s: %s", self.name, str(e))
 
         # ── 3. Retire disposed serial numbers permanently ─────────────────────
         if self.serial_number_ids:
