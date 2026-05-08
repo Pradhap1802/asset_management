@@ -253,8 +253,20 @@ class AssetDisposal(models.Model):
         for rec in self:
             if rec.state == 'draft':
                 rec.state = 'confirmed'
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Disposal Submitted'),
+                'message': _('The asset disposal request has been created and is waiting for administrator approval.'),
+                'sticky': False,
+                'type': 'success',
+            }
+        }
 
     def action_approve(self):
+        if not self.env.user.has_group('asset_management.assets_admin_group') and not self.env.is_admin():
+            raise exceptions.UserError(_("Only administrators can approve asset disposals."))
         for rec in self:
             if rec.state == 'confirmed':
                 rec.state = 'approved'
