@@ -114,6 +114,13 @@ class AssetDisposal(models.Model):
         ('done', 'Disposed'),
     ], string="Status", default='draft', tracking=True)
 
+    scrap_ids = fields.One2many(
+        'stock.scrap',
+        'asset_disposal_id',
+        string="Stock Scraps",
+        help="Linked inventory scrap records",
+    )
+
     # -------------------------------------------------------------------------
     # Computed
     # -------------------------------------------------------------------------
@@ -185,57 +192,62 @@ class AssetDisposal(models.Model):
         asset.sudo().write({'current_stock': new_stock})
 
         # ── 2. Create stock.scrap to reduce actual Odoo inventory ────────────
-        # Find the source stock location for the company/branch
-        warehouse = self.env['stock.warehouse'].search(
-            [('company_id', '=', company.id)], limit=1
-        )
-        source_location = warehouse.lot_stock_id if warehouse else self.env['stock.location'].search(
-            [('usage', '=', 'internal'), ('company_id', '=', company.id)], limit=1
-        )
+        # Only create scrap if the product is trackable (Storable or Consumable)
+        if product.type in ('consu', 'product'):
+            # Find the source stock location for the company/branch
+            warehouse = self.env['stock.warehouse'].search(
+                [('company_id', 'in', [company.id, False])], limit=1
+            )
+            source_location = warehouse.lot_stock_id if warehouse else self.env['stock.location'].search(
+                [('usage', '=', 'internal'), ('company_id', 'in', [company.id, False])], limit=1
+            )
+            
+            # Global Fallback: If no internal location found for company, find ANY internal location
+            if not source_location:
+                source_location = self.env['stock.location'].search([('usage', '=', 'internal')], limit=1)
 
-        if source_location and product:
-            uom = product.uom_id
+            if source_location:
+                uom = product.uom_id
 
-            if self.serial_number_ids:
-                # Scrap one unit per serial number, matched to its lot if available
-                for serial in self.serial_number_ids:
-                    # Find the matching stock lot
-                    lot = self.env['stock.lot'].search([
-                        ('name', '=', serial.name),
-                        ('product_id', '=', product.id),
-                        ('company_id', '=', company.id),
-                    ], limit=1)
-                    scrap_vals = {
+                if self.serial_number_ids:
+                    # Scrap one unit per serial number, matched to its lot if available
+                    for serial in self.serial_number_ids:
+                        # Find the matching stock lot
+                        lot = self.env['stock.lot'].search([
+                            ('name', '=', serial.name),
+                            ('product_id', '=', product.id),
+                            ('company_id', 'in', [company.id, False]),
+                        ], limit=1)
+                        scrap_vals = {
+                            'product_id': product.id,
+                            'product_uom_id': uom.id,
+                            'scrap_qty': 1,
+                            'location_id': source_location.id,
+                            'company_id': company.id,
+                            'origin': self.name,
+                            'asset_disposal_id': self.id,
+                        }
+                        if lot:
+                            scrap_vals['lot_id'] = lot.id
+                        
+                        scrap = self.env['stock.scrap'].sudo().create(scrap_vals)
+                        # We let do_scrap() raise errors (like 'Insufficient Qty') 
+                        # so the user knows why it failed instead of failing silently.
+                        scrap.do_scrap()
+                else:
+                    # No serial selected — scrap 1 unit generically
+                    scrap = self.env['stock.scrap'].sudo().create({
                         'product_id': product.id,
                         'product_uom_id': uom.id,
-                        'scrap_qty': 1,
+                        'scrap_qty': 1.0,
                         'location_id': source_location.id,
                         'company_id': company.id,
                         'origin': self.name,
-                    }
-                    if lot:
-                        scrap_vals['lot_id'] = lot.id
-                    scrap = self.env['stock.scrap'].sudo().create(scrap_vals)
-                    try:
-                        # Use do_scrap() instead of action_validate() to bypass the 'insufficient qty' wizard
-                        # which cannot be handled in this automated backend context.
-                        scrap.do_scrap()
-                    except Exception as e:
-                        _logger.warning("Failed to validate scrap for serial %s: %s", serial.name, str(e))
-            else:
-                # No serial selected — scrap 1 unit generically
-                scrap = self.env['stock.scrap'].sudo().create({
-                    'product_id': product.id,
-                    'product_uom_id': uom.id,
-                    'scrap_qty': 1.0,
-                    'location_id': source_location.id,
-                    'company_id': company.id,
-                    'origin': self.name,
-                })
-                try:
+                        'asset_disposal_id': self.id,
+                    })
                     scrap.do_scrap()
-                except Exception as e:
-                    _logger.warning("Failed to validate generic scrap for disposal %s: %s", self.name, str(e))
+            else:
+                _logger.warning("No source location found for scrap in disposal %s", self.name)
 
         # ── 3. Retire disposed serial numbers permanently ─────────────────────
         if self.serial_number_ids:

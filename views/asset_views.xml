@@ -807,22 +807,7 @@
         </field>
     </record>
 
-    <!-- Root menu item for Asset Management -->
-    <menuitem name="Asset Management"
-              id="menu_asset_root"
-              sequence="10"
-              web_icon="asset_management,static/description/icon.png"
-              groups="asset_management.assets_user_group,asset_management.assets_admin_group,base.group_system"/>
-
-    <!-- Dashboard Menu -->
-    <menuitem id="menu_asset_dashboard"
-              name="Dashboard"
-              parent="menu_asset_root"
-              action="action_asset_dashboard"
-              groups="assets_user_group,assets_admin_group,base.group_system"
-              sequence="5"/>
-
-    <!-- Server Action for dynamic app entry logic -->
+    <!-- Server Action for dynamic Assets entry logic (Warranty Check) -->
     <record id="action_asset_management_entry" model="ir.actions.server">
         <field name="name">Asset Management Entry</field>
         <field name="model_id" ref="asset_management.model_asset_management"/>
@@ -834,19 +819,34 @@ expiring = env['asset.management'].search(domain, limit=1)
 
 if expiring:
     wizard = env['asset.warranty.wizard'].create({'days_ahead': 30})
-    action = env.ref('asset_management.action_asset_warranty_wizard').read()[0]
+    action = env["ir.actions.actions"]._for_xml_id("asset_management.action_asset_warranty_wizard")
     action['res_id'] = wizard.id
 else:
-    action = env.ref('asset_management.action_assets').read()[0]
+    action = env["ir.actions.actions"]._for_xml_id("asset_management.action_assets")
         </field>
     </record>
 
-    <!-- Assets Menu: Links to the main asset list via logic -->
+    <!-- Root menu item for Asset Management -->
+    <menuitem name="Asset Management"
+              id="menu_asset_root"
+              sequence="10"
+              web_icon="asset_management,static/description/icon.png"
+              groups="asset_management.assets_user_group,asset_management.assets_admin_group,base.group_system"/>
+
+    <!-- Dashboard Menu: Direct link to dashboard -->
+    <menuitem id="menu_asset_dashboard"
+              name="Dashboard"
+              parent="menu_asset_root"
+              action="action_asset_dashboard"
+              groups="asset_management.assets_user_group,asset_management.assets_admin_group,base.group_system"
+              sequence="5"/>
+
+    <!-- Assets Menu: Links to the smart entry action (Warranty Check) -->
     <menuitem id="menu_asset"
               name="Assets"
               parent="menu_asset_root"
               action="action_asset_management_entry"
-              groups="assets_user_group,assets_admin_group,base.group_system"
+              groups="asset_management.assets_user_group,asset_management.assets_admin_group,base.group_system"
               sequence="10"/>
 
     <!-- Transfer Menu: For managing asset transfers -->
@@ -854,7 +854,7 @@ else:
               name="Transfer"
               parent="menu_asset_root"
               action="action_assets_transfer_entry"
-              groups="transfer_user_group,transfer_admin_group,base.group_system"
+              groups="asset_management.transfer_user_group,asset_management.transfer_admin_group,base.group_system"
               sequence="30"/>
 
     <!-- Maintenance Menu: For managing asset maintenance and repairs -->
@@ -862,7 +862,7 @@ else:
               name="Maintenance"
               parent="menu_asset_root"
               action="action_assets_maintenance_entry"
-              groups="maintenance_user_group,maintenance_admin_group,base.group_system"
+              groups="asset_management.maintenance_user_group,asset_management.maintenance_admin_group,base.group_system"
               sequence="40"/>
 
     <!-- Depreciation Menu: For managing asset depreciation -->
@@ -870,14 +870,14 @@ else:
               name="Depreciation"
               parent="menu_asset_root"
               action="action_assets_depreciation_entry"
-              groups="depreciation_user_group,depreciation_admin_group,base.group_system"
+              groups="asset_management.depreciation_user_group,asset_management.depreciation_admin_group,base.group_system"
               sequence="50"/>
 
     <!-- Configuration Menu: Parent menu for configuration options -->
     <menuitem id="asset_configuration"
               name="Configuration"
               parent="menu_asset_root"
-              groups="assets_user_group,assets_admin_group,base.group_system"
+              groups="asset_management.assets_user_group,asset_management.assets_admin_group,base.group_system"
               sequence="70"/>
 
     <!-- Asset Types Menu: For managing different types of assets -->
@@ -885,7 +885,7 @@ else:
               name="Types"
               parent="asset_configuration"
               action="action_assets_settings"
-              groups="assets_user_group,assets_admin_group,base.group_system"
+              groups="asset_management.assets_user_group,asset_management.assets_admin_group,base.group_system"
               sequence="10"/>
 
     <!-- Asset Tags Menu: For managing asset tags -->
@@ -893,6 +893,6 @@ else:
               name="Tags"
               parent="asset_configuration"
               action="action_asset_tags"
-              groups="assets_user_group,assets_admin_group,base.group_system"
+              groups="asset_management.assets_user_group,asset_management.assets_admin_group,base.group_system"
               sequence="20"/>
 </odoo>
