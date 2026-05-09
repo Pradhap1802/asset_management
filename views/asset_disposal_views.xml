@@ -26,6 +26,16 @@
                            statusbar_visible="draft,confirmed,approved,done"/>
                 </header>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(stock.action_stock_scrap)d" type="action"
+                                class="oe_stat_button" icon="fa-trash"
+                                invisible="not scrap_ids"
+                                context="{'search_default_asset_disposal_id': id, 'default_asset_disposal_id': id}">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Scrap Orders</span>
+                            </div>
+                        </button>
+                    </div>
                     <div class="oe_title">
                         <h1>
                             <field name="name" readonly="1"/>
@@ -64,6 +74,7 @@
                                readonly="state == 'done'"
                                placeholder="Describe why this asset is being disposed…"/>
                     </group>
+                    <field name="scrap_ids" invisible="1"/>
                 </sheet>
                 <chatter/>
             </form>

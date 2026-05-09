@@ -23,5 +23,5 @@ class AssetWarrantyWizard(models.TransientModel):
 
 
     def action_close(self):
-        """When closing the wizard, proceed to the main assets list anyway"""
-        return self.env.ref('asset_management.action_assets').read()[0]
+        """When closing the wizard, proceed to the main Assets list"""
+        return self.env["ir.actions.actions"]._for_xml_id("asset_management.action_assets")

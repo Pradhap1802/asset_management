@@ -515,22 +515,33 @@ class AssetTransferEntry(models.Model):
                 "Please match them."
             ) % (len(record.serial_number_ids), qty))
 
-        # --- Source: reduce current_stock only; initial_stock stays as-is ---
-        asset.sudo().write({'current_stock': asset.current_stock - qty})
-
-        # --- Destination: new asset record at the target branch ---
-        #   initial_stock = 0  → nothing was purchased/received at this branch
-        #   current_stock = qty → the units that just arrived
-        new_asset = asset.copy({
-            'name': 'New',
-            'company_id': record.to_branch_id.id,
-            'initial_stock': 0,        # No purchase happened at destination
-            'current_stock': qty,      # Received quantity
-            'transfer_ids': False,
-            'maintenance_ids': False,
-            'depreciation_ids': False,
-            'serial_number_ids': False,
-        })
+        # --- Source: reduce current_stock ---
+        new_current_stock = asset.current_stock - qty
+        
+        if new_current_stock == 0:
+            # Full Transfer: Move the existing record to the new branch instead of copying
+            # This preserves the Asset ID and history on a single record
+            asset.sudo().write({
+                'company_id': record.to_branch_id.id,
+                'current_stock': qty # Ensure current_stock matches what was moved
+            })
+            # For full transfers, we don't need a new_asset, so we skip copy
+            new_asset = asset
+        else:
+            # Partial Transfer: Must create a new record at the destination 
+            # to track split stock (some at source, some at destination)
+            asset.sudo().write({'current_stock': new_current_stock})
+            
+            new_asset = asset.copy({
+                'name': 'New',
+                'company_id': record.to_branch_id.id,
+                'initial_stock': 0,        # No purchase happened at destination
+                'current_stock': qty,      # Received quantity
+                'transfer_ids': False,
+                'maintenance_ids': False,
+                'depreciation_ids': False,
+                'serial_number_ids': False,
+            })
 
         # Move selected serial numbers to the destination asset
         # Step 1: Snapshot the serials to transfer BEFORE any write
