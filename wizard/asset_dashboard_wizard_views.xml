@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_asset_dashboard_wizard_form" model="ir.ui.view">
+        <field name="name">asset.dashboard.wizard.form</field>
+        <field name="model">asset.dashboard.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Asset Category Overview">
+                <sheet>
+                    <!-- Header Summary -->
+                    <div class="d-flex justify-content-between align-items-center mb-3 px-2">
+                        <div>
+                            <h2 class="mb-0">
+                                <field name="asset_type_id" readonly="1" class="fw-bold"/>
+                            </h2>
+                        </div>
+                        <div class="d-flex gap-3">
+                            <div class="text-center px-3 py-2 border rounded-3">
+                                <span class="text-muted small d-block">Total Assets</span>
+                                <strong class="fs-4 text-info"><field name="total_count" readonly="1"/></strong>
+                            </div>
+                            <div class="text-center px-3 py-2 border rounded-3">
+                                <span class="text-muted small d-block">Net Value</span>
+                                <strong class="fs-4 text-success"><field name="total_value" readonly="1" widget="monetary"/></strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <field name="currency_id" invisible="1"/>
+
+                    <!-- Asset Cards -->
+                    <field name="summary_line_ids" readonly="1">
+                        <kanban create="0" edit="0" delete="0" class="o_kanban_dashboard">
+                            <field name="name"/>
+                            <field name="asset_ref"/>
+                            <field name="asset_status"/>
+                            <field name="company_id"/>
+                            <field name="count"/>
+                            <field name="original_value"/>
+                            <field name="current_value"/>
+                            <field name="depreciated_amount"/>
+                            <field name="maintenance_cost"/>
+                            <field name="maintenance_count"/>
+                            <field name="transfer_count"/>
+                            <field name="depreciation_method"/>
+                            <field name="depreciation_frequency"/>
+                            <field name="useful_life"/>
+                            <field name="warranty_expiry"/>
+                            <field name="currency_id"/>
+                            <templates>
+                                <t t-name="card">
+                                    <div class="d-flex flex-column w-100 border rounded-3" style="overflow: hidden;">
+
+                                        <!-- Card Header: Name + Status -->
+                                        <div class="d-flex justify-content-between align-items-center px-3 pt-3 pb-2">
+                                            <div>
+                                                <strong class="fs-5 d-block"><field name="name"/></strong>
+                                                <span class="text-muted small"><field name="asset_ref"/></span>
+                                            </div>
+                                            <div>
+                                                <span t-if="record.asset_status.raw_value == 'active'" class="badge bg-success">🟢 Active</span>
+                                                <span t-if="record.asset_status.raw_value == 'maintenance_due'" class="badge bg-warning text-dark">🟡 Maintenance Due</span>
+                                                <span t-if="record.asset_status.raw_value == 'expired'" class="badge bg-danger">🔴 Expired</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Location -->
+                                        <div class="px-3 pb-2" t-if="record.company_id.raw_value">
+                                            <span class="badge text-bg-info">
+                                                <i class="fa fa-building me-1" title="Location" aria-label="Location"/>
+                                                <field name="company_id"/>
+                                            </span>
+                                            <span class="badge text-bg-secondary ms-1">
+                                                <i class="fa fa-cubes me-1" title="Stock" aria-label="Stock"/>Stock: <field name="count"/>
+                                            </span>
+                                        </div>
+
+                                        <hr class="my-0"/>
+
+                                        <!-- Financial Report -->
+                                        <div class="px-3 py-2">
+                                            <div class="text-uppercase fw-bold text-info small mb-2" style="letter-spacing: 1px;">Financial Report</div>
+                                            <div class="d-flex justify-content-between py-1">
+                                                <span class="text-muted small">Purchase Value</span>
+                                                <strong><field name="original_value" widget="monetary"/></strong>
+                                            </div>
+                                            <div class="d-flex justify-content-between py-1">
+                                                <span class="text-muted small">Current Book Value</span>
+                                                <strong class="text-success"><field name="current_value" widget="monetary"/></strong>
+                                            </div>
+                                            <div class="d-flex justify-content-between py-1">
+                                                <span class="text-muted small">Accumulated Depreciation</span>
+                                                <strong class="text-danger"><field name="depreciated_amount" widget="monetary"/></strong>
+                                            </div>
+                                            <div class="d-flex justify-content-between py-1">
+                                                <span class="text-muted small">Maintenance Cost</span>
+                                                <strong class="text-warning"><field name="maintenance_cost" widget="monetary"/></strong>
+                                            </div>
+                                        </div>
+
+                                        <hr class="my-0"/>
+
+                                        <!-- Depreciation Info -->
+                                        <div class="px-3 py-2">
+                                            <div class="text-uppercase fw-bold text-info small mb-2" style="letter-spacing: 1px;">Depreciation</div>
+                                            <div class="d-flex justify-content-between py-1">
+                                                <span class="text-muted small">Method</span>
+                                                <strong class="small"><field name="depreciation_method"/></strong>
+                                            </div>
+                                            <div class="d-flex justify-content-between py-1">
+                                                <span class="text-muted small">Frequency</span>
+                                                <strong class="small"><field name="depreciation_frequency"/></strong>
+                                            </div>
+                                            <div class="d-flex justify-content-between py-1">
+                                                <span class="text-muted small">Useful Life</span>
+                                                <strong class="small"><field name="useful_life"/></strong>
+                                            </div>
+                                        </div>
+
+                                        <!-- Footer Stats -->
+                                        <div class="d-flex justify-content-around py-2 px-3 border-top">
+                                            <div class="text-center">
+                                                <div class="text-muted small">Transfers</div>
+                                                <strong class="text-info"><field name="transfer_count"/></strong>
+                                            </div>
+                                            <div class="text-center">
+                                                <div class="text-muted small">Maintenance</div>
+                                                <strong class="text-info"><field name="maintenance_count"/></strong>
+                                            </div>
+                                            <div class="text-center" t-if="record.warranty_expiry.raw_value">
+                                                <div class="text-muted small">Warranty</div>
+                                                <strong class="small text-info"><field name="warranty_expiry"/></strong>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </t>
+                            </templates>
+                        </kanban>
+                    </field>
+                </sheet>
+                <footer>
+                    <button string="Close" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_asset_dashboard_wizard" model="ir.actions.act_window">
+        <field name="name">Asset Category Overview</field>
+        <field name="res_model">asset.dashboard.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

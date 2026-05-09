@@ -6,11 +6,12 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <!-- Status bar at the top of the form -->
-                    <field name="status" widget="statusbar" options="{'clickable': '1'}"/>
                     <button string="Print Label" name="action_open_label_layout"
                             type="object" class="oe_highlight" icon="fa-print"
                             groups="asset_management.assets_user_group,asset_management.assets_admin_group,base.group_system"/>
+                    <field name="asset_status" widget="statusbar"
+                           statusbar_visible="active,maintenance_due,expired"
+                           options="{'clickable': '1'}"/>
                 </header>
                 <sheet>
                     <!-- Title section with asset name -->
@@ -24,14 +25,14 @@
                         <!-- Basic Information group -->
                         <group string="Basic Information">
                             <field name="product_id"/>
+                            <field name="serial_number_ids" widget="many2many_tags" string="Serial Number / Barcode"/>
                             <field name="asset_type_id"/>
+                            <field name="company_id" />
                             <field name="transfer_count"/>
                             <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
-                            <field name="model_type" widget="radio"/>
-                            <field name="initial_stock" invisible="model_type == 'single'"
-                                   required="model_type == 'multiple'"/>
-                            <field name="current_stock" invisible="model_type == 'single'"/>
-                            <field name="active_transfers" invisible="model_type == 'single'"/>
+                            <field name="initial_stock" required="1"/>
+                            <field name="current_stock"/>
+                            <field name="active_transfers"/>
                         </group>
                         <!-- Financial Information group -->
                         <group string="Financial Information">
@@ -39,6 +40,8 @@
                             <field name="invoice_id"/>
                             <field name="invoice_date"/>
                             <field name="current_amount" readonly="1"/>
+                            <field name="vendor_partner_id" readonly="1"/>
+                            <field name="asset_status" readonly="1" decoration-info="asset_status == 'active'" decoration-danger="asset_status == 'expired'" widget="badge"/>
                         </group>
                         <!-- Depreciation Settings group -->
                         <group string="Depreciation Settings">
@@ -47,28 +50,49 @@
                             <field name="last_depreciation_date"/>
                             <field name="depreciation_count"/>
                         </group>
-                        <!-- Maintenance Information group -->
-                        <group string="Maintenance Information">
+                        <!-- Maintenance & AMC Tracking -->
+                        <group string="Maintenance &amp; AMC Tracking">
                             <field name="total_maintenance_amount" readonly="1"/>
                             <field name="maintenance_count"/>
+                            <field name="total_downtime_days" readonly="1"/>
                         </group>
-                        <!-- Vendor And Warranty group -->
-                        <group string="Vendor And Warranty">
+                        <!-- Asset Warranty group -->
+                        <group string="Asset Warranty">
                             <field name="expired_warranty_date"/>
-                            <field name="vendor_id"/>
                         </group>
                         <!-- Documentation group -->
                         <group string="Documentation">
                             <field name="document_ids" widget="many2many_binary"/>
                         </group>
                     </group>
+
                     <!-- Notebook for additional details -->
                     <notebook>
+                        <!-- Lifecycle Timeline Page -->
+                        <page string="Lifecycle Timeline">
+                            <group>
+                                <group string="Key Dates">
+                                    <field name="invoice_date" string="Purchase Date" readonly="1"/>
+                                    <field name="capitalization_date"/>
+                                    <field name="last_maintenance_date" readonly="1"/>
+                                </group>
+                                <group string="Upcoming / Expiry">
+                                    <field name="next_maintenance_due" readonly="1"/>
+                                    <field name="expired_warranty_date" string="Warranty Expiry" readonly="1"/>
+                                    <field name="end_of_life_date"/>
+                                </group>
+                            </group>
+                        </page>
+
                         <!-- Transfer Page -->
                         <page string="Transfer" groups="asset_management.transfer_user_group,base.group_system">
                             <field name="transfer_ids">
                                 <list editable="bottom">
                                     <field name="transfer_code"/>
+                                    <field name="product_id" readonly="1"/>
+                                    <field name="serial_number_ids" widget="many2many_tags"
+                                               domain="[('asset_id', '=', parent.id)]"
+                                               string="Serial Numbers"/>
                                     <field name="transfer_employee_id"/>
                                     <field name="assign_date"/>
                                     <field name="assign_by"/>
@@ -80,19 +104,22 @@
                         </page>
 
                         <!-- Maintenance Page -->
-                        <page string="Maintenance / Repair"
+                        <page string="Maintenance"
                               groups="asset_management.maintenance_user_group,base.group_system">
                             <field name="maintenance_ids">
                                 <list editable="bottom">
+                                    <field name="serial_number_id" domain="[('asset_id', '=', parent.id)]"/>
+                                    <field name="maintenance_type"/>
                                     <field name="maintenance_vendor_id"/>
                                     <field name="assign_date"/>
                                     <field name="return_date"/>
+                                    <field name="downtime_days" readonly="1"/>
                                     <field name="assign_by"/>
+                                    <field name="maintenance_amount"/>
                                     <field name="invoice_id"/>
                                     <field name="file_name" column_invisible="1"/>
                                     <field name="document" filename="file_name"
                                            widget="binary"/>
-                                    <field name="maintenance_amount"/>
                                     <field name="maintenance_status"/>
                                 </list>
                             </field>
@@ -103,21 +130,33 @@
                             <field name="depreciation_ids">
                                 <list editable="bottom">
                                     <field name="depreciation_amount"/>
+                                    <field name="product_id" readonly="1"/>
+                                    <field name="bill_id"/>
                                     <field name="created_by"/>
                                     <field name="entry_date"/>
+                                    <field name="state"/>
                                     <field name="notes"/>
                                 </list>
                             </field>
                         </page>
+
+                        <!-- Disposal Page -->
+                        <page string="Disposals" groups="asset_management.assets_user_group,asset_management.assets_admin_group,base.group_system">
+                            <field name="disposal_ids"
+                                   readonly="1"
+                                   views="[('list', 'asset_management.view_asset_disposal_inline_list')]">
+                            </field>
+                        </page>
                     </notebook>
                 </sheet>
+                <chatter/>
             </form>
         </field>
     </record>
 
-    <!-- Tree View for Asset Management -->
-    <record id="view_asset_tree" model="ir.ui.view">
-        <field name="name">asset.management.tree</field>
+    <!-- list View for Asset Management -->
+    <record id="view_asset_list" model="ir.ui.view">
+        <field name="name">asset.management.list</field>
         <field name="model">asset.management</field>
         <field name="arch" type="xml">
             <list>
@@ -128,10 +167,14 @@
                             class="oe_highlight"
                             groups="asset_management.assets_user_group,asset_management.assets_admin_group,base.group_system"/>
                 </header>
-                <!-- Fields to display in the tree view -->
+                <!-- Fields to display in the list view -->
                 <field name="name"/>
+                <field name="serial_number_ids" widget="many2many_tags" string="Serial Number / Barcode" optional="show"/>
                 <field name="tag_ids" widget="many2many_tags" optional="show"/>
-                <field name="model_type"/>
+                <field name="asset_status" widget="badge" optional="show"
+                       decoration-success="asset_status == 'active'"
+                       decoration-warning="asset_status == 'maintenance_due'"
+                       decoration-danger="asset_status == 'expired'"/>
                 <field name="initial_stock" optional="show"/>
                 <field name="current_stock" optional="show"/>
                 <field name="active_transfers" optional="show"/>
@@ -144,7 +187,6 @@
                 <field name="depreciation_count"/>
                 <field name="maintenance_count"/>
                 <field name="transfer_count"/>
-                <field name="status"/>
             </list>
         </field>
     </record>
@@ -159,26 +201,21 @@
                 <field name="product_id"/>
                 <field name="tag_ids"/>
 
-                <filter string="Assigned" name="assigned" domain="[('status', '=', 'assign')]"/>
-                <filter string="Returned" name="returned" domain="[('status', '=', 'return')]"/>
-                <filter string="On Hold" name="on_hold" domain="[('status', '=', 'on_hold')]"/>
-                <filter string="In Warehouse" name="in_warehouse" domain="[('status', '=', 'in_warehouse')]"/>
-                <filter string="In Repair" name="repair" domain="[('status', '=', 'repair')]"/>
-                <filter string="Destroyed" name="destroyed" domain="[('status', '=', 'destroyed')]"/>
-
-                <filter string="Single Assets" name="single_assets" domain="[('model_type', '=', 'single')]"/>
-                <filter string="Multiple Assets" name="multiple_assets" domain="[('model_type', '=', 'multiple')]"/>
                 <filter string="Out of Stock" name="out_of_stock"
-                        domain="[('model_type', '=', 'multiple'), ('current_stock', '&lt;=', 0)]"/>
+                        domain="[('current_stock', '&lt;=', 0)]"/>
                 <filter string="In Stock" name="in_stock"
-                        domain="[('model_type', '=', 'multiple'), ('current_stock', '&gt;', 0)]"/>
+                        domain="[('current_stock', '&gt;', 0)]"/>
+                <separator/>
+                <filter string="Active" name="status_active"
+                        domain="[('asset_status', '=', 'active')]"/>
+                <filter string="Maintenance Due" name="status_maintenance_due"
+                        domain="[('asset_status', '=', 'maintenance_due')]"/>
+                <filter string="Expired / Scrap" name="status_expired"
+                        domain="[('asset_status', '=', 'expired')]"/>
 
                 <group>
-                    <filter string="Status" name="group_by_status" context="{'group_by': 'status'}"/>
                     <filter string="Asset Type" name="group_by_asset_type" context="{'group_by': 'asset_type_id'}"/>
-                    <filter string="Vendor" name="group_by_vendor" context="{'group_by': 'vendor_id'}"/>
                     <filter string="Tags" name="group_by_tags" context="{'group_by': 'tag_ids'}"/>
-                    <filter string="Model Type" name="group_by_model_type" context="{'group_by': 'model_type'}"/>
                 </group>
 
             </search>
@@ -190,12 +227,12 @@
         <field name="name">asset.management.kanban</field>
         <field name="model">asset.management</field>
         <field name="arch" type="xml">
-            <kanban default_group_by="status" class="o_kanban_dashboard" multi_selection="1" create="1">
+            <kanban default_group_by="asset_type_id" class="o_kanban_dashboard" multi_selection="1" create="1">
                 <field name="id"/>
                 <field name="name"/>
-                <field name="status"/>
                 <field name="asset_type_id"/>
-                <field name="barcode"/>
+                <field name="asset_status"/>
+                <field name="barcode" invisible="1"/>
                 <field name="amount"/>
                 <field name="current_amount"/>
                 <field name="invoice_date"/>
@@ -209,13 +246,12 @@
                 <field name="total_depreciation_amount"/>
                 <field name="total_maintenance_amount"/>
                 <field name="tag_ids"/>
-                <field name="model_type"/>
                 <field name="initial_stock"/>
                 <field name="current_stock"/>
                 <field name="active_transfers"/>
                 <field name="product_id"/>
-                <field name="vendor_id"/>
-                <progressbar field="status" colors='{"assign":"success","return":"info","on_hold":"warning","in_warehouse":"primary","repair":"danger","destroyed":"muted"}'/>
+                <field name="company_id"/>
+
                 <templates>
                     <t t-name="card">
                         <div class="oe_kanban_global_click o_kanban_card oe_kanban_content" role="article">
@@ -227,17 +263,15 @@
                                             <strong class="text-truncate d-block" style="font-size: 1.1em;">
                                                 <field name="name"/>
                                             </strong>
+                                            <div class="text-muted text-truncate" style="font-size: 0.9em;" t-if="record.product_id.value">
+                                                <field name="product_id"/>
+                                            </div>
                                         </div>
-                                        <div class="ms-2">
-                                            <span t-attf-class="badge rounded-pill text-white lh-1 px-2 py-1 
-                                                #{record.status.raw_value == 'assign' ? 'bg-success' : 
-                                                  record.status.raw_value == 'return' ? 'bg-info' : 
-                                                  record.status.raw_value == 'on_hold' ? 'bg-warning' : 
-                                                  record.status.raw_value == 'in_warehouse' ? 'bg-primary' :
-                                                  record.status.raw_value == 'repair' ? 'bg-danger' :
-                                                  record.status.raw_value == 'destroyed' ? 'bg-secondary' : 'bg-secondary'}">
-                                                <field name="status"/>
-                                            </span>
+                                        <!-- Asset Status Badge -->
+                                        <div>
+                                            <span t-if="record.asset_status.raw_value == 'active'" class="badge bg-success">🟢 Active</span>
+                                            <span t-if="record.asset_status.raw_value == 'maintenance_due'" class="badge bg-warning text-dark">🟡 Maintenance Due</span>
+                                            <span t-if="record.asset_status.raw_value == 'expired'" class="badge bg-danger">🔴 Expired/Scrap</span>
                                         </div>
                                     </div>
                                 </div>
@@ -249,7 +283,7 @@
                                 <div class="mb-2" t-if="record.asset_type_id.raw_value">
                                     <span class="badge rounded-pill" 
                                           t-attf-class="badge rounded-pill #{record.asset_type_id.color and record.asset_type_id.color.raw_value ? 'o_tag_color_' + record.asset_type_id.color.raw_value : 'bg-secondary'} text-white">
-                                        <i class="fa fa-tag me-1"></i>
+                                        <i title="fa fa-tag me-1" aria-label="fa fa-tag me-1" class="fa fa-tag me-1"></i>
                                         <field name="asset_type_id"/>
                                     </span>
                                 </div>
@@ -259,26 +293,38 @@
                                     <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
                                 </div>
                                 
+                                <!-- Serial Numbers -->
+                                <div class="mb-2" t-if="record.serial_number_ids.raw_value">
+                                    <div class="d-flex align-items-center text-muted">
+                                        <i title="fa fa-barcode me-2" aria-label="fa fa-barcode me-2" class="fa fa-barcode me-2"></i>
+                                        <field name="serial_number_ids" widget="many2many_tags"/>
+                                    </div>
+                                </div>
+                                
                                 <!-- Assigned User -->
                                 <div class="mb-2" t-if="record.assigned_user.raw_value">
                                     <div class="d-flex align-items-center text-muted">
-                                        <i class="fa fa-user me-2"></i>
+                                        <i title="fa fa-user me-2" aria-label="fa fa-user me-2" class="fa fa-user me-2"></i>
                                         <span class="text-truncate">
                                             <field name="assigned_user"/>
                                         </span>
                                     </div>
                                 </div>
                                 
-                                <!-- Stock Information for Multiple Assets -->
-                                <div class="mb-2" t-if="record.model_type.raw_value == 'multiple'">
+                                <!-- Stock Information -->
+                                <div class="mb-2">
                                     <div class="d-flex gap-2 flex-wrap">
                                         <span class="badge bg-info">
-                                            <i class="fa fa-cubes me-1"></i>
+                                            <i title="fa fa-cubes me-1" aria-label="fa fa-cubes me-1" class="fa fa-cubes me-1"></i>
                                             Stock: <field name="current_stock"/>/<field name="initial_stock"/>
                                         </span>
                                         <span class="badge bg-warning text-dark" t-if="record.active_transfers.raw_value">
-                                            <i class="fa fa-exchange me-1"></i>
+                                            <i title="fa fa-exchange me-1" aria-label="fa fa-exchange me-1" class="fa fa-exchange me-1"></i>
                                             Active: <field name="active_transfers"/>
+                                        </span>
+                                        <span t-if="record.company_id.raw_value" t-attf-class="badge rounded-pill o_tag_color_#{record.company_id.raw_value % 11} text-black">
+                                            <i title="fa fa-building me-1" aria-label="fa fa-building me-1" class="fa fa-building me-1"></i>
+                                            <field name="company_id"/>
                                         </span>
                                     </div>
                                 </div>
@@ -288,13 +334,13 @@
                                     <div class="d-flex flex-column gap-1">
                                         <div class="d-flex justify-content-between align-items-center" t-if="record.amount.raw_value">
                                             <span class="text-muted small">
-                                                <i class="fa fa-dollar-sign me-1"></i>Purchase Price:
+                                                <i title="fa fa-dollar-sign me-1" aria-label="fa fa-dollar-sign me-1" class="fa fa-dollar-sign me-1"></i>Purchase Price:
                                             </span>
                                             <strong><field name="amount" widget="monetary"/></strong>
                                         </div>
                                         <div class="d-flex justify-content-between align-items-center" t-if="record.current_amount.raw_value">
                                             <span class="text-muted small">
-                                                <i class="fa fa-chart-line me-1"></i>Book Value:
+                                                <i title="fa fa-chart-line me-1" aria-label="fa fa-chart-line me-1" class="fa fa-chart-line me-1"></i>Book Value:
                                             </span>
                                             <strong class="text-primary"><field name="current_amount" widget="monetary"/></strong>
                                         </div>
@@ -305,12 +351,12 @@
                                 <div class="mb-2">
                                     <div class="d-flex flex-column gap-1 small">
                                         <div t-if="record.invoice_date.raw_value" class="text-muted">
-                                            <i class="fa fa-calendar me-1"></i>
+                                            <i title="fa fa-calendar me-1" aria-label="fa fa-calendar me-1" class="fa fa-calendar me-1"></i>
                                             Purchase: <field name="invoice_date"/>
                                         </div>
                                         <div t-if="record.expired_warranty_date.raw_value" 
                                              t-attf-class="text-#{record.warranty_status.raw_value == 'expired' ? 'danger' : 'muted'}">
-                                            <i class="fa fa-shield-alt me-1"></i>
+                                            <i title="fa fa-shield-alt me-1" aria-label="fa fa-shield-alt me-1" class="fa fa-shield-alt me-1"></i>
                                             Warranty: <field name="expired_warranty_date"/>
                                         </div>
                                     </div>
@@ -321,16 +367,16 @@
                             <div class="o_kanban_record_bottom">
                                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pt-2 border-top">
                                     <div class="d-flex gap-2 flex-wrap">
-                                        <span class="badge bg-light text-dark border" title="Depreciation Entries">
-                                            <i class="fa fa-chart-line me-1"></i>
+                                        <span class="badge text-bg-secondary" title="Depreciation Entries">
+                                            <i title="fa fa-chart-line me-1" aria-label="fa fa-chart-line me-1" class="fa fa-chart-line me-1"></i>
                                             <field name="depreciation_count"/>
                                         </span>
-                                        <span class="badge bg-light text-dark border" title="Maintenance Records">
-                                            <i class="fa fa-wrench me-1"></i>
+                                        <span class="badge text-bg-secondary" title="Maintenance Records">
+                                            <i title="fa fa-wrench me-1" aria-label="fa fa-wrench me-1" class="fa fa-wrench me-1"></i>
                                             <field name="maintenance_count"/>
                                         </span>
-                                        <span class="badge bg-light text-dark border" title="Transfer History">
-                                            <i class="fa fa-exchange me-1"></i>
+                                        <span class="badge text-bg-secondary" title="Transfer History">
+                                            <i title="fa fa-exchange me-1" aria-label="fa fa-exchange me-1" class="fa fa-exchange me-1"></i>
                                             <field name="transfer_count"/>
                                         </span>
                                     </div>
@@ -339,7 +385,7 @@
                                             #{record.warranty_status.raw_value == 'expired' ? 'bg-danger' : 
                                               record.warranty_status.raw_value == 'expiring_soon' ? 'bg-warning text-dark' : 
                                               'bg-success'}">
-                                            <i class="fa fa-shield-alt me-1"></i>
+                                            <i title="fa fa-shield-alt me-1" aria-label="fa fa-shield-alt me-1" class="fa fa-shield-alt me-1"></i>
                                             <field name="remaining_warranty"/>
                                         </span>
                                     </div>
@@ -352,15 +398,19 @@
         </field>
     </record>
 
-    <!-- Tree View for Asset Transfer Entries -->
-    <record id="view_asset_transfer_tree" model="ir.ui.view">
-        <field name="name">asset.transfer.tree</field>
+    <!-- list View for Asset Transfer Entries -->
+    <record id="view_asset_transfer_list" model="ir.ui.view">
+        <field name="name">asset.transfer.list</field>
         <field name="model">asset.transfer.entry</field>
         <field name="arch" type="xml">
-            <list editable="bottom">
-                <!-- Fields displayed in the tree view for asset transfers -->
+            <list>
+                <!-- Fields displayed in the list view for asset transfers -->
                 <field name="transfer_code"/>
                 <field name="asset_id"/>
+                <field name="product_id"/>
+                <field name="serial_number_ids" widget="many2many_tags" string="Serial Numbers"/>
+                <field name="from_branch_id"/>
+                <field name="to_branch_id"/>
                 <field name="transfer_employee_id"/>
                 <field name="assign_date"/>
                 <field name="assign_by"/>
@@ -371,15 +421,16 @@
         </field>
     </record>
 
-    <!-- Tree View for Asset Maintenance Entries -->
-    <record id="view_asset_maintenance_tree" model="ir.ui.view">
-        <field name="name">asset.maintenance.tree</field>
+    <!-- list View for Asset Maintenance Entries -->
+    <record id="view_asset_maintenance_list" model="ir.ui.view">
+        <field name="name">asset.maintenance.list</field>
         <field name="model">asset.maintenance.entry</field>
         <field name="arch" type="xml">
-            <list editable="bottom">
-                <!-- Fields displayed in the tree view for asset maintenance -->
+            <list>
+                <!-- Fields displayed in the list view for asset maintenance -->
                 <field name="asset_id"/>
                 <field name="maintenance_vendor_id"/>
+                <field name="product_id" string="Product / Equipment"/>
                 <field name="maintenance_amount"/>
                 <field name="assign_date"/>
                 <field name="assign_by"/>
@@ -389,25 +440,136 @@
         </field>
     </record>
 
-    <!-- Tree View for Asset Depreciation Entries -->
-    <record id="view_asset_depreciation_tree" model="ir.ui.view">
-        <field name="name">asset.depreciation.tree</field>
+    <!-- Form View for Asset Maintenance Entries -->
+    <record id="view_asset_maintenance_form" model="ir.ui.view">
+        <field name="name">asset.maintenance.form</field>
+        <field name="model">asset.maintenance.entry</field>
+        <field name="arch" type="xml">
+            <form string="Maintenance">
+                <sheet>
+                    <group>
+                        <group string="Asset &amp; Equipment">
+                            <field name="asset_id"/>
+                            <field name="serial_number_id" domain="[('asset_id', '=', asset_id)]"/>
+                            <field name="product_id" string="Product / Equipment"
+                                   options="{'no_create': False}"
+                                   help="Select the existing product from inventory used as maintenance equipment or spare part"/>
+                            <field name="maintenance_vendor_id"/>
+                        </group>
+                        <group string="Service Details">
+                            <field name="assign_date"/>
+                            <field name="return_date"/>
+                            <field name="assign_by"/>
+                            <field name="maintenance_status"/>
+                            <field name="maintenance_amount"/>
+                            <field name="invoice_id"/>
+                        </group>
+                    </group>
+                    <group string="Documents">
+                        <field name="file_name" invisible="1"/>
+                        <field name="document" filename="file_name" widget="binary"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Form View for Asset Transfer Entries -->
+    <record id="view_asset_transfer_form" model="ir.ui.view">
+        <field name="name">asset.transfer.form</field>
+        <field name="model">asset.transfer.entry</field>
+        <field name="arch" type="xml">
+            <form string="Asset Transfer">
+                <sheet>
+                    <group>
+                        <group string="Transfer Details">
+                            <field name="transfer_code" readonly="1"/>
+                            <field name="asset_id"/>
+                            <field name="product_id" readonly="1"/>
+                            <field name="serial_number_ids" widget="many2many_tags"
+                                       domain="[('asset_id', '=', asset_id)]"
+                                       string="Serial Numbers"/>
+                            <field name="from_branch_id"/>
+                            <field name="to_branch_id"/>
+                            <field name="transfer_employee_id"/>
+                            <field name="stock_qty"/>
+                        </group>
+                        <group string="Dates &amp; Status">
+                            <field name="assign_date"/>
+                            <field name="return_date"/>
+                            <field name="assign_by"/>
+                            <field name="status"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View for Asset Depreciation Entries -->
+    <record id="view_asset_depreciation_search" model="ir.ui.view">
+        <field name="name">asset.depreciation.search</field>
         <field name="model">asset.depreciation.entry</field>
         <field name="arch" type="xml">
-            <list editable="bottom">
-                <!-- Fields displayed in the tree view for asset depreciation -->
+            <search string="Depreciation Entries">
                 <field name="asset_id"/>
+                <group>
+                    <filter string="Asset Reference" name="group_by_asset" context="{'group_by': 'asset_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- list View for Asset Depreciation Entries -->
+    <record id="view_asset_depreciation_list" model="ir.ui.view">
+        <field name="name">asset.depreciation.list</field>
+        <field name="model">asset.depreciation.entry</field>
+        <field name="arch" type="xml">
+            <list>
+                <!-- Fields displayed in the list view for asset depreciation -->
+                <field name="asset_id"/>
+                <field name="product_id"/>
+                <field name="bill_id"/>
                 <field name="created_by"/>
                 <field name="depreciation_amount"/>
                 <field name="entry_date"/>
+                <field name="state"/>
                 <field name="notes"/>
             </list>
         </field>
     </record>
 
-    <!-- Tree View for Asset Tags -->
-    <record id="view_asset_tag_tree" model="ir.ui.view">
-        <field name="name">asset.tag.tree</field>
+    <!-- Form View for Asset Depreciation Entries -->
+    <record id="view_asset_depreciation_form" model="ir.ui.view">
+        <field name="name">asset.depreciation.form</field>
+        <field name="model">asset.depreciation.entry</field>
+        <field name="arch" type="xml">
+            <form string="Depreciation Entry">
+                <sheet>
+                    <group>
+                        <group string="Asset Information">
+                            <field name="asset_id"/>
+                            <field name="product_id" readonly="1"/>
+                            <field name="entry_date"/>
+                            <field name="state"/>
+                        </group>
+                        <group string="Depreciation Details">
+                            <field name="depreciation_amount"/>
+                            <field name="bill_id"/>
+                            <field name="created_by"/>
+                        </group>
+                    </group>
+                    <group string="Notes">
+                        <field name="notes" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- list View for Asset Tags -->
+    <record id="view_asset_tag_list" model="ir.ui.view">
+        <field name="name">asset.tag.list</field>
         <field name="model">asset.tag</field>
         <field name="arch" type="xml">
             <list editable="bottom">
@@ -440,13 +602,13 @@
         </field>
     </record>
 
-    <!-- Tree View for Asset Types -->
-    <record id="view_asset_type_tree" model="ir.ui.view">
-        <field name="name">asset.type.tree</field>
+    <!-- list View for Asset Types -->
+    <record id="view_asset_type_list" model="ir.ui.view">
+        <field name="name">asset.type.list</field>
         <field name="model">asset.type</field>
         <field name="arch" type="xml">
             <list>
-                <!-- Fields displayed in the tree view for asset types -->
+                <!-- Fields displayed in the list view for asset types -->
                 <field name="name"/>
                 <field name="color" widget="color_picker"/>
                 <field name="depreciation_frequency"/>
@@ -464,7 +626,7 @@
         <field name="name">Print Labels</field>
         <field name="model_id" ref="model_asset_management"/>
         <field name="binding_model_id" ref="model_asset_management"/>
-        <field name="binding_view_types">kanban,tree</field>
+        <field name="binding_view_types">kanban,list</field>
         <field name="state">code</field>
         <field name="code">
             action = records.action_open_label_layout()
@@ -476,7 +638,7 @@
         <field name="name">Print Labels</field>
         <field name="model_id" ref="model_asset_management"/>
         <field name="binding_model_id" ref="model_asset_management"/>
-        <field name="binding_view_types">kanban,tree</field>
+        <field name="binding_view_types">kanban,list</field>
         <field name="state">code</field>
         <field name="code">
             action = records.action_open_label_layout()
@@ -509,9 +671,9 @@
 
     <!-- Action for Asset Maintenance Entries -->
     <record id="action_assets_maintenance_entry" model="ir.actions.act_window">
-        <field name="name">Maintenance / Repair</field>
+        <field name="name">Maintenance </field>
         <field name="res_model">asset.maintenance.entry</field>
-        <field name="view_mode">list</field>
+        <field name="view_mode">list,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first Record
@@ -523,7 +685,7 @@
     <record id="action_assets_transfer_entry" model="ir.actions.act_window">
         <field name="name">Transfer</field>
         <field name="res_model">asset.transfer.entry</field>
-        <field name="view_mode">list</field>
+        <field name="view_mode">list,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first Record
@@ -531,11 +693,101 @@
         </field>
     </record>
 
+    <!-- Asset Type Kanban View for Dashboard (Tile Chart) -->
+    <record id="view_asset_type_kanban_dashboard" model="ir.ui.view">
+        <field name="name">asset.type.kanban.dashboard</field>
+        <field name="model">asset.type</field>
+        <field name="arch" type="xml">
+            <kanban class="o_asset_dashboard" create="0">
+                <field name="name"/>
+                <field name="color"/>
+                <field name="asset_count"/>
+                <field name="total_booked_value"/>
+                <field name="total_current_value"/>
+                <field name="total_transfer_count"/>
+                <field name="total_maintenance_count"/>
+                <field name="currency_id"/>
+                <templates>
+                    <t t-name="card">
+                        <t t-set="border_colors" t-value="['#00A1E4', '#FF6B6B', '#2EC4B6', '#F7B731', '#A55EEA', '#26de81', '#fd9644', '#4b7bec', '#d63384', '#0dcaf0', '#198754']"/>
+                        <t t-set="top_color" t-value="border_colors[(record.id.raw_value or 0) % 11]"/>
+
+                        <button type="object" name="action_open_assets"
+                                class="d-flex flex-column p-0 border-0 w-100"
+                                t-attf-style="border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.08); transition: all 0.3s ease; cursor: pointer;"
+                                onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.15)';"
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 12px rgba(0,0,0,0.08)';">
+
+                            <!-- Colored Top Border -->
+                            <div class="w-100" t-attf-style="height: 5px; background: {{top_color}};"/>
+
+                            <!-- Header: Asset Type + Count -->
+                            <div class="w-100 px-4 pt-3 pb-2 d-flex justify-content-between align-items-center">
+                                <h4 class="mb-0 fw-bold">
+                                    <field name="name"/>
+                                </h4>
+                                <span class="badge fs-6 fw-bold" t-attf-style="background: {{top_color}}; color: white; padding: 6px 14px; border-radius: 20px;">
+                                    <field name="asset_count"/> Assets
+                                </span>
+                            </div>
+
+                            <!-- Divider -->
+                            <hr class="w-100 mx-auto my-0"/>
+
+                            <!-- Details List -->
+                            <div class="w-100 py-2 px-4 text-start">
+                                <div class="d-flex justify-content-between align-items-center py-2">
+                                    <span class="text-muted small"><i title="fa fa-money me-2" aria-label="fa fa-money me-2" class="fa fa-money me-2"/>Booked Value</span>
+                                    <strong><field name="total_booked_value" widget="monetary"/></strong>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center py-2">
+                                    <span class="text-muted small"><i title="fa fa-line-chart me-2" aria-label="fa fa-line-chart me-2" class="fa fa-line-chart me-2"/>Current Value</span>
+                                    <strong t-attf-style="color: {{top_color}};"><field name="total_current_value" widget="monetary"/></strong>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center py-2">
+                                    <span class="text-muted small"><i title="fa fa-exchange me-2" aria-label="fa fa-exchange me-2" class="fa fa-exchange me-2"/>Transfers</span>
+                                    <strong><field name="total_transfer_count"/></strong>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center py-2">
+                                    <span class="text-muted small"><i title="fa fa-wrench me-2" aria-label="fa fa-wrench me-2" class="fa fa-wrench me-2"/>Maintenance</span>
+                                    <strong><field name="total_maintenance_count"/></strong>
+                                </div>
+                            </div>
+
+                            <!-- Footer -->
+                            <div class="w-100 p-3 text-center border-top">
+                                <span class="fw-semibold small" t-attf-style="color: {{top_color}};">
+                                    View Details <i title="fa fa-arrow-right ms-1" aria-label="fa fa-arrow-right ms-1" class="fa fa-arrow-right ms-1"/>
+                                </span>
+                            </div>
+
+                        </button>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action for Asset Dashboard -->
+    <record id="action_asset_dashboard" model="ir.actions.act_window">
+        <field name="name">Dashboard</field>
+        <field name="res_model">asset.type</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="view_id" ref="view_asset_type_kanban_dashboard"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No asset types defined.
+            </p>
+        </field>
+    </record>
+
+
     <!-- Action for Asset Depreciation Entries -->
     <record id="action_assets_depreciation_entry" model="ir.actions.act_window">
         <field name="name">Depreciation</field>
         <field name="res_model">asset.depreciation.entry</field>
-        <field name="view_mode">list</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_group_by_asset': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first Record
@@ -562,11 +814,38 @@
               web_icon="asset_management,static/description/icon.png"
               groups="asset_management.assets_user_group,asset_management.assets_admin_group,base.group_system"/>
 
-    <!-- Assets Menu: Links to the main asset list -->
+    <!-- Dashboard Menu -->
+    <menuitem id="menu_asset_dashboard"
+              name="Dashboard"
+              parent="menu_asset_root"
+              action="action_asset_dashboard"
+              groups="assets_user_group,assets_admin_group,base.group_system"
+              sequence="5"/>
+
+    <!-- Server Action for dynamic app entry logic -->
+    <record id="action_asset_management_entry" model="ir.actions.server">
+        <field name="name">Asset Management Entry</field>
+        <field name="model_id" ref="asset_management.model_asset_management"/>
+        <field name="state">code</field>
+        <field name="code">
+target_date = datetime.date.today() + datetime.timedelta(days=30)
+domain = [('expired_warranty_date', '!=', False), ('expired_warranty_date', '&lt;=', target_date), ('asset_status', '!=', 'expired')]
+expiring = env['asset.management'].search(domain, limit=1)
+
+if expiring:
+    wizard = env['asset.warranty.wizard'].create({'days_ahead': 30})
+    action = env.ref('asset_management.action_asset_warranty_wizard').read()[0]
+    action['res_id'] = wizard.id
+else:
+    action = env.ref('asset_management.action_assets').read()[0]
+        </field>
+    </record>
+
+    <!-- Assets Menu: Links to the main asset list via logic -->
     <menuitem id="menu_asset"
               name="Assets"
               parent="menu_asset_root"
-              action="action_assets"
+              action="action_asset_management_entry"
               groups="assets_user_group,assets_admin_group,base.group_system"
               sequence="10"/>
 
@@ -580,7 +859,7 @@
 
     <!-- Maintenance Menu: For managing asset maintenance and repairs -->
     <menuitem id="menu_asset_maintenance"
-              name="Maintenance / Repair"
+              name="Maintenance"
               parent="menu_asset_root"
               action="action_assets_maintenance_entry"
               groups="maintenance_user_group,maintenance_admin_group,base.group_system"

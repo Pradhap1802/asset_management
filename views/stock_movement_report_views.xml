@@ -56,10 +56,5 @@
         </field>
     </record>
 
-    <menuitem id="menu_asset_stock_movement_report"
-              name="Stock Movements"
-              parent="menu_asset_root"
-              action="action_asset_stock_movement_report"
-              groups="assets_user_group,assets_admin_group,base.group_system"
-              sequence="60"/>
+
 </odoo>

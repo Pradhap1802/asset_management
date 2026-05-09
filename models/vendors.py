@@ -19,3 +19,11 @@ class AssetVendor(models.Model):
     repair_service = fields.Boolean(string="Repair Services", help="Indicates if the vendor offers repair services (Yes/No)")
     maintenance_service = fields.Boolean(string="Maintenance Services", help="Indicates if the vendor provides maintenance services (Yes/No)")
     
+    # Link back to the Odoo contact (res.partner)
+    partner_id = fields.Many2one(
+        'res.partner',
+        string="Contact",
+        readonly=True,
+        copy=False,
+        help="Linked Odoo contact record that auto-created this vendor"
+    )
