@@ -458,6 +458,12 @@ class AssetTransferEntry(models.Model):
             if vals.get('transfer_code', 'New') == 'New':
                 vals['transfer_code'] = self.env['ir.sequence'].next_by_code('asset.transfer.entry') or 'New'
 
+            # Auto-link serial number if the asset has exactly 1 serial number and none is specified
+            if vals.get('asset_id') and not vals.get('serial_number_ids'):
+                asset = self.env['asset.management'].browse(vals['asset_id'])
+                if len(asset.serial_number_ids) == 1:
+                    vals['serial_number_ids'] = [(6, 0, asset.serial_number_ids.ids)]
+
             if vals.get('asset_id') and vals.get('to_branch_id'):
                 asset = self.env['asset.management'].browse(vals['asset_id'])
                 qty = vals.get('stock_qty', 1)
@@ -599,6 +605,12 @@ class AssetTransferEntry(models.Model):
 
     def write(self, vals):
         """On write, trigger branch transfer and log status changes to chatter."""
+        # Auto-link serial number if the asset has exactly 1 serial number and none is specified
+        if vals.get('asset_id') and not vals.get('serial_number_ids'):
+            asset = self.env['asset.management'].browse(vals['asset_id'])
+            if len(asset.serial_number_ids) == 1:
+                vals['serial_number_ids'] = [(6, 0, asset.serial_number_ids.ids)]
+
         # Capture old values
         old_data = {}
         for r in self:
