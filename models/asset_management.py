@@ -178,13 +178,13 @@ class Asset(models.Model):
                 record.warranty_status = 'none'
                 record.months_left = 0
 
-    @api.depends('transfer_ids', 'transfer_ids.assign_date')
+    @api.depends('transfer_ids', 'transfer_ids.assign_date', 'transfer_ids.transfer_employee_id', 'transfer_ids.assign_by', 'transfer_ids.status')
     def _compute_assigned_user(self):
         for record in self:
             if record.transfer_ids:
-                # Sort by assign_date descending to get the most recent assignment
+                # Sort by assign_date descending and id descending to get the most recent assignment
                 last_transfer = record.transfer_ids.sorted(
-                    key=lambda t: t.assign_date or fields.Date.min, reverse=True
+                    key=lambda t: (t.assign_date or fields.Date.min, t.id), reverse=True
                 )[:1]
                 if last_transfer:
                     record.assigned_user = last_transfer.transfer_employee_id.name or ''
@@ -422,7 +422,7 @@ class AssetTransferEntry(models.Model):
         help="Select the serial numbers being transferred (one per unit)"
     )
     transfer_employee_id = fields.Many2one('hr.employee', string="Assigned To", help="Employee who is receiving or has received the asset")
-    assign_date = fields.Date(string="Assign Date", help="Date when the asset was assigned to the employee")
+    assign_date = fields.Date(string="Assign Date", default=fields.Date.today, help="Date when the asset was assigned to the employee")
     assign_by = fields.Many2one('res.users', string="Assign By", default=lambda self: self.env.user, help="Person responsible for assigning the asset")
     return_date = fields.Date(string="Return Date", help="Date when the asset was returned by the employee")
     status = fields.Selection([
@@ -445,8 +445,11 @@ class AssetTransferEntry(models.Model):
     
     @api.onchange('asset_id')
     def _onchange_asset_id(self):
-        if self.asset_id and self.asset_id.company_id:
-            self.from_branch_id = self.asset_id.company_id.id
+        if self.asset_id:
+            if self.asset_id.company_id:
+                self.from_branch_id = self.asset_id.company_id.id
+            if len(self.asset_id.serial_number_ids) == 1:
+                self.serial_number_ids = self.asset_id.serial_number_ids
     
     @api.model_create_multi
     def create(self, vals_list):
@@ -474,13 +477,24 @@ class AssetTransferEntry(models.Model):
 
         records = super(AssetTransferEntry, self).create(vals_list)
 
-        # Branch Transfer Logic
+        # Branch Transfer Logic & Chatter Logging
         for record in records:
             if (
                 record.to_branch_id
                 and record.asset_id.company_id != record.to_branch_id
             ):
                 self._do_branch_transfer(record)
+            else:
+                if record.asset_id:
+                    serials_str = ", ".join(record.serial_number_ids.mapped('name')) if record.serial_number_ids else ""
+                    serial_suffix = f" (Serials: {serials_str})" if serials_str else ""
+                    msg = _("Asset assigned to Employee '%s' by %s on %s%s.") % (
+                        record.transfer_employee_id.name or _('Unknown'),
+                        record.assign_by.name or _('Unknown'),
+                        record.assign_date or fields.Date.today(),
+                        serial_suffix
+                    )
+                    record.asset_id.message_post(body=msg)
 
         return records
 
@@ -527,10 +541,26 @@ class AssetTransferEntry(models.Model):
             })
             # For full transfers, we don't need a new_asset, so we skip copy
             new_asset = asset
+            # Post chatter message on full transfer:
+            msg = _("Asset fully transferred to Branch '%s' (Qty: %d) by %s on %s.") % (
+                record.to_branch_id.name or '',
+                qty,
+                record.assign_by.name or '',
+                record.assign_date or fields.Date.today()
+            )
+            asset.message_post(body=msg)
         else:
             # Partial Transfer: Must create a new record at the destination 
             # to track split stock (some at source, some at destination)
             asset.sudo().write({'current_stock': new_current_stock})
+            # Post chatter message on source:
+            msg_src = _("%d unit(s) transferred to Branch '%s' by %s on %s.") % (
+                qty,
+                record.to_branch_id.name or '',
+                record.assign_by.name or '',
+                record.assign_date or fields.Date.today()
+            )
+            asset.message_post(body=msg_src)
             
             new_asset = asset.copy({
                 'name': 'New',
@@ -542,6 +572,13 @@ class AssetTransferEntry(models.Model):
                 'depreciation_ids': False,
                 'serial_number_ids': False,
             })
+            # Post chatter message on destination:
+            msg_dest = _("%d unit(s) received from Branch '%s' by transfer %s.") % (
+                qty,
+                asset.company_id.name or '',
+                record.transfer_code
+            )
+            new_asset.message_post(body=msg_dest)
 
         # Move selected serial numbers to the destination asset
         # Step 1: Snapshot the serials to transfer BEFORE any write
@@ -561,13 +598,24 @@ class AssetTransferEntry(models.Model):
         })
 
     def write(self, vals):
-        """On write, trigger branch transfer only when to_branch_id is newly set."""
+        """On write, trigger branch transfer and log status changes to chatter."""
+        # Capture old values
+        old_data = {}
+        for r in self:
+            old_data[r.id] = {
+                'status': r.status,
+                'employee': r.transfer_employee_id.name,
+                'asset': r.asset_id,
+            }
+        
         # Remember which records already had a to_branch_id before the write
         already_transferred = {
             r.id: (r.to_branch_id and r.asset_id.company_id != r.to_branch_id)
             for r in self
         }
+        
         res = super(AssetTransferEntry, self).write(vals)
+        
         for record in self:
             if (
                 record.to_branch_id
@@ -575,6 +623,26 @@ class AssetTransferEntry(models.Model):
                 and not already_transferred.get(record.id)
             ):
                 self._do_branch_transfer(record)
+                
+            # Log status updates to chatter
+            old = old_data.get(record.id)
+            if old and vals.get('status') and vals.get('status') != old['status']:
+                new_status = vals.get('status')
+                if new_status == 'returned':
+                    msg = _("Asset returned by Employee '%s' on %s.") % (
+                        record.transfer_employee_id.name or old['employee'] or _('Unknown'),
+                        record.return_date or fields.Date.today()
+                    )
+                elif new_status == 'under_maintenance':
+                    msg = _("Asset status updated to Under Maintenance for transfer reference %s.") % (record.transfer_code)
+                else:
+                    msg = _("Asset transfer status updated to %s.") % (dict(self._fields['status'].selection).get(new_status, new_status))
+                
+                if record.asset_id:
+                    record.asset_id.message_post(body=msg)
+                if old['asset'] and old['asset'] != record.asset_id:
+                    old['asset'].message_post(body=msg)
+                    
         return res
 
     _constraints = [
