@@ -10,7 +10,7 @@ msgstr ""
 "PO-Revision-Date: 2026-06-18 07:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: de\n"
+"Language: hi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,252 +19,252 @@ msgstr ""
 #. module: asset_management
 #: model:ir.model,name:asset_management.model_asset_management\n#: model:ir.ui.menu,name:asset_management.menu_asset_root
 msgid "Asset Management"
-msgstr "Anlagenverwaltung"
+msgstr "परिसंपत्ति प्रबंधन"
 
 #. module: asset_management
 #: actions.act_window,name:asset_management.action_assets\n#: model:ir.ui.menu,name:asset_management.menu_asset
 msgid "Assets"
-msgstr "Anlagen"
+msgstr "परिसंपत्तियां"
 
 #. module: asset_management
 #: actions.act_window,name:asset_management.action_asset_dashboard\n#: model:ir.ui.menu,name:asset_management.menu_asset_dashboard
 msgid "Dashboard"
-msgstr "Dashboard"
+msgstr "डैशबोर्ड"
 
 #. module: asset_management
 #: actions.act_window,name:asset_management.action_assets_transfer_entry\n#: model:ir.ui.menu,name:asset_management.menu_asset_transfer
 msgid "Transfer"
-msgstr "Übertragungen"
+msgstr "स्थानांतरण"
 
 #. module: asset_management
 #: actions.act_window,name:asset_management.action_assets_maintenance_entry\n#: model:ir.ui.menu,name:asset_management.menu_asset_maintenance
 msgid "Maintenance"
-msgstr "Wartung"
+msgstr "रखरखाव"
 
 #. module: asset_management
 #: actions.act_window,name:asset_management.action_assets_depreciation_entry\n#: model:ir.ui.menu,name:asset_management.menu_asset_depreciation
 msgid "Depreciation"
-msgstr "Abschreibung"
+msgstr "मूल्यह्रास"
 
 #. module: asset_management
 #: ui.menu,name:asset_management.asset_configuration
 msgid "Configuration"
-msgstr "Konfiguration"
+msgstr "विन्यास"
 
 #. module: asset_management
 #: actions.act_window,name:asset_management.action_assets_settings\n#: model:ir.ui.menu,name:asset_type_menu
 msgid "Types"
-msgstr "Typen"
+msgstr "प्रकार"
 
 #. module: asset_management
 #: actions.act_window,name:asset_management.action_asset_tags\n#: model:ir.ui.menu,name:asset_tag_menu
 msgid "Tags"
-msgstr "Tags"
+msgstr "टैग"
 
 #. module: asset_management
 #: model,name:asset_management.model_asset_transfer_entry
 msgid "Asset Transfer Entry"
-msgstr "Anlagenübertragungseintrag"
+msgstr "परिसंपत्ति स्थानांतरण प्रविष्टि"
 
 #. module: asset_management
 #: model,name:asset_management.model_asset_maintenance_entry
 msgid "Asset Maintenance Entry"
-msgstr "Anlagenwartungseintrag"
+msgstr "परिसंपत्ति रखरखाव प्रविष्टि"
 
 #. module: asset_management
 #: model,name:asset_management.model_asset_depreciation_entry
 msgid "Asset Depreciation Entry"
-msgstr "Anlagenabschreibungseintrag"
+msgstr "परिसंपत्ति मूल्यह्रास प्रविष्टि"
 
 #. module: asset_management
 #: model,name:asset_management.model_asset_type
 msgid "Asset Type"
-msgstr "Anlagentyp"
+msgstr "परिसंपत्ति प्रकार"
 
 #. module: asset_management
 #: model,name:asset_management.model_asset_disposal
 msgid "Asset Disposal"
-msgstr "Anlagenabgang"
+msgstr "परिसंपत्ति निपटान"
 
 #. module: asset_management
 #: model,name:asset_management.model_asset_serial_number
 msgid "Asset Serial Number"
-msgstr "Anlagen-Seriennummer"
+msgstr "परिसंपत्ति क्रमांक"
 
 #. module: asset_management
 #: model,name:asset_management.model_asset_tag
 msgid "Asset Tag"
-msgstr "Anlagen-Tag"
+msgstr "परिसंपत्ति टैग"
 
 #. module: asset_management
 #: field:asset.management,name:0
 msgid "Asset Reference"
-msgstr "Anlagenreferenz"
+msgstr "परिसंपत्ति संदर्भ"
 
 #. module: asset_management
 #: field:asset.management,barcode:0
 msgid "Barcode"
-msgstr "Barcode"
+msgstr "बारकोड"
 
 #. module: asset_management
 #: field:asset.management,serial_number_ids:0
 msgid "Serial Numbers"
-msgstr "Seriennummern"
+msgstr "क्रमांक"
 
 #. module: asset_management
 #: field:asset.management,product_id:0
 msgid "Associated Product"
-msgstr "Zugeordnetes Produkt"
+msgstr "संबद्ध उत्पाद"
 
 #. module: asset_management
 #: field:asset.management,asset_type_id:0
 msgid "Asset Type"
-msgstr "Anlagentyp"
+msgstr "परिसंपत्ति प्रकार"
 
 #. module: asset_management
 #: field:asset.management,initial_stock:0
 msgid "Initial Stock"
-msgstr "Anfangsbestand"
+msgstr "प्रारंभिक स्टॉक"
 
 #. module: asset_management
 #: field:asset.management,current_stock:0
 msgid "Current Stock"
-msgstr "Aktueller Bestand"
+msgstr "वर्तमान स्टॉक"
 
 #. module: asset_management
 #: field:asset.management,active_transfers:0
 msgid "Active Transfers"
-msgstr "Aktive Übertragungen"
+msgstr "सक्रिय स्थानांतरण"
 
 #. module: asset_management
 #: field:asset.management,depreciation_apply:0
 msgid "Enable Depreciation"
-msgstr "Abschreibung aktivieren"
+msgstr "मूल्यह्रास सक्षम करें"
 
 #. module: asset_management
 #: field:asset.management,expired_warranty_date:0
 msgid "Expired Warranty Date"
-msgstr "Ablaufdatum der Garantie"
+msgstr "वारंटी समाप्त होने की तिथि"
 
 #. module: asset_management
 #: field:asset.management,vendor_id:0
 msgid "Associated Vendor"
-msgstr "Zugeordneter Lieferant"
+msgstr "संबद्ध विक्रेता"
 
 #. module: asset_management
 #: field:asset.management,invoice_date:0
 msgid "Invoice Date"
-msgstr "Rechnungsdatum"
+msgstr "विधेयक तिथि"
 
 #. module: asset_management
 #: field:asset.management,amount:0
 msgid "Purchase Price"
-msgstr "Kaufpreis"
+msgstr "क्रय मूल्य"
 
 #. module: asset_management
 #: field:asset.management,capitalization_date:0
 msgid "Capitalization Date"
-msgstr "Aktivierungsdatum"
+msgstr "पूंजीकरण तिथि"
 
 #. module: asset_management
 #: field:asset.management,end_of_life_date:0
 msgid "End of Life Date"
-msgstr "Ende der Lebensdauer"
+msgstr "जीवन समाप्ति तिथि"
 
 #. module: asset_management
 #: field:asset.management,last_maintenance_date:0
 msgid "Last Maintenance Date"
-msgstr "Letzte Wartung"
+msgstr "अंतिम रखरखाव तिथि"
 
 #. module: asset_management
 #: field:asset.management,next_maintenance_due:0
 msgid "Next Maintenance Due"
-msgstr "Nächste Wartung fällig"
+msgstr "अगला रखरखाव देय"
 
 #. module: asset_management
 #: field:asset.management,asset_status:0
 msgid "Asset Status"
-msgstr "Anlagenstatus"
+msgstr "परिसंपत्ति स्थिति"
 
 #. module: asset_management
 #: field:asset.management,current_amount:0
 msgid "Current Book Value"
-msgstr "Aktueller Buchwert"
+msgstr "वर्तमान बही मूल्य"
 
 #. module: asset_management
 #: field:asset.management,total_depreciation_amount:0
 msgid "Accumulated Depreciation"
-msgstr "Kumulierte Abschreibung"
+msgstr "संचित मूल्यह्रास"
 
 #. module: asset_management
 #: field:asset.management,total_maintenance_amount:0
 msgid "Total Maintenance Cost"
-msgstr "Wartungskosten gesamt"
+msgstr "कुल रखरखाव लागत"
 
 #. module: asset_management
 #: field:asset.management,total_downtime_days:0
 msgid "Total Downtime (Days)"
-msgstr "Ausfallzeit gesamt (Tage)"
+msgstr "कुल डाउनटाइम (दिन)"
 
 #. module: asset_management
 #: field:asset.management,document_ids:0
 msgid "Asset Documentation"
-msgstr "Anlagendokumentation"
+msgstr "परिसंपत्ति प्रलेखन"
 
 #. module: asset_management
 #: field:asset.management,transfer_ids:0
 msgid "Transfer Entries"
-msgstr "Übertragungseinträge"
+msgstr "स्थानांतरण प्रविष्टियां"
 
 #. module: asset_management
 #: field:asset.management,maintenance_ids:0
 msgid "Maintenance Entries"
-msgstr "Wartungseinträge"
+msgstr "रखरखाव प्रविष्टियां"
 
 #. module: asset_management
 #: field:asset.management,depreciation_ids:0
 msgid "Depreciation Entries"
-msgstr "Abschreibungseinträge"
+msgstr "मूल्यह्रास प्रविष्टियां"
 
 #. module: asset_management
 #: field:asset.management,disposal_ids:0
 msgid "Disposal Records"
-msgstr "Abgangsaufzeichnungen"
+msgstr "निपटान रिकॉर्ड"
 
 #. module: asset_management
 #: field:asset.management,months_left:0
 msgid "Months Left"
-msgstr "Verbleibende Monate"
+msgstr "शेष महीने"
 
 #. module: asset_management
 #: field:asset.management,assigned_user:0
 msgid "Assigned User"
-msgstr "Zugewiesener Benutzer"
+msgstr "सौंपा गया उपयोगकर्ता"
 
 #. module: asset_management
 #: field:asset.management,assign_by:0
 msgid "Assigned By"
-msgstr "Zugewiesen von"
+msgstr "किसके द्वारा सौंपा गया"
 
 #. module: asset_management
 #: field:asset.management,remaining_warranty:0
 msgid "Remaining Warranty"
-msgstr "Verbleibende Garantie"
+msgstr "शेष वारंटी"
 
 #. module: asset_management
 #: field:asset.management,warranty_status:0
 msgid "Warranty Status"
-msgstr "Garantiestatus"
+msgstr "वारंटी स्थिति"
 
 #. module: asset_management
 #: field:asset.management,company_id:0
 msgid "Company / Branch"
-msgstr "Unternehmen / Filiale"
+msgstr "कंपनी / शाखा"
 
 #. module: asset_management
 #: field:asset.management,accounting_asset_id:0
 msgid "Accounting Asset"
-msgstr "Buchhaltungsanlage"
+msgstr "लेखांकन परिसंपत्ति"
 
 #. module: asset_management
 #: field:asset.transfer.entry,product_id:0
@@ -274,12 +274,12 @@ msgstr "Product"
 #. module: asset_management
 #: field:asset.transfer.entry,transfer_employee_id:0
 msgid "Assigned To"
-msgstr "Zugewiesen an"
+msgstr "किसे सौंपा गया"
 
 #. module: asset_management
 #: field:asset.transfer.entry,assign_date:0
 msgid "Assign Date"
-msgstr "Zuweisungsdatum"
+msgstr "सौंपने की तिथि"
 
 #. module: asset_management
 #: field:asset.transfer.entry,assign_by:0
@@ -289,145 +289,145 @@ msgstr "Assign By"
 #. module: asset_management
 #: field:asset.transfer.entry,return_date:0
 msgid "Return Date"
-msgstr "Rückgabedatum"
+msgstr "वापसी की तिथि"
 
 #. module: asset_management
 #: field:asset.transfer.entry,status:0
 msgid "Status"
-msgstr "Status"
+msgstr "स्थिति"
 
 #. module: asset_management
 #: field:asset.transfer.entry,transfer_code:0
 msgid "Transfer Code"
-msgstr "Übertragungscode"
+msgstr "स्थानांतरण कोड"
 
 #. module: asset_management
 #: field:asset.transfer.entry,stock_qty:0
 msgid "Quantity"
-msgstr "Menge"
+msgstr "मात्रा"
 
 #. module: asset_management
 #: field:asset.transfer.entry,from_branch_id:0
 msgid "From Branch"
-msgstr "Von Filiale"
+msgstr "किस शाखा से"
 
 #. module: asset_management
 #: field:asset.transfer.entry,to_branch_id:0
 msgid "To Branch"
-msgstr "An Filiale"
+msgstr "किस शाखा को"
 
 #. module: asset_management
 #: selection:asset.management,asset_status:0
 msgid "Active"
-msgstr "Aktiv"
+msgstr "सक्रिय"
 
 #. module: asset_management
 #: selection:asset.management,asset_status:0
 msgid "Expired/Scrap"
-msgstr "Abgelaufen/Ausschuss"
+msgstr "समाप्त/स्क्रैप"
 
 #. module: asset_management
 #: selection:asset.transfer.entry,status:0
 msgid "Assigned"
-msgstr "Zugewiesen"
+msgstr "सौंपा गया"
 
 #. module: asset_management
 #: selection:asset.transfer.entry,status:0
 msgid "Transfered"
-msgstr "Übertragen"
+msgstr "स्थानांतरित"
 
 #. module: asset_management
 #: selection:asset.transfer.entry,status:0
 msgid "Under Maintenance"
-msgstr "In Wartung"
+msgstr "रखरखाव के अधीन"
 
 #. module: asset_management
 #: field:asset.disposal,name:0
 msgid "Disposal Reference"
-msgstr "Abgangsreferenz"
+msgstr "निपटान संदर्भ"
 
 #. module: asset_management
 #: field:asset.disposal,asset_id:0
 msgid "Asset"
-msgstr "Anlage"
+msgstr "परिसंपत्ति"
 
 #. module: asset_management
 #: field:asset.disposal,disposal_date:0
 msgid "Disposal Date"
-msgstr "Abgangsdatum"
+msgstr "निपटान तिथि"
 
 #. module: asset_management
 #: field:asset.disposal,disposal_method:0
 msgid "Disposal Method"
-msgstr "Abgangsmethode"
+msgstr "निपटान विधि"
 
 #. module: asset_management
 #: field:asset.disposal,disposal_value:0
 msgid "Disposal / Sale Value"
-msgstr "Abgangs- / Verkaufswert"
+msgstr "निपटान / बिक्री मूल्य"
 
 #. module: asset_management
 #: field:asset.disposal,book_value_at_disposal:0
 msgid "Book Value at Disposal"
-msgstr "Buchwert bei Abgang"
+msgstr "निपटान पर बही मूल्य"
 
 #. module: asset_management
 #: field:asset.disposal,loss_on_disposal:0
 msgid "Loss / (Gain) on Disposal"
-msgstr "Verlust / (Gewinn) bei Abgang"
+msgstr "निपटान पर हानि / (लाभ)"
 
 #. module: asset_management
 #: field:asset.disposal,disposal_reason:0
 msgid "Reason for Disposal"
-msgstr "Abgangsgrund"
+msgstr "निपटान का कारण"
 
 #. module: asset_management
 #: field:asset.disposal,approved_by:0
 msgid "Approved By"
-msgstr "Genehmigt von"
+msgstr "किसके द्वारा स्वीकृत"
 
 #. module: asset_management
 #: selection:asset.disposal,disposal_method:0
 msgid "Scrap"
-msgstr "Ausschuss"
+msgstr "स्क्रैप"
 
 #. module: asset_management
 #: selection:asset.disposal,disposal_method:0
 msgid "Sold"
-msgstr "Verkauft"
+msgstr "बेचा गया"
 
 #. module: asset_management
 #: selection:asset.disposal,disposal_method:0
 msgid "Donated"
-msgstr "Gespendet"
+msgstr "दान दिया गया"
 
 #. module: asset_management
 #: selection:asset.disposal,disposal_method:0
 msgid "Written Off"
-msgstr "Abgeschrieben"
+msgstr "बट्टे खाते में डाला गया"
 
 #. module: asset_management
 #: selection:asset.disposal,disposal_method:0
 msgid "Other"
-msgstr "Anderes"
+msgstr "अन्य"
 
 #. module: asset_management
 #: selection:asset.disposal,state:0
 msgid "Draft"
-msgstr "Entwurf"
+msgstr "प्रारूप"
 
 #. module: asset_management
 #: selection:asset.disposal,state:0
 msgid "Waiting Approval"
-msgstr "Wartet auf Genehmigung"
+msgstr "स्वीकृति की प्रतीक्षा में"
 
 #. module: asset_management
 #: selection:asset.disposal,state:0
 msgid "Approved"
-msgstr "Genehmigt"
+msgstr "स्वीकृत"
 
 #. module: asset_management
 #: selection:asset.disposal,state:0
 msgid "Disposed"
-msgstr "Ausgeschieden"
+msgstr "निपटाया गया"
 
