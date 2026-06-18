@@ -409,6 +409,7 @@ class AssetSerialNumber(models.Model):
 class AssetTransferEntry(models.Model):
     _name = 'asset.transfer.entry'
     _description = 'Asset Transfer Entry'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     # Fields for tracking asset transfers
     asset_id = fields.Many2one('asset.management', string="Asset Reference", help="Choose the asset for which the transfer is being recorded")
@@ -421,7 +422,7 @@ class AssetTransferEntry(models.Model):
         string="Serial Numbers",
         help="Select the serial numbers being transferred (one per unit)"
     )
-    transfer_employee_id = fields.Many2one('hr.employee', string="Assigned To", help="Employee who is receiving or has received the asset")
+    transfer_employee_id = fields.Many2one('hr.employee', string="Assigned To", tracking=True, help="Employee who is receiving or has received the asset")
     assign_date = fields.Date(string="Assign Date", default=fields.Date.today, help="Date when the asset was assigned to the employee")
     assign_by = fields.Many2one('res.users', string="Assign By", default=lambda self: self.env.user, help="Person responsible for assigning the asset")
     return_date = fields.Date(string="Return Date", help="Date when the asset was returned by the employee")
@@ -429,7 +430,7 @@ class AssetTransferEntry(models.Model):
         ('assigned', 'Assigned'),
         ('returned', 'Transfered'),
         ('under_maintenance', 'Under Maintenance')
-    ], string="Status", help="Current status of the asset transfer")
+    ], string="Status", tracking=True, help="Current status of the asset transfer")
     transfer_code = fields.Char(
         string="Transfer Code",
         copy=False,
@@ -680,6 +681,7 @@ class AssetTransferEntry(models.Model):
 class AssetMaintenanceEntry(models.Model):
     _name = 'asset.maintenance.entry'
     _description = 'Asset Maintenance Entry'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     # Fields for tracking asset maintenance
     asset_id = fields.Many2one('asset.management', string="Asset Reference", help="Choose the asset for undergoing maintenance or repair is being recorded")
@@ -701,7 +703,7 @@ class AssetMaintenanceEntry(models.Model):
         ('in_progress', 'In Progress'),
         ('pending', 'Pending'),
         ('completed', 'Completed')
-    ], string="Status", help="Current status of the maintenance or repair process")
+    ], string="Status", tracking=True, help="Current status of the maintenance or repair process")
     maintenance_amount = fields.Float(string="Service Cost", help="Cost of this maintenance service")
     downtime_days = fields.Integer(string="Downtime (Days)", compute='_compute_downtime_days', store=True, help="Number of days the asset was unavailable during maintenance")
     invoice_id = fields.Many2one('account.move', string="Invoice")
@@ -745,6 +747,7 @@ class AssetMaintenanceEntry(models.Model):
 class AssetDepreciationEntry(models.Model):
     _name = 'asset.depreciation.entry'
     _description = 'Asset Depreciation Entry'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     # Fields for tracking asset depreciation
     asset_id = fields.Many2one('asset.management', string="Asset Reference", help="Choose the asset for which depreciation is being recorded")
@@ -752,7 +755,7 @@ class AssetDepreciationEntry(models.Model):
     bill_id = fields.Many2one('account.move', string="Bill Reference", domain="[('move_type', 'in', ['in_invoice', 'in_refund'])]", help="Vendor bill associated with this depreciation entry")
     depreciation_amount = fields.Float(string="Amount", help="The monetary value of depreciation applied in this entry")
     entry_date = fields.Date(string="Depreciation Date", help="Date when this depreciation entry was recorded")
-    state = fields.Selection([('draft', 'Planned'), ('posted', 'Posted')], string='Status', default='posted')
+    state = fields.Selection([('draft', 'Planned'), ('posted', 'Posted')], string='Status', default='posted', tracking=True)
     notes = fields.Text(string="Comments", help="Additional information or remarks about this depreciation entry")
     created_by = fields.Many2one('res.users', string="Recorded By", default=lambda self: self.env.user, help="Person who created this depreciation entry")
 
@@ -760,6 +763,7 @@ class AssetDepreciationEntry(models.Model):
 class AssetType(models.Model):
     _name = 'asset.type'
     _description = 'Asset Type'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     # Fields for defining asset types and their depreciation rules
     name = fields.Char(string='Name', required=True)

@@ -470,6 +470,7 @@
                         <field name="document" filename="file_name" widget="binary"/>
                     </group>
                 </sheet>
+                <chatter/>
             </form>
         </field>
     </record>
@@ -502,6 +503,7 @@
                         </group>
                     </group>
                 </sheet>
+                <chatter/>
             </form>
         </field>
     </record>
@@ -563,6 +565,7 @@
                         <field name="notes" nolabel="1"/>
                     </group>
                 </sheet>
+                <chatter/>
             </form>
         </field>
     </record>
@@ -598,6 +601,7 @@
                         <field name="maximum_depreciation_entries"/>
                     </group>
                 </sheet>
+                <chatter/>
             </form>
         </field>
     </record>

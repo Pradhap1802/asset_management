@@ -3,6 +3,8 @@ from odoo import models, fields
 class AssetVendor(models.Model):
     _name = 'asset.vendor'
     _description = 'Asset Vendor'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+
 
     # Basic Information
     name = fields.Char(string="Name", required=True, help="Official registered name of the vendor company")
