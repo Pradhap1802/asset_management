@@ -17,302 +17,266 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: asset_management
-#: model:ir.model,name:asset_management.model_asset_management\n#: model:ir.ui.menu,name:asset_management.menu_asset_root
+#: model:ir.model,name:asset_management.model_asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_root
 msgid "Asset Management"
 msgstr "Varlık Yönetimi"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets\n#: model:ir.ui.menu,name:asset_management.menu_asset
+#: model:ir.actions.act_window,name:asset_management.action_assets
+#: model:ir.ui.menu,name:asset_management.menu_asset
 msgid "Assets"
 msgstr "Varlıklar"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_asset_dashboard\n#: model:ir.ui.menu,name:asset_management.menu_asset_dashboard
+#: model:ir.actions.act_window,name:asset_management.action_asset_dashboard
+#: model:ir.ui.menu,name:asset_management.menu_asset_dashboard
 msgid "Dashboard"
 msgstr "Panel"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets_transfer_entry\n#: model:ir.ui.menu,name:asset_management.menu_asset_transfer
+#: model:ir.actions.act_window,name:asset_management.action_assets_transfer_entry
+#: model:ir.ui.menu,name:asset_management.menu_asset_transfer
 msgid "Transfer"
 msgstr "Transfer"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets_maintenance_entry\n#: model:ir.ui.menu,name:asset_management.menu_asset_maintenance
+#: model:ir.actions.act_window,name:asset_management.action_assets_maintenance_entry
+#: model:ir.ui.menu,name:asset_management.menu_asset_maintenance
 msgid "Maintenance"
 msgstr "Bakım"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets_depreciation_entry\n#: model:ir.ui.menu,name:asset_management.menu_asset_depreciation
+#: model:ir.actions.act_window,name:asset_management.action_assets_depreciation_entry
+#: model:ir.ui.menu,name:asset_management.menu_asset_depreciation
 msgid "Depreciation"
 msgstr "Amortisman"
 
 #. module: asset_management
-#: ui.menu,name:asset_management.asset_configuration
+#: model:ir.ui.menu,name:asset_management.asset_configuration
 msgid "Configuration"
 msgstr "Yapılandırma"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets_settings\n#: model:ir.ui.menu,name:asset_type_menu
+#: model:ir.actions.act_window,name:asset_management.action_assets_settings
+#: model:ir.ui.menu,name:asset_management.asset_type_menu
 msgid "Types"
 msgstr "Türler"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_asset_tags\n#: model:ir.ui.menu,name:asset_tag_menu
+#: model:ir.actions.act_window,name:asset_management.action_asset_tags
+#: model:ir.ui.menu,name:asset_management.asset_tag_menu
 msgid "Tags"
 msgstr "Etiketler"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_transfer_entry
+#: model:ir.model,name:asset_management.model_asset_transfer_entry
 msgid "Asset Transfer Entry"
 msgstr "Varlık Transfer Kaydı"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_maintenance_entry
+#: model:ir.model,name:asset_management.model_asset_maintenance_entry
 msgid "Asset Maintenance Entry"
 msgstr "Varlık Bakım Kaydı"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_depreciation_entry
+#: model:ir.model,name:asset_management.model_asset_depreciation_entry
 msgid "Asset Depreciation Entry"
 msgstr "Amortisman Kaydı"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_type
+#: model:ir.model,name:asset_management.model_asset_type
 msgid "Asset Type"
 msgstr "Varlık Türü"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_disposal
+#: model:ir.model,name:asset_management.model_asset_disposal
 msgid "Asset Disposal"
 msgstr "Varlık Elden Çıkarma"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_serial_number
+#: model:ir.model,name:asset_management.model_asset_serial_number
 msgid "Asset Serial Number"
 msgstr "Varlık Seri Numarası"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_tag
+#: model:ir.model,name:asset_management.model_asset_tag
 msgid "Asset Tag"
 msgstr "Varlık Etiketi"
 
 #. module: asset_management
-#: field:asset.management,name:0
 msgid "Asset Reference"
 msgstr "Varlık Referansı"
 
 #. module: asset_management
-#: field:asset.management,barcode:0
 msgid "Barcode"
 msgstr "Barkod"
 
 #. module: asset_management
-#: field:asset.management,serial_number_ids:0
 msgid "Serial Numbers"
 msgstr "Seri Numaraları"
 
 #. module: asset_management
-#: field:asset.management,product_id:0
 msgid "Associated Product"
 msgstr "İlişkili Ürün"
 
 #. module: asset_management
-#: field:asset.management,asset_type_id:0
 msgid "Asset Type"
 msgstr "Varlık Türü"
 
 #. module: asset_management
-#: field:asset.management,initial_stock:0
 msgid "Initial Stock"
 msgstr "Başlangıç Stoğu"
 
 #. module: asset_management
-#: field:asset.management,current_stock:0
 msgid "Current Stock"
 msgstr "Mevcut Stok"
 
 #. module: asset_management
-#: field:asset.management,active_transfers:0
 msgid "Active Transfers"
 msgstr "Aktif Transferler"
 
 #. module: asset_management
-#: field:asset.management,depreciation_apply:0
 msgid "Enable Depreciation"
 msgstr "Amortismanı Etkinleştir"
 
 #. module: asset_management
-#: field:asset.management,expired_warranty_date:0
 msgid "Expired Warranty Date"
 msgstr "Garanti Bitiş Tarihi"
 
 #. module: asset_management
-#: field:asset.management,vendor_id:0
 msgid "Associated Vendor"
 msgstr "İlişkili Satıcı"
 
 #. module: asset_management
-#: field:asset.management,invoice_date:0
 msgid "Invoice Date"
 msgstr "Fatura Tarihi"
 
 #. module: asset_management
-#: field:asset.management,amount:0
 msgid "Purchase Price"
 msgstr "Satın Alma Fiyatı"
 
 #. module: asset_management
-#: field:asset.management,capitalization_date:0
 msgid "Capitalization Date"
 msgstr "Aktifleştirme Tarihi"
 
 #. module: asset_management
-#: field:asset.management,end_of_life_date:0
 msgid "End of Life Date"
 msgstr "Ömür Bitiş Tarihi"
 
 #. module: asset_management
-#: field:asset.management,last_maintenance_date:0
 msgid "Last Maintenance Date"
 msgstr "Son Bakım Tarihi"
 
 #. module: asset_management
-#: field:asset.management,next_maintenance_due:0
 msgid "Next Maintenance Due"
 msgstr "Gelecek Bakım Tarihi"
 
 #. module: asset_management
-#: field:asset.management,asset_status:0
 msgid "Asset Status"
 msgstr "Varlık Durumu"
 
 #. module: asset_management
-#: field:asset.management,current_amount:0
 msgid "Current Book Value"
 msgstr "Mevcut Defter Değeri"
 
 #. module: asset_management
-#: field:asset.management,total_depreciation_amount:0
 msgid "Accumulated Depreciation"
 msgstr "Birikmiş Amortisman"
 
 #. module: asset_management
-#: field:asset.management,total_maintenance_amount:0
 msgid "Total Maintenance Cost"
 msgstr "Toplam Bakım Maliyeti"
 
 #. module: asset_management
-#: field:asset.management,total_downtime_days:0
 msgid "Total Downtime (Days)"
 msgstr "Toplam Duruş Süresi (Gün)"
 
 #. module: asset_management
-#: field:asset.management,document_ids:0
 msgid "Asset Documentation"
 msgstr "Varlık Belgeleri"
 
 #. module: asset_management
-#: field:asset.management,transfer_ids:0
 msgid "Transfer Entries"
 msgstr "Transfer Kayıtları"
 
 #. module: asset_management
-#: field:asset.management,maintenance_ids:0
 msgid "Maintenance Entries"
 msgstr "Bakım Kayıtları"
 
 #. module: asset_management
-#: field:asset.management,depreciation_ids:0
 msgid "Depreciation Entries"
 msgstr "Amortisman Kayıtları"
 
 #. module: asset_management
-#: field:asset.management,disposal_ids:0
 msgid "Disposal Records"
 msgstr "Elden Çıkarma Kayıtları"
 
 #. module: asset_management
-#: field:asset.management,months_left:0
 msgid "Months Left"
 msgstr "Kalan Ay"
 
 #. module: asset_management
-#: field:asset.management,assigned_user:0
 msgid "Assigned User"
 msgstr "Atanan Kullanıcı"
 
 #. module: asset_management
-#: field:asset.management,assign_by:0
 msgid "Assigned By"
 msgstr "Atayan"
 
 #. module: asset_management
-#: field:asset.management,remaining_warranty:0
 msgid "Remaining Warranty"
 msgstr "Kalan Garanti"
 
 #. module: asset_management
-#: field:asset.management,warranty_status:0
 msgid "Warranty Status"
 msgstr "Garanti Durumu"
 
 #. module: asset_management
-#: field:asset.management,company_id:0
 msgid "Company / Branch"
 msgstr "Şirket / Şube"
 
 #. module: asset_management
-#: field:asset.management,accounting_asset_id:0
 msgid "Accounting Asset"
 msgstr "Muhasebe Varlığı"
 
 #. module: asset_management
-#: field:asset.transfer.entry,product_id:0
 msgid "Product"
 msgstr "Product"
 
 #. module: asset_management
-#: field:asset.transfer.entry,transfer_employee_id:0
 msgid "Assigned To"
 msgstr "Atanan kişi"
 
 #. module: asset_management
-#: field:asset.transfer.entry,assign_date:0
 msgid "Assign Date"
 msgstr "Atama Tarihi"
 
 #. module: asset_management
-#: field:asset.transfer.entry,assign_by:0
 msgid "Assign By"
 msgstr "Assign By"
 
 #. module: asset_management
-#: field:asset.transfer.entry,return_date:0
 msgid "Return Date"
 msgstr "İade Tarihi"
 
 #. module: asset_management
-#: field:asset.transfer.entry,status:0
 msgid "Status"
 msgstr "Durum"
 
 #. module: asset_management
-#: field:asset.transfer.entry,transfer_code:0
 msgid "Transfer Code"
 msgstr "Transfer Kodu"
 
 #. module: asset_management
-#: field:asset.transfer.entry,stock_qty:0
 msgid "Quantity"
 msgstr "Miktar"
 
 #. module: asset_management
-#: field:asset.transfer.entry,from_branch_id:0
 msgid "From Branch"
 msgstr "Gönderen Şube"
 
 #. module: asset_management
-#: field:asset.transfer.entry,to_branch_id:0
 msgid "To Branch"
 msgstr "Alıcı Şube"
 
@@ -342,47 +306,38 @@ msgid "Under Maintenance"
 msgstr "Bakımda"
 
 #. module: asset_management
-#: field:asset.disposal,name:0
 msgid "Disposal Reference"
 msgstr "Elden Çıkarma Referansı"
 
 #. module: asset_management
-#: field:asset.disposal,asset_id:0
 msgid "Asset"
 msgstr "Varlık"
 
 #. module: asset_management
-#: field:asset.disposal,disposal_date:0
 msgid "Disposal Date"
 msgstr "Elden Çıkarma Tarihi"
 
 #. module: asset_management
-#: field:asset.disposal,disposal_method:0
 msgid "Disposal Method"
 msgstr "Elden Çıkarma Yöntemi"
 
 #. module: asset_management
-#: field:asset.disposal,disposal_value:0
 msgid "Disposal / Sale Value"
 msgstr "Elden Çıkarma / Satış Değeri"
 
 #. module: asset_management
-#: field:asset.disposal,book_value_at_disposal:0
 msgid "Book Value at Disposal"
 msgstr "Elden Çıkarma Sırasındaki Defter Değeri"
 
 #. module: asset_management
-#: field:asset.disposal,loss_on_disposal:0
 msgid "Loss / (Gain) on Disposal"
 msgstr "Elden Çıkarma Kar/Zararı"
 
 #. module: asset_management
-#: field:asset.disposal,disposal_reason:0
 msgid "Reason for Disposal"
 msgstr "Elden Çıkarma Nedeni"
 
 #. module: asset_management
-#: field:asset.disposal,approved_by:0
 msgid "Approved By"
 msgstr "Onaylayan"
 

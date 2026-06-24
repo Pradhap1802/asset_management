@@ -17,302 +17,266 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: asset_management
-#: model:ir.model,name:asset_management.model_asset_management\n#: model:ir.ui.menu,name:asset_management.menu_asset_root
+#: model:ir.model,name:asset_management.model_asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_root
 msgid "Asset Management"
 msgstr "资产管理"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets\n#: model:ir.ui.menu,name:asset_management.menu_asset
+#: model:ir.actions.act_window,name:asset_management.action_assets
+#: model:ir.ui.menu,name:asset_management.menu_asset
 msgid "Assets"
 msgstr "资产"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_asset_dashboard\n#: model:ir.ui.menu,name:asset_management.menu_asset_dashboard
+#: model:ir.actions.act_window,name:asset_management.action_asset_dashboard
+#: model:ir.ui.menu,name:asset_management.menu_asset_dashboard
 msgid "Dashboard"
 msgstr "仪表板"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets_transfer_entry\n#: model:ir.ui.menu,name:asset_management.menu_asset_transfer
+#: model:ir.actions.act_window,name:asset_management.action_assets_transfer_entry
+#: model:ir.ui.menu,name:asset_management.menu_asset_transfer
 msgid "Transfer"
 msgstr "转移"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets_maintenance_entry\n#: model:ir.ui.menu,name:asset_management.menu_asset_maintenance
+#: model:ir.actions.act_window,name:asset_management.action_assets_maintenance_entry
+#: model:ir.ui.menu,name:asset_management.menu_asset_maintenance
 msgid "Maintenance"
 msgstr "维护"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets_depreciation_entry\n#: model:ir.ui.menu,name:asset_management.menu_asset_depreciation
+#: model:ir.actions.act_window,name:asset_management.action_assets_depreciation_entry
+#: model:ir.ui.menu,name:asset_management.menu_asset_depreciation
 msgid "Depreciation"
 msgstr "折旧"
 
 #. module: asset_management
-#: ui.menu,name:asset_management.asset_configuration
+#: model:ir.ui.menu,name:asset_management.asset_configuration
 msgid "Configuration"
 msgstr "配置"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets_settings\n#: model:ir.ui.menu,name:asset_type_menu
+#: model:ir.actions.act_window,name:asset_management.action_assets_settings
+#: model:ir.ui.menu,name:asset_management.asset_type_menu
 msgid "Types"
 msgstr "类型"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_asset_tags\n#: model:ir.ui.menu,name:asset_tag_menu
+#: model:ir.actions.act_window,name:asset_management.action_asset_tags
+#: model:ir.ui.menu,name:asset_management.asset_tag_menu
 msgid "Tags"
 msgstr "标签"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_transfer_entry
+#: model:ir.model,name:asset_management.model_asset_transfer_entry
 msgid "Asset Transfer Entry"
 msgstr "资产转移分录"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_maintenance_entry
+#: model:ir.model,name:asset_management.model_asset_maintenance_entry
 msgid "Asset Maintenance Entry"
 msgstr "资产维护分录"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_depreciation_entry
+#: model:ir.model,name:asset_management.model_asset_depreciation_entry
 msgid "Asset Depreciation Entry"
 msgstr "资产折旧分录"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_type
+#: model:ir.model,name:asset_management.model_asset_type
 msgid "Asset Type"
 msgstr "资产类型"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_disposal
+#: model:ir.model,name:asset_management.model_asset_disposal
 msgid "Asset Disposal"
 msgstr "资产处置"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_serial_number
+#: model:ir.model,name:asset_management.model_asset_serial_number
 msgid "Asset Serial Number"
 msgstr "资产序列号"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_tag
+#: model:ir.model,name:asset_management.model_asset_tag
 msgid "Asset Tag"
 msgstr "资产标签"
 
 #. module: asset_management
-#: field:asset.management,name:0
 msgid "Asset Reference"
 msgstr "资产参考"
 
 #. module: asset_management
-#: field:asset.management,barcode:0
 msgid "Barcode"
 msgstr "条码"
 
 #. module: asset_management
-#: field:asset.management,serial_number_ids:0
 msgid "Serial Numbers"
 msgstr "序列号"
 
 #. module: asset_management
-#: field:asset.management,product_id:0
 msgid "Associated Product"
 msgstr "关联产品"
 
 #. module: asset_management
-#: field:asset.management,asset_type_id:0
 msgid "Asset Type"
 msgstr "资产类型"
 
 #. module: asset_management
-#: field:asset.management,initial_stock:0
 msgid "Initial Stock"
 msgstr "初始库存"
 
 #. module: asset_management
-#: field:asset.management,current_stock:0
 msgid "Current Stock"
 msgstr "当前库存"
 
 #. module: asset_management
-#: field:asset.management,active_transfers:0
 msgid "Active Transfers"
 msgstr "进行中的转移"
 
 #. module: asset_management
-#: field:asset.management,depreciation_apply:0
 msgid "Enable Depreciation"
 msgstr "启用折旧"
 
 #. module: asset_management
-#: field:asset.management,expired_warranty_date:0
 msgid "Expired Warranty Date"
 msgstr "保修到期日期"
 
 #. module: asset_management
-#: field:asset.management,vendor_id:0
 msgid "Associated Vendor"
 msgstr "关联供应商"
 
 #. module: asset_management
-#: field:asset.management,invoice_date:0
 msgid "Invoice Date"
 msgstr "发票日期"
 
 #. module: asset_management
-#: field:asset.management,amount:0
 msgid "Purchase Price"
 msgstr "采购价格"
 
 #. module: asset_management
-#: field:asset.management,capitalization_date:0
 msgid "Capitalization Date"
 msgstr "资本化日期"
 
 #. module: asset_management
-#: field:asset.management,end_of_life_date:0
 msgid "End of Life Date"
 msgstr "报废日期"
 
 #. module: asset_management
-#: field:asset.management,last_maintenance_date:0
 msgid "Last Maintenance Date"
 msgstr "上次维护日期"
 
 #. module: asset_management
-#: field:asset.management,next_maintenance_due:0
 msgid "Next Maintenance Due"
 msgstr "下次维护期限"
 
 #. module: asset_management
-#: field:asset.management,asset_status:0
 msgid "Asset Status"
 msgstr "资产状态"
 
 #. module: asset_management
-#: field:asset.management,current_amount:0
 msgid "Current Book Value"
 msgstr "当前账面价值"
 
 #. module: asset_management
-#: field:asset.management,total_depreciation_amount:0
 msgid "Accumulated Depreciation"
 msgstr "累计折旧"
 
 #. module: asset_management
-#: field:asset.management,total_maintenance_amount:0
 msgid "Total Maintenance Cost"
 msgstr "总维护成本"
 
 #. module: asset_management
-#: field:asset.management,total_downtime_days:0
 msgid "Total Downtime (Days)"
 msgstr "总停机时间（天）"
 
 #. module: asset_management
-#: field:asset.management,document_ids:0
 msgid "Asset Documentation"
 msgstr "资产文档"
 
 #. module: asset_management
-#: field:asset.management,transfer_ids:0
 msgid "Transfer Entries"
 msgstr "转移分录"
 
 #. module: asset_management
-#: field:asset.management,maintenance_ids:0
 msgid "Maintenance Entries"
 msgstr "维护分录"
 
 #. module: asset_management
-#: field:asset.management,depreciation_ids:0
 msgid "Depreciation Entries"
 msgstr "折旧分录"
 
 #. module: asset_management
-#: field:asset.management,disposal_ids:0
 msgid "Disposal Records"
 msgstr "处置记录"
 
 #. module: asset_management
-#: field:asset.management,months_left:0
 msgid "Months Left"
 msgstr "剩余月份"
 
 #. module: asset_management
-#: field:asset.management,assigned_user:0
 msgid "Assigned User"
 msgstr "指派用户"
 
 #. module: asset_management
-#: field:asset.management,assign_by:0
 msgid "Assigned By"
 msgstr "指派人"
 
 #. module: asset_management
-#: field:asset.management,remaining_warranty:0
 msgid "Remaining Warranty"
 msgstr "剩余保修期"
 
 #. module: asset_management
-#: field:asset.management,warranty_status:0
 msgid "Warranty Status"
 msgstr "保修状态"
 
 #. module: asset_management
-#: field:asset.management,company_id:0
 msgid "Company / Branch"
 msgstr "公司/分部"
 
 #. module: asset_management
-#: field:asset.management,accounting_asset_id:0
 msgid "Accounting Asset"
 msgstr "会计资产"
 
 #. module: asset_management
-#: field:asset.transfer.entry,product_id:0
 msgid "Product"
 msgstr "Product"
 
 #. module: asset_management
-#: field:asset.transfer.entry,transfer_employee_id:0
 msgid "Assigned To"
 msgstr "指派给"
 
 #. module: asset_management
-#: field:asset.transfer.entry,assign_date:0
 msgid "Assign Date"
 msgstr "分配日期"
 
 #. module: asset_management
-#: field:asset.transfer.entry,assign_by:0
 msgid "Assign By"
 msgstr "Assign By"
 
 #. module: asset_management
-#: field:asset.transfer.entry,return_date:0
 msgid "Return Date"
 msgstr "退还日期"
 
 #. module: asset_management
-#: field:asset.transfer.entry,status:0
 msgid "Status"
 msgstr "状态"
 
 #. module: asset_management
-#: field:asset.transfer.entry,transfer_code:0
 msgid "Transfer Code"
 msgstr "转移代码"
 
 #. module: asset_management
-#: field:asset.transfer.entry,stock_qty:0
 msgid "Quantity"
 msgstr "数量"
 
 #. module: asset_management
-#: field:asset.transfer.entry,from_branch_id:0
 msgid "From Branch"
 msgstr "自中心"
 
 #. module: asset_management
-#: field:asset.transfer.entry,to_branch_id:0
 msgid "To Branch"
 msgstr "至中心"
 
@@ -342,47 +306,38 @@ msgid "Under Maintenance"
 msgstr "维护中"
 
 #. module: asset_management
-#: field:asset.disposal,name:0
 msgid "Disposal Reference"
 msgstr "处置参考"
 
 #. module: asset_management
-#: field:asset.disposal,asset_id:0
 msgid "Asset"
 msgstr "资产"
 
 #. module: asset_management
-#: field:asset.disposal,disposal_date:0
 msgid "Disposal Date"
 msgstr "处置日期"
 
 #. module: asset_management
-#: field:asset.disposal,disposal_method:0
 msgid "Disposal Method"
 msgstr "处置方式"
 
 #. module: asset_management
-#: field:asset.disposal,disposal_value:0
 msgid "Disposal / Sale Value"
 msgstr "处置/销售价值"
 
 #. module: asset_management
-#: field:asset.disposal,book_value_at_disposal:0
 msgid "Book Value at Disposal"
 msgstr "处置时的账面价值"
 
 #. module: asset_management
-#: field:asset.disposal,loss_on_disposal:0
 msgid "Loss / (Gain) on Disposal"
 msgstr "处置损失/（收益）"
 
 #. module: asset_management
-#: field:asset.disposal,disposal_reason:0
 msgid "Reason for Disposal"
 msgstr "处置原因"
 
 #. module: asset_management
-#: field:asset.disposal,approved_by:0
 msgid "Approved By"
 msgstr "批准人"
 

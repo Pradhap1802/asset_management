@@ -17,302 +17,266 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: asset_management
-#: model:ir.model,name:asset_management.model_asset_management\n#: model:ir.ui.menu,name:asset_management.menu_asset_root
+#: model:ir.model,name:asset_management.model_asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_root
 msgid "Asset Management"
 msgstr "Gestión de activos"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets\n#: model:ir.ui.menu,name:asset_management.menu_asset
+#: model:ir.actions.act_window,name:asset_management.action_assets
+#: model:ir.ui.menu,name:asset_management.menu_asset
 msgid "Assets"
 msgstr "Activos"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_asset_dashboard\n#: model:ir.ui.menu,name:asset_management.menu_asset_dashboard
+#: model:ir.actions.act_window,name:asset_management.action_asset_dashboard
+#: model:ir.ui.menu,name:asset_management.menu_asset_dashboard
 msgid "Dashboard"
 msgstr "Tablero"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets_transfer_entry\n#: model:ir.ui.menu,name:asset_management.menu_asset_transfer
+#: model:ir.actions.act_window,name:asset_management.action_assets_transfer_entry
+#: model:ir.ui.menu,name:asset_management.menu_asset_transfer
 msgid "Transfer"
 msgstr "Transferencia"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets_maintenance_entry\n#: model:ir.ui.menu,name:asset_management.menu_asset_maintenance
+#: model:ir.actions.act_window,name:asset_management.action_assets_maintenance_entry
+#: model:ir.ui.menu,name:asset_management.menu_asset_maintenance
 msgid "Maintenance"
 msgstr "Mantenimiento"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets_depreciation_entry\n#: model:ir.ui.menu,name:asset_management.menu_asset_depreciation
+#: model:ir.actions.act_window,name:asset_management.action_assets_depreciation_entry
+#: model:ir.ui.menu,name:asset_management.menu_asset_depreciation
 msgid "Depreciation"
 msgstr "Depreciación"
 
 #. module: asset_management
-#: ui.menu,name:asset_management.asset_configuration
+#: model:ir.ui.menu,name:asset_management.asset_configuration
 msgid "Configuration"
 msgstr "Configuración"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets_settings\n#: model:ir.ui.menu,name:asset_type_menu
+#: model:ir.actions.act_window,name:asset_management.action_assets_settings
+#: model:ir.ui.menu,name:asset_management.asset_type_menu
 msgid "Types"
 msgstr "Tipos"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_asset_tags\n#: model:ir.ui.menu,name:asset_tag_menu
+#: model:ir.actions.act_window,name:asset_management.action_asset_tags
+#: model:ir.ui.menu,name:asset_management.asset_tag_menu
 msgid "Tags"
 msgstr "Etiquetas"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_transfer_entry
+#: model:ir.model,name:asset_management.model_asset_transfer_entry
 msgid "Asset Transfer Entry"
 msgstr "Asiento de transferencia de activo"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_maintenance_entry
+#: model:ir.model,name:asset_management.model_asset_maintenance_entry
 msgid "Asset Maintenance Entry"
 msgstr "Asiento de mantenimiento de activo"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_depreciation_entry
+#: model:ir.model,name:asset_management.model_asset_depreciation_entry
 msgid "Asset Depreciation Entry"
 msgstr "Asiento de depreciación de activo"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_type
+#: model:ir.model,name:asset_management.model_asset_type
 msgid "Asset Type"
 msgstr "Tipo de activo"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_disposal
+#: model:ir.model,name:asset_management.model_asset_disposal
 msgid "Asset Disposal"
 msgstr "Baja de activo"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_serial_number
+#: model:ir.model,name:asset_management.model_asset_serial_number
 msgid "Asset Serial Number"
 msgstr "Número de serie de activo"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_tag
+#: model:ir.model,name:asset_management.model_asset_tag
 msgid "Asset Tag"
 msgstr "Etiqueta de activo"
 
 #. module: asset_management
-#: field:asset.management,name:0
 msgid "Asset Reference"
 msgstr "Referencia de activo"
 
 #. module: asset_management
-#: field:asset.management,barcode:0
 msgid "Barcode"
 msgstr "Código de barras"
 
 #. module: asset_management
-#: field:asset.management,serial_number_ids:0
 msgid "Serial Numbers"
 msgstr "Números de serie"
 
 #. module: asset_management
-#: field:asset.management,product_id:0
 msgid "Associated Product"
 msgstr "Producto asociado"
 
 #. module: asset_management
-#: field:asset.management,asset_type_id:0
 msgid "Asset Type"
 msgstr "Tipo de activo"
 
 #. module: asset_management
-#: field:asset.management,initial_stock:0
 msgid "Initial Stock"
 msgstr "Stock inicial"
 
 #. module: asset_management
-#: field:asset.management,current_stock:0
 msgid "Current Stock"
 msgstr "Stock actual"
 
 #. module: asset_management
-#: field:asset.management,active_transfers:0
 msgid "Active Transfers"
 msgstr "Transferencias activas"
 
 #. module: asset_management
-#: field:asset.management,depreciation_apply:0
 msgid "Enable Depreciation"
 msgstr "Activar depreciación"
 
 #. module: asset_management
-#: field:asset.management,expired_warranty_date:0
 msgid "Expired Warranty Date"
 msgstr "Fecha de fin de garantía"
 
 #. module: asset_management
-#: field:asset.management,vendor_id:0
 msgid "Associated Vendor"
 msgstr "Proveedor asociado"
 
 #. module: asset_management
-#: field:asset.management,invoice_date:0
 msgid "Invoice Date"
 msgstr "Fecha de factura"
 
 #. module: asset_management
-#: field:asset.management,amount:0
 msgid "Purchase Price"
 msgstr "Precio de compra"
 
 #. module: asset_management
-#: field:asset.management,capitalization_date:0
 msgid "Capitalization Date"
 msgstr "Fecha de activación"
 
 #. module: asset_management
-#: field:asset.management,end_of_life_date:0
 msgid "End of Life Date"
 msgstr "Fecha de fin de vida"
 
 #. module: asset_management
-#: field:asset.management,last_maintenance_date:0
 msgid "Last Maintenance Date"
 msgstr "Fecha de último mantenimiento"
 
 #. module: asset_management
-#: field:asset.management,next_maintenance_due:0
 msgid "Next Maintenance Due"
 msgstr "Próximo mantenimiento"
 
 #. module: asset_management
-#: field:asset.management,asset_status:0
 msgid "Asset Status"
 msgstr "Estado del activo"
 
 #. module: asset_management
-#: field:asset.management,current_amount:0
 msgid "Current Book Value"
 msgstr "Valor contable actual"
 
 #. module: asset_management
-#: field:asset.management,total_depreciation_amount:0
 msgid "Accumulated Depreciation"
 msgstr "Depreciación acumulada"
 
 #. module: asset_management
-#: field:asset.management,total_maintenance_amount:0
 msgid "Total Maintenance Cost"
 msgstr "Coste total de mantenimiento"
 
 #. module: asset_management
-#: field:asset.management,total_downtime_days:0
 msgid "Total Downtime (Days)"
 msgstr "Tiempo de inactividad total (Días)"
 
 #. module: asset_management
-#: field:asset.management,document_ids:0
 msgid "Asset Documentation"
 msgstr "Documentación del activo"
 
 #. module: asset_management
-#: field:asset.management,transfer_ids:0
 msgid "Transfer Entries"
 msgstr "Asientos de transferencia"
 
 #. module: asset_management
-#: field:asset.management,maintenance_ids:0
 msgid "Maintenance Entries"
 msgstr "Asientos de mantenimiento"
 
 #. module: asset_management
-#: field:asset.management,depreciation_ids:0
 msgid "Depreciation Entries"
 msgstr "Asientos de depreciación"
 
 #. module: asset_management
-#: field:asset.management,disposal_ids:0
 msgid "Disposal Records"
 msgstr "Registros de baja"
 
 #. module: asset_management
-#: field:asset.management,months_left:0
 msgid "Months Left"
 msgstr "Meses restantes"
 
 #. module: asset_management
-#: field:asset.management,assigned_user:0
 msgid "Assigned User"
 msgstr "Usuario asignado"
 
 #. module: asset_management
-#: field:asset.management,assign_by:0
 msgid "Assigned By"
 msgstr "Asignado por"
 
 #. module: asset_management
-#: field:asset.management,remaining_warranty:0
 msgid "Remaining Warranty"
 msgstr "Garantía restante"
 
 #. module: asset_management
-#: field:asset.management,warranty_status:0
 msgid "Warranty Status"
 msgstr "Estado de la garantía"
 
 #. module: asset_management
-#: field:asset.management,company_id:0
 msgid "Company / Branch"
 msgstr "Compañía / Sucursal"
 
 #. module: asset_management
-#: field:asset.management,accounting_asset_id:0
 msgid "Accounting Asset"
 msgstr "Activo contable"
 
 #. module: asset_management
-#: field:asset.transfer.entry,product_id:0
 msgid "Product"
 msgstr "Product"
 
 #. module: asset_management
-#: field:asset.transfer.entry,transfer_employee_id:0
 msgid "Assigned To"
 msgstr "Asignado a"
 
 #. module: asset_management
-#: field:asset.transfer.entry,assign_date:0
 msgid "Assign Date"
 msgstr "Fecha de asignación"
 
 #. module: asset_management
-#: field:asset.transfer.entry,assign_by:0
 msgid "Assign By"
 msgstr "Assign By"
 
 #. module: asset_management
-#: field:asset.transfer.entry,return_date:0
 msgid "Return Date"
 msgstr "Fecha de devolución"
 
 #. module: asset_management
-#: field:asset.transfer.entry,status:0
 msgid "Status"
 msgstr "Estado"
 
 #. module: asset_management
-#: field:asset.transfer.entry,transfer_code:0
 msgid "Transfer Code"
 msgstr "Código de transferencia"
 
 #. module: asset_management
-#: field:asset.transfer.entry,stock_qty:0
 msgid "Quantity"
 msgstr "Cantidad"
 
 #. module: asset_management
-#: field:asset.transfer.entry,from_branch_id:0
 msgid "From Branch"
 msgstr "Desde sucursal"
 
 #. module: asset_management
-#: field:asset.transfer.entry,to_branch_id:0
 msgid "To Branch"
 msgstr "A sucursal"
 
@@ -342,47 +306,38 @@ msgid "Under Maintenance"
 msgstr "En mantenimiento"
 
 #. module: asset_management
-#: field:asset.disposal,name:0
 msgid "Disposal Reference"
 msgstr "Referencia de baja"
 
 #. module: asset_management
-#: field:asset.disposal,asset_id:0
 msgid "Asset"
 msgstr "Activo"
 
 #. module: asset_management
-#: field:asset.disposal,disposal_date:0
 msgid "Disposal Date"
 msgstr "Fecha de baja"
 
 #. module: asset_management
-#: field:asset.disposal,disposal_method:0
 msgid "Disposal Method"
 msgstr "Método de baja"
 
 #. module: asset_management
-#: field:asset.disposal,disposal_value:0
 msgid "Disposal / Sale Value"
 msgstr "Valor de baja / venta"
 
 #. module: asset_management
-#: field:asset.disposal,book_value_at_disposal:0
 msgid "Book Value at Disposal"
 msgstr "Valor contable en baja"
 
 #. module: asset_management
-#: field:asset.disposal,loss_on_disposal:0
 msgid "Loss / (Gain) on Disposal"
 msgstr "Pérdida / (Ganancia) por baja"
 
 #. module: asset_management
-#: field:asset.disposal,disposal_reason:0
 msgid "Reason for Disposal"
 msgstr "Motivo de baja"
 
 #. module: asset_management
-#: field:asset.disposal,approved_by:0
 msgid "Approved By"
 msgstr "Aprobado por"
 

@@ -17,302 +17,266 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: asset_management
-#: model:ir.model,name:asset_management.model_asset_management\n#: model:ir.ui.menu,name:asset_management.menu_asset_root
+#: model:ir.model,name:asset_management.model_asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_root
 msgid "Asset Management"
 msgstr "자산 관리"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets\n#: model:ir.ui.menu,name:asset_management.menu_asset
+#: model:ir.actions.act_window,name:asset_management.action_assets
+#: model:ir.ui.menu,name:asset_management.menu_asset
 msgid "Assets"
 msgstr "자산"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_asset_dashboard\n#: model:ir.ui.menu,name:asset_management.menu_asset_dashboard
+#: model:ir.actions.act_window,name:asset_management.action_asset_dashboard
+#: model:ir.ui.menu,name:asset_management.menu_asset_dashboard
 msgid "Dashboard"
 msgstr "대시보드"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets_transfer_entry\n#: model:ir.ui.menu,name:asset_management.menu_asset_transfer
+#: model:ir.actions.act_window,name:asset_management.action_assets_transfer_entry
+#: model:ir.ui.menu,name:asset_management.menu_asset_transfer
 msgid "Transfer"
 msgstr "이전"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets_maintenance_entry\n#: model:ir.ui.menu,name:asset_management.menu_asset_maintenance
+#: model:ir.actions.act_window,name:asset_management.action_assets_maintenance_entry
+#: model:ir.ui.menu,name:asset_management.menu_asset_maintenance
 msgid "Maintenance"
 msgstr "유지보수"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets_depreciation_entry\n#: model:ir.ui.menu,name:asset_management.menu_asset_depreciation
+#: model:ir.actions.act_window,name:asset_management.action_assets_depreciation_entry
+#: model:ir.ui.menu,name:asset_management.menu_asset_depreciation
 msgid "Depreciation"
 msgstr "감가상각"
 
 #. module: asset_management
-#: ui.menu,name:asset_management.asset_configuration
+#: model:ir.ui.menu,name:asset_management.asset_configuration
 msgid "Configuration"
 msgstr "설정"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets_settings\n#: model:ir.ui.menu,name:asset_type_menu
+#: model:ir.actions.act_window,name:asset_management.action_assets_settings
+#: model:ir.ui.menu,name:asset_management.asset_type_menu
 msgid "Types"
 msgstr "유형"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_asset_tags\n#: model:ir.ui.menu,name:asset_tag_menu
+#: model:ir.actions.act_window,name:asset_management.action_asset_tags
+#: model:ir.ui.menu,name:asset_management.asset_tag_menu
 msgid "Tags"
 msgstr "태그"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_transfer_entry
+#: model:ir.model,name:asset_management.model_asset_transfer_entry
 msgid "Asset Transfer Entry"
 msgstr "자산 이전 분개"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_maintenance_entry
+#: model:ir.model,name:asset_management.model_asset_maintenance_entry
 msgid "Asset Maintenance Entry"
 msgstr "자산 유지보수 분개"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_depreciation_entry
+#: model:ir.model,name:asset_management.model_asset_depreciation_entry
 msgid "Asset Depreciation Entry"
 msgstr "자산 감가상각 분개"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_type
+#: model:ir.model,name:asset_management.model_asset_type
 msgid "Asset Type"
 msgstr "자산 유형"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_disposal
+#: model:ir.model,name:asset_management.model_asset_disposal
 msgid "Asset Disposal"
 msgstr "자산 처분"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_serial_number
+#: model:ir.model,name:asset_management.model_asset_serial_number
 msgid "Asset Serial Number"
 msgstr "자산 일련번호"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_tag
+#: model:ir.model,name:asset_management.model_asset_tag
 msgid "Asset Tag"
 msgstr "자산 태그"
 
 #. module: asset_management
-#: field:asset.management,name:0
 msgid "Asset Reference"
 msgstr "자산 참조"
 
 #. module: asset_management
-#: field:asset.management,barcode:0
 msgid "Barcode"
 msgstr "바코드"
 
 #. module: asset_management
-#: field:asset.management,serial_number_ids:0
 msgid "Serial Numbers"
 msgstr "일련번호"
 
 #. module: asset_management
-#: field:asset.management,product_id:0
 msgid "Associated Product"
 msgstr "관련 제품"
 
 #. module: asset_management
-#: field:asset.management,asset_type_id:0
 msgid "Asset Type"
 msgstr "자산 유형"
 
 #. module: asset_management
-#: field:asset.management,initial_stock:0
 msgid "Initial Stock"
 msgstr "초기 재고"
 
 #. module: asset_management
-#: field:asset.management,current_stock:0
 msgid "Current Stock"
 msgstr "현재 재고"
 
 #. module: asset_management
-#: field:asset.management,active_transfers:0
 msgid "Active Transfers"
 msgstr "활성 이전"
 
 #. module: asset_management
-#: field:asset.management,depreciation_apply:0
 msgid "Enable Depreciation"
 msgstr "감가상각 활성화"
 
 #. module: asset_management
-#: field:asset.management,expired_warranty_date:0
 msgid "Expired Warranty Date"
 msgstr "보증 만료일"
 
 #. module: asset_management
-#: field:asset.management,vendor_id:0
 msgid "Associated Vendor"
 msgstr "관련 공급업체"
 
 #. module: asset_management
-#: field:asset.management,invoice_date:0
 msgid "Invoice Date"
 msgstr "청구서 발행일"
 
 #. module: asset_management
-#: field:asset.management,amount:0
 msgid "Purchase Price"
 msgstr "구매 가격"
 
 #. module: asset_management
-#: field:asset.management,capitalization_date:0
 msgid "Capitalization Date"
 msgstr "자산화 일자"
 
 #. module: asset_management
-#: field:asset.management,end_of_life_date:0
 msgid "End of Life Date"
 msgstr "수명 만료일"
 
 #. module: asset_management
-#: field:asset.management,last_maintenance_date:0
 msgid "Last Maintenance Date"
 msgstr "최근 유지보수일"
 
 #. module: asset_management
-#: field:asset.management,next_maintenance_due:0
 msgid "Next Maintenance Due"
 msgstr "차기 유지보수 기한"
 
 #. module: asset_management
-#: field:asset.management,asset_status:0
 msgid "Asset Status"
 msgstr "자산 상태"
 
 #. module: asset_management
-#: field:asset.management,current_amount:0
 msgid "Current Book Value"
 msgstr "현재 장부가액"
 
 #. module: asset_management
-#: field:asset.management,total_depreciation_amount:0
 msgid "Accumulated Depreciation"
 msgstr "감가상각누계액"
 
 #. module: asset_management
-#: field:asset.management,total_maintenance_amount:0
 msgid "Total Maintenance Cost"
 msgstr "총 유지보수 비용"
 
 #. module: asset_management
-#: field:asset.management,total_downtime_days:0
 msgid "Total Downtime (Days)"
 msgstr "총 가동 중단 시간(일)"
 
 #. module: asset_management
-#: field:asset.management,document_ids:0
 msgid "Asset Documentation"
 msgstr "자산 문서"
 
 #. module: asset_management
-#: field:asset.management,transfer_ids:0
 msgid "Transfer Entries"
 msgstr "이전 분개"
 
 #. module: asset_management
-#: field:asset.management,maintenance_ids:0
 msgid "Maintenance Entries"
 msgstr "유지보수 분개"
 
 #. module: asset_management
-#: field:asset.management,depreciation_ids:0
 msgid "Depreciation Entries"
 msgstr "감가상각 분개"
 
 #. module: asset_management
-#: field:asset.management,disposal_ids:0
 msgid "Disposal Records"
 msgstr "처분 기록"
 
 #. module: asset_management
-#: field:asset.management,months_left:0
 msgid "Months Left"
 msgstr "남은 개월"
 
 #. module: asset_management
-#: field:asset.management,assigned_user:0
 msgid "Assigned User"
 msgstr "배정된 사용자"
 
 #. module: asset_management
-#: field:asset.management,assign_by:0
 msgid "Assigned By"
 msgstr "배정자"
 
 #. module: asset_management
-#: field:asset.management,remaining_warranty:0
 msgid "Remaining Warranty"
 msgstr "남은 보증"
 
 #. module: asset_management
-#: field:asset.management,warranty_status:0
 msgid "Warranty Status"
 msgstr "보증 상태"
 
 #. module: asset_management
-#: field:asset.management,company_id:0
 msgid "Company / Branch"
 msgstr "회사 / 지사"
 
 #. module: asset_management
-#: field:asset.management,accounting_asset_id:0
 msgid "Accounting Asset"
 msgstr "회계 자산"
 
 #. module: asset_management
-#: field:asset.transfer.entry,product_id:0
 msgid "Product"
 msgstr "Product"
 
 #. module: asset_management
-#: field:asset.transfer.entry,transfer_employee_id:0
 msgid "Assigned To"
 msgstr "배정 대상"
 
 #. module: asset_management
-#: field:asset.transfer.entry,assign_date:0
 msgid "Assign Date"
 msgstr "배정 일자"
 
 #. module: asset_management
-#: field:asset.transfer.entry,assign_by:0
 msgid "Assign By"
 msgstr "Assign By"
 
 #. module: asset_management
-#: field:asset.transfer.entry,return_date:0
 msgid "Return Date"
 msgstr "반납일"
 
 #. module: asset_management
-#: field:asset.transfer.entry,status:0
 msgid "Status"
 msgstr "상태"
 
 #. module: asset_management
-#: field:asset.transfer.entry,transfer_code:0
 msgid "Transfer Code"
 msgstr "이전 코드"
 
 #. module: asset_management
-#: field:asset.transfer.entry,stock_qty:0
 msgid "Quantity"
 msgstr "수량"
 
 #. module: asset_management
-#: field:asset.transfer.entry,from_branch_id:0
 msgid "From Branch"
 msgstr "출발 지사"
 
 #. module: asset_management
-#: field:asset.transfer.entry,to_branch_id:0
 msgid "To Branch"
 msgstr "도착 지사"
 
@@ -342,47 +306,38 @@ msgid "Under Maintenance"
 msgstr "유지보수 중"
 
 #. module: asset_management
-#: field:asset.disposal,name:0
 msgid "Disposal Reference"
 msgstr "처분 참조"
 
 #. module: asset_management
-#: field:asset.disposal,asset_id:0
 msgid "Asset"
 msgstr "자산"
 
 #. module: asset_management
-#: field:asset.disposal,disposal_date:0
 msgid "Disposal Date"
 msgstr "처분일"
 
 #. module: asset_management
-#: field:asset.disposal,disposal_method:0
 msgid "Disposal Method"
 msgstr "처분 방법"
 
 #. module: asset_management
-#: field:asset.disposal,disposal_value:0
 msgid "Disposal / Sale Value"
 msgstr "처분/판매 가치"
 
 #. module: asset_management
-#: field:asset.disposal,book_value_at_disposal:0
 msgid "Book Value at Disposal"
 msgstr "처분 시 장부가액"
 
 #. module: asset_management
-#: field:asset.disposal,loss_on_disposal:0
 msgid "Loss / (Gain) on Disposal"
 msgstr "처분 손실 / (이익)"
 
 #. module: asset_management
-#: field:asset.disposal,disposal_reason:0
 msgid "Reason for Disposal"
 msgstr "처분 사유"
 
 #. module: asset_management
-#: field:asset.disposal,approved_by:0
 msgid "Approved By"
 msgstr "승인자"
 

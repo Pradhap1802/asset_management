@@ -17,302 +17,266 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: asset_management
-#: model:ir.model,name:asset_management.model_asset_management\n#: model:ir.ui.menu,name:asset_management.menu_asset_root
+#: model:ir.model,name:asset_management.model_asset_management
+#: model:ir.ui.menu,name:asset_management.menu_asset_root
 msgid "Asset Management"
 msgstr "അസറ്റ് മാനേജ്മെന്റ്"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets\n#: model:ir.ui.menu,name:asset_management.menu_asset
+#: model:ir.actions.act_window,name:asset_management.action_assets
+#: model:ir.ui.menu,name:asset_management.menu_asset
 msgid "Assets"
 msgstr "അസറ്റുകൾ"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_asset_dashboard\n#: model:ir.ui.menu,name:asset_management.menu_asset_dashboard
+#: model:ir.actions.act_window,name:asset_management.action_asset_dashboard
+#: model:ir.ui.menu,name:asset_management.menu_asset_dashboard
 msgid "Dashboard"
 msgstr "ഡาഷ്ബോർഡ്"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets_transfer_entry\n#: model:ir.ui.menu,name:asset_management.menu_asset_transfer
+#: model:ir.actions.act_window,name:asset_management.action_assets_transfer_entry
+#: model:ir.ui.menu,name:asset_management.menu_asset_transfer
 msgid "Transfer"
 msgstr "കൈമാറ്റം"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets_maintenance_entry\n#: model:ir.ui.menu,name:asset_management.menu_asset_maintenance
+#: model:ir.actions.act_window,name:asset_management.action_assets_maintenance_entry
+#: model:ir.ui.menu,name:asset_management.menu_asset_maintenance
 msgid "Maintenance"
 msgstr "പരിപാലനം"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets_depreciation_entry\n#: model:ir.ui.menu,name:asset_management.menu_asset_depreciation
+#: model:ir.actions.act_window,name:asset_management.action_assets_depreciation_entry
+#: model:ir.ui.menu,name:asset_management.menu_asset_depreciation
 msgid "Depreciation"
 msgstr "തേയ്മാനം"
 
 #. module: asset_management
-#: ui.menu,name:asset_management.asset_configuration
+#: model:ir.ui.menu,name:asset_management.asset_configuration
 msgid "Configuration"
 msgstr "ക്രമീകരണം"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_assets_settings\n#: model:ir.ui.menu,name:asset_type_menu
+#: model:ir.actions.act_window,name:asset_management.action_assets_settings
+#: model:ir.ui.menu,name:asset_management.asset_type_menu
 msgid "Types"
 msgstr "ഇനങ്ങൾ"
 
 #. module: asset_management
-#: actions.act_window,name:asset_management.action_asset_tags\n#: model:ir.ui.menu,name:asset_tag_menu
+#: model:ir.actions.act_window,name:asset_management.action_asset_tags
+#: model:ir.ui.menu,name:asset_management.asset_tag_menu
 msgid "Tags"
 msgstr "ടാഗുകൾ"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_transfer_entry
+#: model:ir.model,name:asset_management.model_asset_transfer_entry
 msgid "Asset Transfer Entry"
 msgstr "അസറ്റ് കൈമാറ്റ എൻട്രി"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_maintenance_entry
+#: model:ir.model,name:asset_management.model_asset_maintenance_entry
 msgid "Asset Maintenance Entry"
 msgstr "അസറ്റ് പരിപാലന എൻട്രി"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_depreciation_entry
+#: model:ir.model,name:asset_management.model_asset_depreciation_entry
 msgid "Asset Depreciation Entry"
 msgstr "അസറ്റ് തേയ്മാന എൻട്രി"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_type
+#: model:ir.model,name:asset_management.model_asset_type
 msgid "Asset Type"
 msgstr "അസറ്റ് തരം"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_disposal
+#: model:ir.model,name:asset_management.model_asset_disposal
 msgid "Asset Disposal"
 msgstr "അസറ്റ് ഒഴിവാക്കൽ"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_serial_number
+#: model:ir.model,name:asset_management.model_asset_serial_number
 msgid "Asset Serial Number"
 msgstr "അസറ്റ് സീരിയൽ നമ്പർ"
 
 #. module: asset_management
-#: model,name:asset_management.model_asset_tag
+#: model:ir.model,name:asset_management.model_asset_tag
 msgid "Asset Tag"
 msgstr "അസറ്റ് ടാഗ്"
 
 #. module: asset_management
-#: field:asset.management,name:0
 msgid "Asset Reference"
 msgstr "അസറ്റ് റഫറൻസ്"
 
 #. module: asset_management
-#: field:asset.management,barcode:0
 msgid "Barcode"
 msgstr "ബാർകോด"
 
 #. module: asset_management
-#: field:asset.management,serial_number_ids:0
 msgid "Serial Numbers"
 msgstr "സീരിയൽ നമ്പറുകൾ"
 
 #. module: asset_management
-#: field:asset.management,product_id:0
 msgid "Associated Product"
 msgstr "ബന്ധപ്പെട്ട ഉൽപ്പന്നം"
 
 #. module: asset_management
-#: field:asset.management,asset_type_id:0
 msgid "Asset Type"
 msgstr "അസറ്റ് തരം"
 
 #. module: asset_management
-#: field:asset.management,initial_stock:0
 msgid "Initial Stock"
 msgstr "പ്രാരംഭ സ്റ്റോക്ക്"
 
 #. module: asset_management
-#: field:asset.management,current_stock:0
 msgid "Current Stock"
 msgstr "നിലവിലെ സ്റ്റോക്ക്"
 
 #. module: asset_management
-#: field:asset.management,active_transfers:0
 msgid "Active Transfers"
 msgstr "സജീവമായ കൈമാറ്റങ്ങൾ"
 
 #. module: asset_management
-#: field:asset.management,depreciation_apply:0
 msgid "Enable Depreciation"
 msgstr "തേയ്മാനം പ്രവർത്തനക്ഷമമാക്കുക"
 
 #. module: asset_management
-#: field:asset.management,expired_warranty_date:0
 msgid "Expired Warranty Date"
 msgstr "വാറന്റി കാലാവധി തീരുന്ന തീയതി"
 
 #. module: asset_management
-#: field:asset.management,vendor_id:0
 msgid "Associated Vendor"
 msgstr "ബന്ധപ്പെട്ട വെണ്ടർ"
 
 #. module: asset_management
-#: field:asset.management,invoice_date:0
 msgid "Invoice Date"
 msgstr "ഇൻവോയ്സ് തീയതി"
 
 #. module: asset_management
-#: field:asset.management,amount:0
 msgid "Purchase Price"
 msgstr "வாங்கிய വില"
 
 #. module: asset_management
-#: field:asset.management,capitalization_date:0
 msgid "Capitalization Date"
 msgstr "മൂലധനമാക്കിയ തീയതി"
 
 #. module: asset_management
-#: field:asset.management,end_of_life_date:0
 msgid "End of Life Date"
 msgstr "காலാവധി തീരുന്ന തീയতি"
 
 #. module: asset_management
-#: field:asset.management,last_maintenance_date:0
 msgid "Last Maintenance Date"
 msgstr "അവസാന പരിപാലന തീയതി"
 
 #. module: asset_management
-#: field:asset.management,next_maintenance_due:0
 msgid "Next Maintenance Due"
 msgstr "അടുത്ത പരിപാലന തീയതി"
 
 #. module: asset_management
-#: field:asset.management,asset_status:0
 msgid "Asset Status"
 msgstr "அസറ്റ് നില"
 
 #. module: asset_management
-#: field:asset.management,current_amount:0
 msgid "Current Book Value"
 msgstr "നിലവിലെ പുസ്തക മൂല്യം"
 
 #. module: asset_management
-#: field:asset.management,total_depreciation_amount:0
 msgid "Accumulated Depreciation"
 msgstr "ക്രോഡീകരിച്ച തേയ്മാനം"
 
 #. module: asset_management
-#: field:asset.management,total_maintenance_amount:0
 msgid "Total Maintenance Cost"
 msgstr "ആകെ പരിപാലന ചെലവ്"
 
 #. module: asset_management
-#: field:asset.management,total_downtime_days:0
 msgid "Total Downtime (Days)"
 msgstr "ആകെ പ്രവർത്തനരഹിതമായ സമയം (ദിവസങ്ങൾ)"
 
 #. module: asset_management
-#: field:asset.management,document_ids:0
 msgid "Asset Documentation"
 msgstr "അസറ്റ് ഡോക്യുമെന്റേഷൻ"
 
 #. module: asset_management
-#: field:asset.management,transfer_ids:0
 msgid "Transfer Entries"
 msgstr "കൈമാറ്റ എൻട്രികൾ"
 
 #. module: asset_management
-#: field:asset.management,maintenance_ids:0
 msgid "Maintenance Entries"
 msgstr "പരിപാലന എൻട്രികൾ"
 
 #. module: asset_management
-#: field:asset.management,depreciation_ids:0
 msgid "Depreciation Entries"
 msgstr "തേയ്മാന എൻട്രികൾ"
 
 #. module: asset_management
-#: field:asset.management,disposal_ids:0
 msgid "Disposal Records"
 msgstr "ഒഴിവാക്കൽ വിവരങ്ങൾ"
 
 #. module: asset_management
-#: field:asset.management,months_left:0
 msgid "Months Left"
 msgstr "ബാക്കിയുള്ള മാസങ്ങൾ"
 
 #. module: asset_management
-#: field:asset.management,assigned_user:0
 msgid "Assigned User"
 msgstr "ചുമതലപ്പെടുത്തിയ ഉപയോക്താവ്"
 
 #. module: asset_management
-#: field:asset.management,assign_by:0
 msgid "Assigned By"
 msgstr "ചുമതലപ്പെടുത്തിയത്"
 
 #. module: asset_management
-#: field:asset.management,remaining_warranty:0
 msgid "Remaining Warranty"
 msgstr "ബാക്കിയുള്ള വാറന്റി"
 
 #. module: asset_management
-#: field:asset.management,warranty_status:0
 msgid "Warranty Status"
 msgstr "வாറന്റി നില"
 
 #. module: asset_management
-#: field:asset.management,company_id:0
 msgid "Company / Branch"
 msgstr "കമ്പനി / ബ്രാഞ്ച്"
 
 #. module: asset_management
-#: field:asset.management,accounting_asset_id:0
 msgid "Accounting Asset"
 msgstr "അക്കൗണ്ടിംഗ് അസറ്റ്"
 
 #. module: asset_management
-#: field:asset.transfer.entry,product_id:0
 msgid "Product"
 msgstr "Product"
 
 #. module: asset_management
-#: field:asset.transfer.entry,transfer_employee_id:0
 msgid "Assigned To"
 msgstr "ചുമതലപ്പെടുത്തിയത്"
 
 #. module: asset_management
-#: field:asset.transfer.entry,assign_date:0
 msgid "Assign Date"
 msgstr "ചുമതലപ്പെടുത്തിയ തീയതി"
 
 #. module: asset_management
-#: field:asset.transfer.entry,assign_by:0
 msgid "Assign By"
 msgstr "Assign By"
 
 #. module: asset_management
-#: field:asset.transfer.entry,return_date:0
 msgid "Return Date"
 msgstr "തിരികെ ലഭിച്ച തീയതി"
 
 #. module: asset_management
-#: field:asset.transfer.entry,status:0
 msgid "Status"
 msgstr "നില"
 
 #. module: asset_management
-#: field:asset.transfer.entry,transfer_code:0
 msgid "Transfer Code"
 msgstr "കൈമാറ്റ കോഡ്"
 
 #. module: asset_management
-#: field:asset.transfer.entry,stock_qty:0
 msgid "Quantity"
 msgstr "അളവ്"
 
 #. module: asset_management
-#: field:asset.transfer.entry,from_branch_id:0
 msgid "From Branch"
 msgstr "ബ്രാഞ്ചിൽ നിന്ന്"
 
 #. module: asset_management
-#: field:asset.transfer.entry,to_branch_id:0
 msgid "To Branch"
 msgstr "ബ്രാഞ്ചിലേക്ക്"
 
@@ -342,47 +306,38 @@ msgid "Under Maintenance"
 msgstr "പരിപालനത്തിൽ"
 
 #. module: asset_management
-#: field:asset.disposal,name:0
 msgid "Disposal Reference"
 msgstr "ஒഴിവാക്കൽ റഫറൻസ്"
 
 #. module: asset_management
-#: field:asset.disposal,asset_id:0
 msgid "Asset"
 msgstr "അസറ്റ്"
 
 #. module: asset_management
-#: field:asset.disposal,disposal_date:0
 msgid "Disposal Date"
 msgstr "ഒഴിવાക്കിയ തീയതി"
 
 #. module: asset_management
-#: field:asset.disposal,disposal_method:0
 msgid "Disposal Method"
 msgstr "ഒഴിવાക്കൽ രീതി"
 
 #. module: asset_management
-#: field:asset.disposal,disposal_value:0
 msgid "Disposal / Sale Value"
 msgstr "ഒഴിവാക്കൽ / വിൽപന മൂല്യം"
 
 #. module: asset_management
-#: field:asset.disposal,book_value_at_disposal:0
 msgid "Book Value at Disposal"
 msgstr "ഒഴിവാക്കുമ്പോഴുള്ള പുസ്തക മൂല്യം"
 
 #. module: asset_management
-#: field:asset.disposal,loss_on_disposal:0
 msgid "Loss / (Gain) on Disposal"
 msgstr "ഒഴിവാക്കൽ നഷ്ടം / (ലാഭം)"
 
 #. module: asset_management
-#: field:asset.disposal,disposal_reason:0
 msgid "Reason for Disposal"
 msgstr "ഒഴിവാക്കാനുള്ള कारण"
 
 #. module: asset_management
-#: field:asset.disposal,approved_by:0
 msgid "Approved By"
 msgstr "അംഗീകരിച്ചത്"
 
